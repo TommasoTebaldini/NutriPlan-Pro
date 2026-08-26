@@ -177,7 +177,7 @@
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Nota / Titolo sessione</label>
-    <input type="text" id="ren-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:16px">
+    <input type="text" id="ren-nota" placeholder="es. Prima visita, follow-up... / e.g. First visit, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:16px">
   </div>
   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
     <button class="btn btn-primary btn-sm" onclick="salvaRenale()" style="background:linear-gradient(135deg,#0F766E,#14B8A6)">💾 Salva in Cartella</button>
@@ -520,10 +520,10 @@
   <div class="grid-2">
     <div class="calc-box">
       <h3><span data-only-lang="it">👤 Dati Paziente</span><span data-only-lang="en" style="display:none">👤 Patient Data</span></h3>
-      <div class="nf" style="margin-bottom:10px"><label>Peso attuale (kg)</label><input type="number" id="r-peso" placeholder="es. 70" step="0.5" oninput="calcIRC()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Peso ideale (kg) — se obeso/edematoso</label><input type="number" id="r-peso-ideale" placeholder="es. 65 (opzionale)" step="0.5" oninput="calcIRC()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="r-altezza" placeholder="es. 170" oninput="calcIRC()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="r-eta" placeholder="es. 60" oninput="calcIRC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Peso attuale (kg)</label><input type="number" id="r-peso" placeholder="es. 70 / e.g. 70" step="0.5" oninput="calcIRC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Peso ideale (kg) — se obeso/edematoso</label><input type="number" id="r-peso-ideale" placeholder="es. 65 (opzionale) / e.g. 65 (optional)" step="0.5" oninput="calcIRC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="r-altezza" placeholder="es. 170 / e.g. 170" oninput="calcIRC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="r-eta" placeholder="es. 60 / e.g. 60" oninput="calcIRC()"></div>
       <div class="nf" style="margin-bottom:10px">
         <label>Sesso</label>
         <select id="r-sesso" onchange="calcIRC()">
@@ -851,11 +851,11 @@
       <div class="calc-box" style="border:1.5px solid #DBEAFE" id="ren-hd-piano">
         <h3>🍽️ <span data-only-lang="it">Piano Alimentare Tipo HD — Giornata Senza Dialisi</span><span data-only-lang="en" style="display:none">Sample HD Meal Plan — Dialysis-Free Day</span></h3>
         <div class="esempio-toolbar no-print">
-          <button id="ren-btn-edit" onclick="toggleEditRenale()" title="Modifica gli alimenti e le quantità">✏️ Modifica</button>
-          <button onclick="salvaEsempiRenale()" title="Salva le modifiche in locale">💾 Salva</button>
-          <button onclick="apriInPianoAlimentareRenale()" title="Copia il piano HD nel Piano Alimentare per modificarlo e salvarlo">📂 Apri in Piano</button>
-          <button onclick="eliminaPianoRenale()" title="Elimina il piano HD" style="color:#DC2626;border-color:#FECACA">🗑️ Elimina</button>
-          <button onclick="ripristinaEsempiRenale()" title="Ripristina esempio originale" style="color:#DC2626;border-color:#FECACA">↩ Ripristina</button>
+          <button id="ren-btn-edit" onclick="toggleEditRenale()" title="Modifica gli alimenti e le quantità / Edit foods and quantities">✏️ Modifica</button>
+          <button onclick="salvaEsempiRenale()" title="Salva le modifiche in locale / Save changes locally">💾 Salva</button>
+          <button onclick="apriInPianoAlimentareRenale()" title="Copia il piano HD nel Piano Alimentare per modificarlo e salvarlo / Copy the HD plan into Meal Plan to edit and save it">📂 Apri in Piano</button>
+          <button onclick="eliminaPianoRenale()" title="Elimina il piano HD / Delete the HD plan" style="color:#DC2626;border-color:#FECACA">🗑️ Elimina</button>
+          <button onclick="ripristinaEsempiRenale()" title="Ripristina esempio originale / Restore original example" style="color:#DC2626;border-color:#FECACA">↩ Ripristina</button>
         </div>
         <div style="overflow-x:auto">
           <table class="ren-table">
@@ -1513,20 +1513,20 @@ ALTER TABLE note_specialistiche ADD COLUMN IF NOT EXISTS updated_at timestamptz 
   console.error('SQL da eseguire:\n' + sql);
   const modal = document.getElementById('modal-sql-setup');
   if (modal) { document.getElementById('sql-setup-text').value = sql; openM('modal-sql-setup'); }
-  else { toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err'); }
+  else { toast(_L('⚠️ Tabella DB mancante — SQL in console (F12)','⚠️ DB table missing — SQL in console (F12)'), 'err'); }
 }
 
 async function caricaRenDaNote(noteId) {
   showLoading(true);
   const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
   showLoading(false);
-  if (error || !data) { toast('❌ Impossibile caricare la scheda', 'err'); return; }
+  if (error || !data) { toast('❌ ' + _L('Impossibile caricare la scheda','Could not load the record'), 'err'); return; }
   editingRenNoteId = noteId;
   await _cwSetById('ren-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('ren-nota');
   if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiRen(JSON.parse(data.dati || '{}')); } catch(e) {}
-  toast('✅ Scheda IRC caricata', 'ok');
+  toast('✅ ' + _L('Scheda IRC caricata','CKD record loaded'), 'ok');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1725,9 +1725,9 @@ function salvaEsempiRenale() {
   if (!el) return;
   try {
     localStorage.setItem(REN_LS_KEY, el.innerHTML);
-    if (typeof toast === 'function') toast('💾 Piano salvato!', 'ok');
-    else alert('Piano salvato!');
-  } catch(e) { alert('Errore nel salvataggio: ' + e.message); }
+    if (typeof toast === 'function') toast('💾 ' + _L('Piano salvato!','Plan saved!'), 'ok');
+    else alert(_L('Piano salvato!','Plan saved!'));
+  } catch(e) { alert(_L('Errore nel salvataggio: ','Save error: ') + e.message); }
 }
 
 function ripristinaEsempiRenale() {

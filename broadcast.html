@@ -147,7 +147,7 @@
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" class="no-print">☰</button>
   <button id="menu-toggle" onclick="toggleSB()">☰</button>
-  <h2>📢 Broadcast & Gruppi</h2>
+  <h2>📢 <span data-only-lang="it">Broadcast & Gruppi</span><span data-only-lang="en" style="display:none">Broadcast & Groups</span></h2>
   <div class="tbar-actions"></div>
 </div>
 <main id="main">
@@ -185,7 +185,7 @@
             <div class="wa-thread-members" id="wa-thread-members"></div>
           </div>
           <button class="btn btn-ghost btn-xs" onclick="openGroupMembersModal()">👥 Membri</button>
-          <button class="btn btn-ghost btn-xs" onclick="deleteActiveGroup()" title="Elimina gruppo">🗑</button>
+          <button id="wa-delete-group-btn" class="btn btn-ghost btn-xs" onclick="deleteActiveGroup()" title="Elimina gruppo / Delete group">🗑</button>
         </div>
         <div class="wa-messages-area" id="wa-messages-area"></div>
         <div class="wa-input-row" style="flex-direction:column;align-items:stretch">
@@ -195,7 +195,7 @@
             <button onclick="waCancelSchedule()" style="background:none;border:none;cursor:pointer;color:#854D0E;font-size:13px">✕</button>
           </div>
           <div style="display:flex;gap:8px;align-items:flex-end">
-            <textarea id="wa-input" placeholder="Scrivi un messaggio al gruppo..." rows="1" onkeydown="handleWaKey(event)" style="flex:1;border:1.5px solid var(--border-d);border-radius:18px;padding:9px 14px;font-size:13px;font-family:inherit;resize:none;outline:none;max-height:100px"></textarea>
+            <textarea id="wa-input" placeholder="Scrivi un messaggio al gruppo... / Write a message to the group..." rows="1" onkeydown="handleWaKey(event)" style="flex:1;border:1.5px solid var(--border-d);border-radius:18px;padding:9px 14px;font-size:13px;font-family:inherit;resize:none;outline:none;max-height:100px"></textarea>
             <button class="btn btn-primary btn-sm" onclick="sendWaMessage()">Invia ➤</button>
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px">
@@ -228,7 +228,7 @@
           </div>
         </div>
         <div style="padding:10px;flex:1;overflow-y:auto">
-          <input type="text" id="pat-search" placeholder="Cerca paziente..." oninput="filterPats()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;margin-bottom:8px">
+          <input type="text" id="pat-search" placeholder="Cerca paziente... / Search patient..." oninput="filterPats()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;margin-bottom:8px">
           <div class="pat-check-list" id="pat-check-list">
             <div style="text-align:center;padding:16px;color:var(--slate-l);font-size:12.5px">Caricamento...</div>
           </div>
@@ -269,7 +269,7 @@
 
           <div style="flex:1;display:flex;flex-direction:column">
             <div style="font-size:11.5px;font-weight:700;color:var(--slate-l);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Messaggio:</div>
-            <textarea class="compose-box" id="broadcast-text" placeholder="Scrivi il tuo messaggio per tutti i pazienti selezionati..." oninput="updateCharCount()" style="flex:1;min-height:120px"></textarea>
+            <textarea class="compose-box" id="broadcast-text" placeholder="Scrivi il tuo messaggio per tutti i pazienti selezionati... / Write your message for all selected patients..." oninput="updateCharCount()" style="flex:1;min-height:120px"></textarea>
             <div class="char-count" id="char-count">0 / 500 caratteri</div>
           </div>
 
@@ -301,7 +301,7 @@
 <!-- New Group Modal -->
 <div id="modal-group" class="modal-bg" style="display:none">
   <div class="modal" style="max-width:440px">
-    <div class="mhdr"><h2>👥 Nuovo Gruppo</h2><button class="mclose" onclick="closeGroupModal()">✕</button></div>
+    <div class="mhdr"><h2>👥 <span data-only-lang="it">Nuovo Gruppo</span><span data-only-lang="en" style="display:none">New Group</span></h2><button class="mclose" onclick="closeGroupModal()">✕</button></div>
     <div class="mbody">
       <div class="fg" style="margin-bottom:12px">
         <label>Nome gruppo *</label>
@@ -320,7 +320,7 @@
       </div>
       <div class="fg">
         <label>Membri del gruppo</label>
-        <input type="text" id="gm-search" placeholder="Cerca dietisti o pazienti..." oninput="filterGroupContacts()" style="margin-bottom:6px">
+        <input type="text" id="gm-search" placeholder="Cerca dietisti o pazienti... / Search dietitians or patients..." oninput="filterGroupContacts()" style="margin-bottom:6px">
         <div class="pat-check-list" id="gm-pat-list" style="max-height:220px;border:1.5px solid var(--border);border-radius:8px;padding:4px"></div>
       </div>
     </div>
@@ -334,12 +334,12 @@
 <!-- Group Members Modal -->
 <div id="modal-group-members" class="modal-bg" style="display:none">
   <div class="modal" style="max-width:440px">
-    <div class="mhdr"><h2>👥 Membri del gruppo</h2><button class="mclose" onclick="closeMembersModal()">✕</button></div>
+    <div class="mhdr"><h2>👥 <span data-only-lang="it">Membri del gruppo</span><span data-only-lang="en" style="display:none">Group members</span></h2><button class="mclose" onclick="closeMembersModal()">✕</button></div>
     <div class="mbody">
       <div id="gmem-current-list" style="margin-bottom:14px"></div>
       <div id="gmem-add-section">
         <label style="font-size:11.5px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.4px">Aggiungi contatti</label>
-        <input type="text" id="gmem-search" placeholder="Cerca dietisti o pazienti..." oninput="renderAddMemberList()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;margin:6px 0">
+        <input type="text" id="gmem-search" placeholder="Cerca dietisti o pazienti... / Search dietitians or patients..." oninput="renderAddMemberList()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;margin:6px 0">
         <div class="pat-check-list" id="gmem-add-list" style="max-height:180px;border:1.5px solid var(--border);border-radius:8px;padding:4px"></div>
       </div>
     </div>
@@ -353,7 +353,7 @@
 <!-- Preview Modal -->
 <div id="modal-preview" class="modal-bg" style="display:none">
   <div class="modal" style="max-width:420px">
-    <div class="mhdr"><h2>👁 Anteprima messaggio</h2><button class="mclose" onclick="document.getElementById('modal-preview').style.display='none'">✕</button></div>
+    <div class="mhdr"><h2>👁 <span data-only-lang="it">Anteprima messaggio</span><span data-only-lang="en" style="display:none">Message preview</span></h2><button class="mclose" onclick="document.getElementById('modal-preview').style.display='none'">✕</button></div>
     <div class="mbody">
       <div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:12px;padding:14px;font-size:13px;color:#1E293B;line-height:1.6;white-space:pre-wrap" id="preview-content"></div>
       <div style="margin-top:12px;font-size:12px;color:var(--slate-l)" id="preview-info"></div>
@@ -400,10 +400,25 @@ function contactLabel(c) {
 }
 
 async function init() {
+  applyStaticI18n();
   showLoading(true);
   await Promise.all([loadPatients(), loadDietitians(), loadWaGroups(), loadHistory()]);
   showLoading(false);
 }
+
+function applyStaticI18n() {
+  const setPh = (id, it, en) => { const el = document.getElementById(id); if (el) el.placeholder = _L(it, en); };
+  const setTitle = (id, it, en) => { const el = document.getElementById(id); if (el) el.title = _L(it, en); };
+  setPh('wa-input', 'Scrivi un messaggio al gruppo...', 'Write a message to the group...');
+  setPh('pat-search', 'Cerca paziente...', 'Search patient...');
+  setPh('broadcast-text', 'Scrivi il tuo messaggio per tutti i pazienti selezionati...', 'Write your message for all selected patients...');
+  setPh('gm-name', 'es. Pazienti diabetici, Follow-up marzo...', 'e.g. Diabetic patients, March follow-up...');
+  setPh('gm-search', 'Cerca dietisti o pazienti...', 'Search dietitians or patients...');
+  setPh('gmem-search', 'Cerca dietisti o pazienti...', 'Search dietitians or patients...');
+  setTitle('wa-delete-group-btn', 'Elimina gruppo', 'Delete group');
+  setTitle('wa-mic-btn', 'Messaggio vocale', 'Voice message');
+}
+new MutationObserver(applyStaticI18n).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
 
 // ─── Top-level tabs ─────────────────────────────────────────────────────────
 function switchTopTab(tab) {
@@ -531,16 +546,16 @@ function updateCharCount() {
 
 function previewBroadcast() {
   const text = document.getElementById('broadcast-text').value.trim();
-  if (!text) { toast('Scrivi un messaggio prima', 'err'); return; }
+  if (!text) { toast(_L('Scrivi un messaggio prima','Write a message first'), 'err'); return; }
   document.getElementById('preview-content').textContent = text;
-  document.getElementById('preview-info').textContent = `Verrà inviato a ${selectedPatients.size} pazienti.`;
+  document.getElementById('preview-info').textContent = _L(`Verrà inviato a ${selectedPatients.size} pazienti.`,`Will be sent to ${selectedPatients.size} patients.`);
   document.getElementById('modal-preview').style.display = 'flex';
 }
 
 async function sendBroadcast() {
   const text = document.getElementById('broadcast-text').value.trim();
-  if (!text) { toast('Scrivi un messaggio prima', 'err'); return; }
-  if (!selectedPatients.size) { toast('Seleziona almeno un paziente', 'err'); return; }
+  if (!text) { toast(_L('Scrivi un messaggio prima','Write a message first'), 'err'); return; }
+  if (!selectedPatients.size) { toast(_L('Seleziona almeno un paziente','Select at least one patient'), 'err'); return; }
   const msgType = document.querySelector('input[name="msg-type"]:checked')?.value || 'chat';
   document.getElementById('modal-preview').style.display = 'none';
   showLoading(true);
@@ -572,7 +587,7 @@ async function sendBroadcast() {
     await loadHistory();
     switchTopTab('history');
   } catch(e) {
-    toast('Errore invio: ' + e.message, 'err');
+    toast(_L('Errore invio: ','Send error: ') + e.message, 'err');
   }
   showLoading(false);
 }
@@ -747,8 +762,8 @@ async function sendWaMessage() {
   const payload = { group_id: activeWaGroupId, sender_id: currentUser.id, content: text, type: 'text', status: _waScheduledAt ? 'scheduled' : 'sent' };
   if (_waScheduledAt) { payload.scheduled_at = _waScheduledAt; waCancelSchedule(); }
   const { error } = await sb.from('chat_group_messages').insert(payload);
-  if (error) { toast('Errore invio: ' + error.message, 'err'); return; }
-  if (payload.status === 'scheduled') { toast('📅 Messaggio programmato!', 'ok'); await loadWaMessages(activeWaGroupId); }
+  if (error) { toast(_L('Errore invio: ','Send error: ') + error.message, 'err'); return; }
+  if (payload.status === 'scheduled') { toast('📅 ' + _L('Messaggio programmato!','Message scheduled!'), 'ok'); await loadWaMessages(activeWaGroupId); }
 }
 
 // ── Template rapidi (nel thread di gruppo) ──────────────────────────────────
@@ -776,7 +791,7 @@ let _waVoiceRecording = false;
 async function waToggleVoiceRecord() {
   const btn = document.getElementById('wa-mic-btn');
   if (_waVoiceRecording) { if (_waMediaRecorder) _waMediaRecorder.stop(); return; }
-  if (!activeWaGroupId) { toast('Seleziona un gruppo prima', 'err'); return; }
+  if (!activeWaGroupId) { toast(_L('Seleziona un gruppo prima','Select a group first'), 'err'); return; }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     _waAudioChunks = [];
@@ -793,7 +808,7 @@ async function waToggleVoiceRecord() {
     _waMediaRecorder.start();
     _waVoiceRecording = true;
     if (btn) { btn.textContent = '⏹️'; btn.style.background = '#FEE2E2'; }
-    toast('🎤 Registrazione in corso... Clicca ⏹️ per fermare', 'info');
+    toast('🎤 ' + _L('Registrazione in corso... Clicca ⏹️ per fermare','Recording... Click ⏹️ to stop'), 'info');
     setTimeout(() => { if (_waVoiceRecording && _waMediaRecorder) _waMediaRecorder.stop(); }, 60000);
   } catch(e) {
     toast('❌ Accesso microfono negato: ' + e.message, 'err');
@@ -813,7 +828,7 @@ async function waSendVoiceMessage(blob) {
       group_id: activeWaGroupId, sender_id: currentUser.id, content: signed.signedUrl, type: 'voice', status: 'sent'
     });
     if (error) throw error;
-    toast('🎤 Messaggio vocale inviato!', 'ok');
+    toast('🎤 ' + _L('Messaggio vocale inviato!','Voice message sent!'), 'ok');
   } catch(e) {
     toast('❌ Errore invio vocale: ' + e.message, 'err');
   }
@@ -847,7 +862,7 @@ function waSetSchedule(type) {
   if (bar) bar.style.display = 'flex';
   const dtInput = document.getElementById('wa-schedule-dt');
   if (dtInput && _waScheduledAt) dtInput.value = _waScheduledAt.slice(0,16);
-  toast('📅 Messaggio programmato per: ' + new Date(_waScheduledAt).toLocaleString('it'), 'info');
+  toast('📅 ' + _L('Messaggio programmato per: ','Message scheduled for: ') + new Date(_waScheduledAt).toLocaleString(getLang()), 'info');
 }
 
 function waCancelSchedule() {
@@ -908,7 +923,7 @@ function renderGroupContactList(search) {
 
 async function saveGroup() {
   const name = document.getElementById('gm-name').value.trim();
-  if (!name) { toast('Inserisci il nome del gruppo', 'err'); return; }
+  if (!name) { toast(_L('Inserisci il nome del gruppo','Enter the group name'), 'err'); return; }
   const checked = [...document.querySelectorAll('#gm-pat-list input[type=checkbox]:checked')];
   const members = checked.map(i => ({ id: i.id.replace('gchk-',''), role: i.dataset.role }));
   showLoading(true);
@@ -926,7 +941,7 @@ async function saveGroup() {
     await loadWaGroups();
     await selectWaGroup(grp.id);
   } catch(e) {
-    toast('Errore: ' + e.message, 'err');
+    toast(_L('Errore: ','Error: ') + e.message, 'err');
   }
   showLoading(false);
 }
@@ -934,8 +949,8 @@ async function saveGroup() {
 async function deleteActiveGroup() {
   if (!activeWaGroupId) return;
   const g = allGroups.find(x => x.id === activeWaGroupId);
-  if (g && g.created_by !== currentUser.id) { toast('Solo chi ha creato il gruppo può eliminarlo', 'err'); return; }
-  if (!confirm('Eliminare questo gruppo per tutti i membri?')) return;
+  if (g && g.created_by !== currentUser.id) { toast(_L('Solo chi ha creato il gruppo può eliminarlo', 'Only the group creator can delete it'), 'err'); return; }
+  if (!confirm(_L('Eliminare questo gruppo per tutti i membri?','Delete this group for all members?'))) return;
   showLoading(true);
   await sb.from('chat_groups').delete().eq('id', activeWaGroupId);
   if (waRealtimeChannel) { waRealtimeChannel.unsubscribe(); waRealtimeChannel = null; }
@@ -969,7 +984,7 @@ function renderCurrentMembersList() {
     return `<div class="member-row">
       <span class="contact-name" style="flex:1">${esc(info.name)}</span>
       <span class="role-badge ${m.member_role}">${m.member_role==='dietitian'?'Dietista/Nutrizionista':'Paziente'}</span>
-      ${canRemove ? `<button onclick="removeMember('${m.user_id}')" style="background:none;border:none;cursor:pointer;color:#94A3B8;font-size:12px" title="Rimuovi">🗑</button>` : ''}
+      ${canRemove ? `<button onclick="removeMember('${m.user_id}')" style="background:none;border:none;cursor:pointer;color:#94A3B8;font-size:12px" title="${_L('Rimuovi','Remove')}">🗑</button>` : ''}
     </div>`;
   }).join('');
 }
@@ -990,11 +1005,11 @@ function renderAddMemberList() {
 
 async function addSelectedMembers() {
   const checked = [...document.querySelectorAll('#gmem-add-list input[type=checkbox]:checked')];
-  if (!checked.length) { toast('Seleziona almeno un contatto', 'err'); return; }
+  if (!checked.length) { toast(_L('Seleziona almeno un contatto','Select at least one contact'), 'err'); return; }
   const rows = checked.map(i => ({ group_id: activeWaGroupId, user_id: i.id.replace('gaddchk-',''), member_role: i.dataset.role }));
   showLoading(true);
   const { error } = await sb.from('chat_group_members').insert(rows);
-  if (error) { toast('Errore: ' + error.message, 'err'); showLoading(false); return; }
+  if (error) { toast(_L('Errore: ','Error: ') + error.message, 'err'); showLoading(false); return; }
   toast(`✅ ${rows.length} membri aggiunti`, 'ok');
   await loadWaGroups();
   const g = allGroups.find(x => x.id === activeWaGroupId);
@@ -1008,7 +1023,7 @@ async function addSelectedMembers() {
 }
 
 async function removeMember(userId) {
-  if (!confirm('Rimuovere questo membro dal gruppo?')) return;
+  if (!confirm(_L('Rimuovere questo membro dal gruppo?','Remove this member from the group?'))) return;
   showLoading(true);
   await sb.from('chat_group_members').delete().eq('group_id', activeWaGroupId).eq('user_id', userId);
   await loadWaGroups();

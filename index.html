@@ -13,6 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <script src="js/lang.min.js?v=2" defer></script>
+<script src="js/utils.min.js" defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradient(135deg,#0F766E 0%,#1E293B 60%,#0C5F58 100%);display:flex;align-items:center;justify-content:center;padding:16px}
@@ -69,11 +70,14 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
 </head>
 <body>
 <div class="box">
-  <a href="landing.html" style="display:block;text-align:center;font-size:12px;color:#64748B;text-decoration:none;margin-bottom:16px">← Torna al sito</a>
+  <a href="landing.html" style="display:block;text-align:center;font-size:12px;color:#64748B;text-decoration:none;margin-bottom:16px"><span data-only-lang="it">← Torna al sito</span><span data-only-lang="en" style="display:none">← Back to site</span></a>
   <div class="logo">
     <h1>DietPlan Pro</h1>
     <p>CREA 2019 + BDA INRAN · v1.0</p>
-    <div style="display:flex;justify-content:center;gap:4px;margin-top:10px" id="login-lang-slot"></div>
+    <div style="display:flex;justify-content:center;gap:4px;margin-top:10px" id="login-lang-slot">
+      <button onclick="setLang('it')" style="padding:4px 10px;border-radius:7px;border:1.5px solid #E2E8F0;background:white;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">🇮🇹 IT</button>
+      <button onclick="setLang('en')" style="padding:4px 10px;border-radius:7px;border:1.5px solid #E2E8F0;background:white;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">🇬🇧 EN</button>
+    </div>
   </div>
 
   <!-- WAITING -->
@@ -88,12 +92,15 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
   <!-- NOTICE: SITO IN SVILUPPO -->
   <div id="dev-notice" style="margin-bottom:16px;padding:16px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:12px;text-align:center">
     <p style="font-size:13px;color:#64748B;line-height:1.7;margin-bottom:14px">
-      🚧 <strong style="color:#334155">Piattaforma in fase di sviluppo.</strong><br>
+      🚧 <span data-only-lang="it"><strong style="color:#334155">Piattaforma in fase di sviluppo.</strong><br>
       NutriPlan Pro non è ancora disponibile al pubblico.<br>
-      <span style="font-size:12px">La registrazione sarà aperta prossimamente.</span>
+      <span style="font-size:12px">La registrazione sarà aperta prossimamente.</span></span>
+      <span data-only-lang="en" style="display:none"><strong style="color:#334155">Platform under development.</strong><br>
+      NutriPlan Pro is not yet publicly available.<br>
+      <span style="font-size:12px">Registration will open soon.</span></span>
     </p>
     <button onclick="mostraLogin()" style="background:#0F766E;color:white;border:none;padding:10px 22px;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s" onmouseover="this.style.background='#0C5F58'" onmouseout="this.style.background='#0F766E'">
-      Hai già un account? Accedi →
+      <span data-only-lang="it">Hai già un account? Accedi →</span><span data-only-lang="en" style="display:none">Already have an account? Sign in →</span>
     </button>
   </div>
 
@@ -109,66 +116,66 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
       <div class="fg"><label data-i18n="index.email">Email</label><input type="email" id="login-email" placeholder="la-tua@email.com" autocomplete="email"></div>
       <div class="fg"><label data-i18n="index.password">Password</label><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="btn" id="login-btn" onclick="doLogin()" data-i18n="index.login_btn">Accedi</button>
-      <p class="note" style="margin-top:10px"><button onclick="showForgot()" style="background:none;border:none;padding:0;color:#0F766E;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline">Password dimenticata?</button></p>
+      <p class="note" style="margin-top:10px"><button onclick="showForgot()" style="background:none;border:none;padding:0;color:#0F766E;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline"><span data-only-lang="it">Password dimenticata?</span><span data-only-lang="en" style="display:none">Forgot password?</span></button></p>
 
-      <p class="note" style="margin-top:14px;text-align:center"><button onclick="toggleSsoOptions()" id="sso-toggle-btn" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline">Accesso aziendale (SSO) →</button></p>
+      <p class="note" style="margin-top:14px;text-align:center"><button onclick="toggleSsoOptions()" id="sso-toggle-btn" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline"><span data-only-lang="it">Accesso aziendale (SSO) →</span><span data-only-lang="en" style="display:none">Company login (SSO) →</span></button></p>
       <div id="sso-options" style="display:none;margin-top:10px;padding-top:12px;border-top:1px solid #E2E8F0">
         <div class="err" id="sso-err"></div>
         <button type="button" onclick="doLoginAzure()" style="width:100%;padding:10px;background:white;color:#1E293B;border:1.5px solid #E2E8F0;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px">
           <svg width="16" height="16" viewBox="0 0 16 16"><rect width="7" height="7" fill="#F25022"/><rect x="9" width="7" height="7" fill="#7FBA00"/><rect y="9" width="7" height="7" fill="#00A4EF"/><rect x="9" y="9" width="7" height="7" fill="#FFB900"/></svg>
-          Accedi con Microsoft
+          <span data-only-lang="it">Accedi con Microsoft</span><span data-only-lang="en" style="display:none">Sign in with Microsoft</span>
         </button>
         <button type="button" onclick="doLoginSSO()" style="width:100%;padding:10px;background:white;color:#1E293B;border:1.5px solid #E2E8F0;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit">
-          🔐 Accedi con SSO aziendale (SAML)
+          🔐 <span data-only-lang="it">Accedi con SSO aziendale (SAML)</span><span data-only-lang="en" style="display:none">Sign in with company SSO (SAML)</span>
         </button>
-        <p class="note" style="margin-top:8px;font-size:11px">Per il login SSO/SAML inserisci la tua email aziendale nel campo Email qui sopra prima di premere il pulsante.</p>
+        <p class="note" style="margin-top:8px;font-size:11px"><span data-only-lang="it">Per il login SSO/SAML inserisci la tua email aziendale nel campo Email qui sopra prima di premere il pulsante.</span><span data-only-lang="en" style="display:none">For SSO/SAML login, enter your company email in the Email field above before pressing the button.</span></p>
       </div>
 
-      <p class="note"><span data-i18n="index.privacy_note">I tuoi dati sono salvati in modo sicuro.</span> <a href="privacy.html" style="color:#0F766E;font-weight:600">Privacy Policy</a> · <a href="termini.html" style="color:#0F766E;font-weight:600">Termini di Servizio</a> · <a href="guida-rapida.html" style="color:#0F766E;font-weight:600">Guida Rapida</a></p>
+      <p class="note"><span data-i18n="index.privacy_note">I tuoi dati sono salvati in modo sicuro.</span> <a href="privacy.html" style="color:#0F766E;font-weight:600">Privacy Policy</a> · <a href="termini.html" style="color:#0F766E;font-weight:600"><span data-only-lang="it">Termini di Servizio</span><span data-only-lang="en" style="display:none">Terms of Service</span></a> · <a href="guida-rapida.html" style="color:#0F766E;font-weight:600"><span data-only-lang="it">Guida Rapida</span><span data-only-lang="en" style="display:none">Quick Guide</span></a></p>
     </div>
 
     <!-- Pannello reset password -->
     <div class="panel" id="p-forgot" style="display:none">
-      <button onclick="showLogin()" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:14px;display:flex;align-items:center;gap:4px">← Torna al login</button>
+      <button onclick="showLogin()" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:14px;display:flex;align-items:center;gap:4px"><span data-only-lang="it">← Torna al login</span><span data-only-lang="en" style="display:none">← Back to login</span></button>
       <div class="err" id="forgot-err"></div>
       <div class="ok" id="forgot-ok"></div>
       <div class="fg">
-        <label>Email del tuo account</label>
+        <label><span data-only-lang="it">Email del tuo account</span><span data-only-lang="en" style="display:none">Your account email</span></label>
         <input type="email" id="forgot-email" placeholder="la-tua@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')doForgotPassword()">
       </div>
-      <button class="btn" id="forgot-btn" onclick="doForgotPassword()">📧 Invia link di recupero</button>
-      <p class="note" style="margin-top:12px">Riceverai un'email con il link per impostare una nuova password.</p>
+      <button class="btn" id="forgot-btn" onclick="doForgotPassword()">📧 <span data-only-lang="it">Invia link di recupero</span><span data-only-lang="en" style="display:none">Send recovery link</span></button>
+      <p class="note" style="margin-top:12px"><span data-only-lang="it">Riceverai un'email con il link per impostare una nuova password.</span><span data-only-lang="en" style="display:none">You will receive an email with the link to set a new password.</span></p>
     </div>
 
     <!-- Pannello nuova password (dopo click link email) -->
     <div class="panel" id="p-reset" style="display:none">
-      <h3 style="margin:0 0 14px;color:#0F766E;font-size:16px">Imposta nuova password</h3>
+      <h3 style="margin:0 0 14px;color:#0F766E;font-size:16px"><span data-only-lang="it">Imposta nuova password</span><span data-only-lang="en" style="display:none">Set new password</span></h3>
       <div class="err" id="reset-err"></div>
       <div class="ok" id="reset-ok"></div>
       <div class="fg">
-        <label>Nuova password</label>
-        <input type="password" id="reset-pw1" placeholder="Minimo 8 caratteri" autocomplete="new-password">
+        <label><span data-only-lang="it">Nuova password</span><span data-only-lang="en" style="display:none">New password</span></label>
+        <input type="password" id="reset-pw1" placeholder="Minimo 8 caratteri / Minimum 8 characters" autocomplete="new-password">
       </div>
       <div class="fg">
-        <label>Conferma password</label>
-        <input type="password" id="reset-pw2" placeholder="Ripeti la password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doResetPassword()">
+        <label><span data-only-lang="it">Conferma password</span><span data-only-lang="en" style="display:none">Confirm password</span></label>
+        <input type="password" id="reset-pw2" placeholder="Ripeti la password / Repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doResetPassword()">
       </div>
-      <button class="btn" id="reset-btn" onclick="doResetPassword()">Salva nuova password</button>
+      <button class="btn" id="reset-btn" onclick="doResetPassword()"><span data-only-lang="it">Salva nuova password</span><span data-only-lang="en" style="display:none">Save new password</span></button>
     </div>
 
     <div class="panel" id="p-register" style="display:none">
       <div class="err" id="reg-err"></div>
       <div class="ok" id="reg-ok"></div>
       <div class="fg"><label data-i18n="index.email">Email</label><input type="email" id="reg-email" placeholder="la-tua@email.com" autocomplete="email"></div>
-      <div class="fg"><label data-i18n="index.password">Password</label><input type="password" id="reg-pw" placeholder="Minimo 8 caratteri" autocomplete="new-password"></div>
-      <div class="fg"><label data-i18n="index.confirm_password">Conferma Password</label><input type="password" id="reg-pw2" placeholder="Ripeti la password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
+      <div class="fg"><label data-i18n="index.password">Password</label><input type="password" id="reg-pw" placeholder="Minimo 8 caratteri / Minimum 8 characters" autocomplete="new-password"></div>
+      <div class="fg"><label data-i18n="index.confirm_password">Conferma Password</label><input type="password" id="reg-pw2" placeholder="Ripeti la password / Repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
       <label style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:#334155;margin:10px 0;cursor:pointer;line-height:1.4">
         <input type="checkbox" id="reg-consent" style="margin-top:2px;flex-shrink:0">
-        <span>Dichiaro di aver letto e di accettare la <a href="privacy.html" target="_blank" style="color:#0F766E;font-weight:600">Privacy Policy</a> e i <a href="termini.html" target="_blank" style="color:#0F766E;font-weight:600">Termini di Servizio</a>.</span>
+        <span><span data-only-lang="it">Dichiaro di aver letto e di accettare la <a href="privacy.html" target="_blank" style="color:#0F766E;font-weight:600">Privacy Policy</a> e i <a href="termini.html" target="_blank" style="color:#0F766E;font-weight:600">Termini di Servizio</a>.</span><span data-only-lang="en" style="display:none">I declare that I have read and accept the <a href="privacy.html" target="_blank" style="color:#0F766E;font-weight:600">Privacy Policy</a> and <a href="termini.html" target="_blank" style="color:#0F766E;font-weight:600">Terms of Service</a>.</span></span>
       </label>
       <button class="btn" id="reg-btn" onclick="doRegister()" data-i18n="index.register_btn">Crea Account</button>
       <p class="note" data-i18n="index.register_note">Dopo la registrazione attendi l'approvazione dell'amministratore.</p>
-      <p class="note">Nel frattempo, dai un'occhiata alla <a href="guida-rapida.html" style="color:#0F766E;font-weight:600">Guida Rapida</a> per sapere cosa aspettarti dal primo accesso.</p>
+      <p class="note"><span data-only-lang="it">Nel frattempo, dai un'occhiata alla <a href="guida-rapida.html" style="color:#0F766E;font-weight:600">Guida Rapida</a> per sapere cosa aspettarti dal primo accesso.</span><span data-only-lang="en" style="display:none">In the meantime, take a look at the <a href="guida-rapida.html" style="color:#0F766E;font-weight:600">Quick Guide</a> to see what to expect from your first login.</span></p>
     </div>
   </div>
 </div>
@@ -179,11 +186,12 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
 <div id="dpa-modal">
   <div class="dpa-box">
     <div class="dpa-head">
-      <h2>Accordo sul Trattamento dei Dati (DPA)</h2>
-      <p>Ai sensi dell'art. 28 del Regolamento (UE) 2016/679 — GDPR &nbsp;·&nbsp; Lettura obbligatoria prima dell'accesso</p>
+      <h2><span data-only-lang="it">Accordo sul Trattamento dei Dati (DPA)</span><span data-only-lang="en" style="display:none">Data Processing Agreement (DPA)</span></h2>
+      <p><span data-only-lang="it">Ai sensi dell'art. 28 del Regolamento (UE) 2016/679 — GDPR &nbsp;·&nbsp; Lettura obbligatoria prima dell'accesso</span><span data-only-lang="en" style="display:none">Pursuant to Art. 28 of Regulation (EU) 2016/679 — GDPR &nbsp;·&nbsp; Mandatory reading before access</span></p>
     </div>
     <div class="dpa-body" id="dpa-scroll" onscroll="checkDpaScroll()">
 
+      <div data-only-lang="it">
       <div class="highlight">
         ⚠️ Il presente accordo è obbligatorio ai sensi dell'art. 28 GDPR. Scorrere fino in fondo e accettare per accedere alla piattaforma. In caso di rifiuto l'accesso non sarà consentito.
       </div>
@@ -278,13 +286,111 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
       <div class="highlight" style="margin-top:18px">
         ✅ Accettando il presente Accordo, il Titolare conferma di aver letto e compreso le condizioni di trattamento dei dati, di agire in qualità di Titolare del Trattamento ai sensi dell'art. 4.7 GDPR, e di accettare gli obblighi derivanti dall'utilizzo della piattaforma DietPlan Pro.
       </div>
+      </div>
+
+      <div data-only-lang="en" style="display:none">
+      <div class="highlight">
+        ⚠️ This agreement is mandatory under Art. 28 GDPR. Scroll to the end and accept to access the platform. If you decline, access will not be granted.
+      </div>
+
+      <h3>PARTIES TO THE AGREEMENT</h3>
+      <p><strong>Data Controller:</strong> the healthcare professional or practice that activated and uses the DietPlan Pro account (hereinafter "Controller").</p>
+      <p><strong>Data Processor:</strong> DietPlan Pro, the provider of the meal-plan management software platform (hereinafter "Processor").</p>
+
+      <h3>1. SUBJECT MATTER AND DURATION</h3>
+      <p>This Agreement governs the conditions under which the Processor processes personal data on behalf of the Controller in connection with the use of the DietPlan Pro platform. The Agreement has the same duration as the service contract between the Parties and terminates automatically at its end.</p>
+
+      <h3>2. NATURE AND PURPOSE OF PROCESSING</h3>
+      <p>The Processor processes personal data solely to provide the DietPlan Pro platform's services, which include:</p>
+      <ul>
+        <li>Management of patients' meal plans and nutritional clinical records</li>
+        <li>Body composition analysis (BIA) and nutritional assessment</li>
+        <li>Processing of nutritional questionnaires and clinical screenings</li>
+        <li>AI support for professional documentation and nutritional calculations</li>
+        <li>Management of the professional calendar and communication with patients</li>
+        <li>Production of clinical documents and nutritional reports</li>
+      </ul>
+
+      <h3>3. TYPES OF DATA AND CATEGORIES OF DATA SUBJECTS</h3>
+      <p><strong>Data processed:</strong> identification and contact data; anthropometric data (weight, height, BMI, body composition); clinical and health data (conditions, medications, allergies, intolerances) — special categories under Art. 9 GDPR; prescribed meal plans; reports, clinical notes and results of nutritional assessments.</p>
+      <p><strong>Categories of data subjects:</strong> the Controller's patients and healthcare professionals using the platform.</p>
+
+      <h3>4. PROCESSOR'S OBLIGATIONS (Art. 28.3 GDPR)</h3>
+      <p>The Processor undertakes to:</p>
+      <ul>
+        <li><strong>(a)</strong> Process personal data only on documented instructions from the Controller, unless required to do so by Union or Member State law;</li>
+        <li><strong>(b)</strong> Ensure that persons authorized to process the data have committed themselves to confidentiality or are under an appropriate statutory obligation of confidentiality;</li>
+        <li><strong>(c)</strong> Adopt all security measures required by Art. 32 GDPR (encryption of data in transit and at rest, role-based access control, regular backups, anomaly monitoring);</li>
+        <li><strong>(d)</strong> Comply with the conditions for engaging a sub-processor, informing the Controller in advance of any changes;</li>
+        <li><strong>(e)</strong> Assist the Controller, through appropriate technical and organizational measures, in fulfilling the obligation to respond to data subjects' requests to exercise their rights (access, rectification, erasure, portability, objection);</li>
+        <li><strong>(f)</strong> Assist the Controller in ensuring compliance with security obligations, data breach notification, impact assessment (DPIA), and prior consultation with the supervisory authority;</li>
+        <li><strong>(g)</strong> Delete or return all personal data to the Controller at the end of the contract, deleting existing copies unless otherwise required by law;</li>
+        <li><strong>(h)</strong> Make available to the Controller all information necessary to demonstrate compliance with this article, and allow for and contribute to audits, including inspections, conducted by the Controller or another auditor mandated by the Controller.</li>
+      </ul>
+
+      <h3>5. SUB-PROCESSORS</h3>
+      <p>The Processor is authorized to engage the following sub-processors, all operating under adequate safeguards pursuant to Art. 46 GDPR (Standard Contractual Clauses):</p>
+      <ul>
+        <li><strong>Supabase Inc.</strong> (USA) — database, authentication and data storage</li>
+        <li><strong>Anthropic PBC</strong> (USA) — AI language model supporting professional clinical documentation</li>
+        <li><strong>Google LLC</strong> (USA) — Gemini AI model for analysis features</li>
+        <li><strong>Vercel Inc.</strong> (USA) — hosting and delivery of the web application</li>
+      </ul>
+      <p>The Processor will notify the Controller of any changes involving the addition or replacement of sub-processors with at least 30 days' notice, allowing the Controller to object to such changes.</p>
+
+      <h3>6. SECURITY MEASURES (Art. 32 GDPR)</h3>
+      <p>The Processor guarantees the adoption of the following technical and organizational measures:</p>
+      <ul>
+        <li>Encryption of data in transit (TLS 1.3) and at rest (AES-256)</li>
+        <li>Authentication with hashed passwords (bcrypt) and secure session management</li>
+        <li>Role-based access control via database Row Level Security (RLS)</li>
+        <li>Automated daily backups with 30-day retention and verified restore</li>
+        <li>Access monitoring and audit logs of sensitive operations</li>
+        <li>Regular security updates to infrastructure and software components</li>
+        <li>Access to production data restricted to strictly necessary personnel</li>
+      </ul>
+
+      <h3>7. BREACH NOTIFICATION (Data Breach)</h3>
+      <p>In the event of a personal data breach, the Processor will notify the Controller without undue delay and, where possible, within <strong>72 hours</strong> of discovery, with the following information:</p>
+      <ul>
+        <li>Nature of the breach and categories of data involved</li>
+        <li>Approximate number of data subjects and data records involved</li>
+        <li>Name and contact details of the data protection contact</li>
+        <li>Likely consequences of the breach</li>
+        <li>Measures taken or proposed to address the breach</li>
+      </ul>
+      <p>The Controller remains responsible for assessing whether notification to the supervisory authority (the Garante Privacy) and to data subjects is required.</p>
+
+      <h3>8. INTERNATIONAL DATA TRANSFERS</h3>
+      <p>Transfers of data to third countries (USA) take place exclusively on the basis of Standard Contractual Clauses approved by the European Commission pursuant to Art. 46.2.c GDPR. The sub-processors listed in section 5 have documented adequate safeguards.</p>
+
+      <h3>9. CONTROLLER'S RESPONSIBILITIES</h3>
+      <p>The Controller is solely responsible for the lawfulness of processing their patients' data, including:</p>
+      <ul>
+        <li>Obtaining data subjects' informed consent under Art. 9.2.a GDPR</li>
+        <li>Providing the privacy notice to data subjects (Arts. 13-14 GDPR)</li>
+        <li>Complying with the principles of data minimization, storage limitation and fairness</li>
+        <li>Maintaining the Register of Processing Activities (Art. 30 GDPR)</li>
+        <li>Assessing whether a DPIA is required for high-risk processing</li>
+      </ul>
+
+      <h3>10. DURATION AND TERMINATION</h3>
+      <p>This Agreement enters into force upon acceptance and remains in force for the entire duration of use of the DietPlan Pro platform. Upon termination of the service, the Processor will ensure the secure return or deletion of data within 30 days of the Controller's request.</p>
+
+      <h3>11. GOVERNING LAW AND JURISDICTION</h3>
+      <p>This Agreement is governed by Italian law and Regulation (EU) 2016/679. For any dispute relating to the interpretation or execution of this Agreement, the courts of the place where the Data Controller is established shall have exclusive jurisdiction.</p>
+
+      <div class="highlight" style="margin-top:18px">
+        ✅ By accepting this Agreement, the Controller confirms having read and understood the data processing conditions, acting as Data Controller under Art. 4.7 GDPR, and accepts the obligations arising from the use of the DietPlan Pro platform.
+      </div>
+      </div>
 
       <div id="dpa-end"></div>
     </div>
     <div class="dpa-foot">
-      <span class="dpa-hint" id="dpa-hint">↓ Scorri fino in fondo per abilitare il pulsante di accettazione</span>
-      <button class="dpa-reject" onclick="doLogout()">Rifiuto (Esci)</button>
-      <button class="dpa-accept" id="dpa-accept-btn" disabled onclick="acceptDPA()">Accetto il DPA</button>
+      <span class="dpa-hint" id="dpa-hint"><span data-only-lang="it">↓ Scorri fino in fondo per abilitare il pulsante di accettazione</span><span data-only-lang="en" style="display:none">↓ Scroll to the end to enable the accept button</span></span>
+      <button class="dpa-reject" onclick="doLogout()"><span data-only-lang="it">Rifiuto (Esci)</span><span data-only-lang="en" style="display:none">Decline (Log out)</span></button>
+      <button class="dpa-accept" id="dpa-accept-btn" disabled onclick="acceptDPA()"><span data-only-lang="it">Accetto il DPA</span><span data-only-lang="en" style="display:none">I accept the DPA</span></button>
     </div>
   </div>
 </div>
@@ -292,14 +398,14 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
 <!-- MODAL 2FA — appare al login se l'account ha la verifica in due passaggi attiva -->
 <div id="mfa-modal" style="position:fixed;inset:0;background:rgba(15,30,50,.88);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px">
   <div style="background:white;border-radius:16px;max-width:380px;width:100%;padding:28px 26px;box-shadow:0 32px 80px rgba(0,0,0,.55)">
-    <h3 style="font-size:18px;font-weight:700;color:#1E293B;margin-bottom:8px">🔐 Verifica in due passaggi</h3>
-    <p style="font-size:13px;color:#64748B;margin-bottom:18px;line-height:1.5">Inserisci il codice a 6 cifre generato dalla tua app authenticator.</p>
+    <h3 style="font-size:18px;font-weight:700;color:#1E293B;margin-bottom:8px">🔐 <span data-only-lang="it">Verifica in due passaggi</span><span data-only-lang="en" style="display:none">Two-step verification</span></h3>
+    <p style="font-size:13px;color:#64748B;margin-bottom:18px;line-height:1.5"><span data-only-lang="it">Inserisci il codice a 6 cifre generato dalla tua app authenticator.</span><span data-only-lang="en" style="display:none">Enter the 6-digit code generated by your authenticator app.</span></p>
     <input type="text" id="mfa-code" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code"
       style="width:100%;padding:12px 14px;border:1.5px solid #CBD5E1;border-radius:10px;font-size:20px;font-family:inherit;letter-spacing:6px;text-align:center;outline:none;margin-bottom:12px"
       onkeydown="if(event.key==='Enter')verifyMfaCode()">
     <div class="err" id="mfa-err" style="margin-bottom:10px"></div>
-    <button class="btn" style="width:100%" onclick="verifyMfaCode()">Verifica</button>
-    <p style="text-align:center;margin-top:12px"><button onclick="cancelMfa()" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline">Annulla e torna al login</button></p>
+    <button class="btn" style="width:100%" onclick="verifyMfaCode()"><span data-only-lang="it">Verifica</span><span data-only-lang="en" style="display:none">Verify</span></button>
+    <p style="text-align:center;margin-top:12px"><button onclick="cancelMfa()" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline"><span data-only-lang="it">Annulla e torna al login</span><span data-only-lang="en" style="display:none">Cancel and return to login</span></button></p>
   </div>
 </div>
 
@@ -315,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   } catch(e) {
     console.warn('Supabase CDN non disponibile:', e.message);
-    sb = { auth: { getSession: async () => ({ data: { session: null } }), signInWithPassword: async () => ({ error: { message: 'Connessione non disponibile' } }), signUp: async () => ({ error: { message: 'Connessione non disponibile' } }), signOut: async () => {} }, from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }) }) };
+    sb = { auth: { getSession: async () => ({ data: { session: null } }), signInWithPassword: async () => ({ error: { message: _L('Connessione non disponibile','Connection unavailable') } }), signUp: async () => ({ error: { message: _L('Connessione non disponibile','Connection unavailable') } }), signOut: async () => {} }, from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }) }) };
   }
   init();
 });
@@ -360,8 +466,8 @@ async function doForgotPassword() {
   const ok    = document.getElementById('forgot-ok');
   const btn   = document.getElementById('forgot-btn');
   err.className = 'err'; ok.className = 'ok';
-  if (!email) { err.textContent = 'Inserisci il tuo indirizzo email.'; err.className = 'err show'; return; }
-  btn.disabled = true; btn.textContent = 'Invio in corso…';
+  if (!email) { err.textContent = _L('Inserisci il tuo indirizzo email.','Enter your email address.'); err.className = 'err show'; return; }
+  btn.disabled = true; btn.textContent = _L('Invio in corso…','Sending…');
   try {
     const res = await fetch('/api/send-reset', {
       method: 'POST',
@@ -369,15 +475,15 @@ async function doForgotPassword() {
       body: JSON.stringify({ email })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Errore server');
-    ok.textContent = '✅ Email inviata! Controlla la tua casella (anche spam) e clicca il link per reimpostare la password.';
+    if (!res.ok) throw new Error(data.error || _L('Errore server','Server error'));
+    ok.textContent = '✅ ' + _L('Email inviata! Controlla la tua casella (anche spam) e clicca il link per reimpostare la password.','Email sent! Check your inbox (including spam) and click the link to reset your password.');
     ok.className = 'ok show';
     document.getElementById('forgot-email').value = '';
   } catch (e) {
-    err.textContent = 'Errore: ' + e.message;
+    err.textContent = _L('Errore: ','Error: ') + e.message;
     err.className = 'err show';
   } finally {
-    btn.disabled = false; btn.textContent = '📧 Invia link di recupero';
+    btn.disabled = false; btn.textContent = '📧 ' + _L('Invia link di recupero','Send recovery link');
   }
 }
 
@@ -386,12 +492,12 @@ async function doLogin() {
   const pw = document.getElementById('login-pw').value;
   const err = document.getElementById('login-err');
   err.classList.remove('show');
-  if (!email||!pw){err.textContent='Inserisci email e password.';err.classList.add('show');return;}
+  if (!email||!pw){err.textContent=_L('Inserisci email e password.','Enter your email and password.');err.classList.add('show');return;}
   const btn = document.getElementById('login-btn');
-  btn.disabled=true;btn.textContent='Accesso...';
+  btn.disabled=true;btn.textContent=_L('Accesso...','Signing in...');
   const {data,error} = await sb.auth.signInWithPassword({email,password:pw});
-  btn.disabled=false;btn.textContent='Accedi';
-  if (error){err.textContent=error.message==='Invalid login credentials'?'Email o password errata.':error.message;err.classList.add('show');return;}
+  btn.disabled=false;btn.textContent=t('index.login_btn');
+  if (error){err.textContent=error.message==='Invalid login credentials'?_L('Email o password errata.','Incorrect email or password.'):error.message;err.classList.add('show');return;}
 
   await checkMfaThenRedirect(data.user);
 }
@@ -426,7 +532,7 @@ function toggleSsoOptions() {
   const box = document.getElementById('sso-options');
   const isHidden = box.style.display === 'none';
   box.style.display = isHidden ? 'block' : 'none';
-  document.getElementById('sso-toggle-btn').textContent = isHidden ? '← Accesso aziendale (SSO)' : 'Accesso aziendale (SSO) →';
+  document.getElementById('sso-toggle-btn').textContent = isHidden ? _L('← Accesso aziendale (SSO)','← Company login (SSO)') : _L('Accesso aziendale (SSO) →','Company login (SSO) →');
 }
 
 // Login via Microsoft Entra ID (Azure AD), tramite il provider OAuth integrato
@@ -457,7 +563,7 @@ async function doLoginSSO() {
   err.classList.remove('show');
   const domain = email.includes('@') ? email.split('@')[1] : '';
   if (!domain) {
-    err.textContent = 'Inserisci la tua email aziendale nel campo Email qui sopra, poi riprova.';
+    err.textContent = _L('Inserisci la tua email aziendale nel campo Email qui sopra, poi riprova.','Enter your company email in the Email field above, then try again.');
     err.classList.add('show');
     return;
   }
@@ -469,7 +575,7 @@ async function doLoginSSO() {
   if (data?.url) {
     window.location.href = data.url;
   } else {
-    err.textContent = 'Nessun provider SSO configurato per il dominio ' + domain + '.';
+    err.textContent = _L('Nessun provider SSO configurato per il dominio ','No SSO provider configured for domain ') + domain + '.';
     err.classList.add('show');
   }
 }
@@ -482,7 +588,7 @@ async function verifyMfaCode() {
   const code = document.getElementById('mfa-code').value.trim();
   const err = document.getElementById('mfa-err');
   err.classList.remove('show');
-  if (!/^\d{6}$/.test(code)) { err.textContent = 'Inserisci il codice a 6 cifre.'; err.classList.add('show'); return; }
+  if (!/^\d{6}$/.test(code)) { err.textContent = _L('Inserisci il codice a 6 cifre.','Enter the 6-digit code.'); err.classList.add('show'); return; }
 
   try {
     const { data: challenge, error: chErr } = await sb.auth.mfa.challenge({ factorId: _pendingMfaFactorId });
@@ -498,7 +604,7 @@ async function verifyMfaCode() {
       await checkAndRedirect(_pendingMfaUser);
     }
   } catch (e) {
-    err.textContent = 'Codice non valido, riprova.';
+    err.textContent = _L('Codice non valido, riprova.','Invalid code, please try again.');
     err.classList.add('show');
   }
 }
@@ -524,35 +630,35 @@ async function doRegister() {
   const err = document.getElementById('reg-err');
   const ok = document.getElementById('reg-ok');
   err.classList.remove('show');ok.classList.remove('show');
-  if (!email||!pw){err.textContent='Compila tutti i campi.';err.classList.add('show');return;}
-  if (pw!==pw2){err.textContent='Le password non coincidono.';err.classList.add('show');return;}
-  if (pw.length<8){err.textContent='Password minimo 8 caratteri.';err.classList.add('show');return;}
-  if (!document.getElementById('reg-consent')?.checked){err.textContent='Devi accettare Privacy Policy e Termini di Servizio per registrarti.';err.classList.add('show');return;}
+  if (!email||!pw){err.textContent=_L('Compila tutti i campi.','Fill in all fields.');err.classList.add('show');return;}
+  if (pw!==pw2){err.textContent=_L('Le password non coincidono.','Passwords do not match.');err.classList.add('show');return;}
+  if (pw.length<8){err.textContent=_L('Password minimo 8 caratteri.','Password must be at least 8 characters.');err.classList.add('show');return;}
+  if (!document.getElementById('reg-consent')?.checked){err.textContent=_L('Devi accettare Privacy Policy e Termini di Servizio per registrarti.','You must accept the Privacy Policy and Terms of Service to register.');err.classList.add('show');return;}
   const btn = document.getElementById('reg-btn');
-  btn.disabled=true;btn.textContent='Registrazione...';
+  btn.disabled=true;btn.textContent=_L('Registrazione...','Registering...');
   // Attempt registration
   const {data, error} = await sb.auth.signUp({
     email,
     password: pw,
     options: { data: { approved: false, terms_accepted_at: new Date().toISOString() } }
   });
-  btn.disabled=false; btn.textContent='Crea Account';
+  btn.disabled=false; btn.textContent=t('index.register_btn');
 
   if (error) {
     const msgs = {
-      'User already registered': 'Email già registrata. Prova ad accedere.',
-      'user_already_exists': 'Email già registrata. Prova ad accedere.',
-      'Password should be at least 6 characters': 'Password troppo corta (min. 6 caratteri).',
-      'Unable to validate email address: invalid format': 'Formato email non valido. Controlla che l\'email sia corretta (es: nome@dominio.it).',
-      'Email rate limit exceeded': 'Troppe richieste. Riprova tra un minuto.',
-      'over_email_send_rate_limit': 'Troppe richieste. Riprova tra qualche minuto.',
-      'Database error saving new user': 'Errore database. Assicurati di aver eseguito il file supabase_setup.sql nel tuo progetto Supabase.',
-      'Error sending confirmation email': '⚠️ Email di conferma non inviata. In Supabase → Authentication → Providers → Email: disabilita "Confirm email".',
-      'signup is disabled': 'Registrazione disabilitata. In Supabase → Authentication → Providers → Email: abilita "Enable Sign Ups".',
-      'Signups not allowed for this instance': 'Registrazione disabilitata. In Supabase → Authentication → Providers → Email: abilita "Enable Sign Ups".',
-      'Email not confirmed': 'Email non ancora confermata. Controlla la tua casella di posta.',
+      'User already registered': _L('Email già registrata. Prova ad accedere.','Email already registered. Try signing in.'),
+      'user_already_exists': _L('Email già registrata. Prova ad accedere.','Email already registered. Try signing in.'),
+      'Password should be at least 6 characters': _L('Password troppo corta (min. 6 caratteri).','Password too short (min. 6 characters).'),
+      'Unable to validate email address: invalid format': _L('Formato email non valido. Controlla che l\'email sia corretta (es: nome@dominio.it).','Invalid email format. Check that the email is correct (e.g. name@domain.com).'),
+      'Email rate limit exceeded': _L('Troppe richieste. Riprova tra un minuto.','Too many requests. Try again in a minute.'),
+      'over_email_send_rate_limit': _L('Troppe richieste. Riprova tra qualche minuto.','Too many requests. Try again in a few minutes.'),
+      'Database error saving new user': _L('Errore database. Assicurati di aver eseguito il file supabase_setup.sql nel tuo progetto Supabase.','Database error. Make sure you have run the supabase_setup.sql file on your Supabase project.'),
+      'Error sending confirmation email': '⚠️ ' + _L('Email di conferma non inviata. In Supabase → Authentication → Providers → Email: disabilita "Confirm email".','Confirmation email not sent. In Supabase → Authentication → Providers → Email: disable "Confirm email".'),
+      'signup is disabled': _L('Registrazione disabilitata. In Supabase → Authentication → Providers → Email: abilita "Enable Sign Ups".','Registration disabled. In Supabase → Authentication → Providers → Email: enable "Enable Sign Ups".'),
+      'Signups not allowed for this instance': _L('Registrazione disabilitata. In Supabase → Authentication → Providers → Email: abilita "Enable Sign Ups".','Registration disabled. In Supabase → Authentication → Providers → Email: enable "Enable Sign Ups".'),
+      'Email not confirmed': _L('Email non ancora confermata. Controlla la tua casella di posta.','Email not yet confirmed. Check your inbox.'),
     };
-    const msg = msgs[error.message] || msgs[error.code] || ('Errore: ' + error.message + (error.code ? ' [' + error.code + ']' : ''));
+    const msg = msgs[error.message] || msgs[error.code] || (_L('Errore: ','Error: ') + error.message + (error.code ? ' [' + error.code + ']' : ''));
     err.textContent = msg;
     err.classList.add('show');
     console.error('SignUp error:', error);
@@ -560,7 +666,7 @@ async function doRegister() {
   }
 
   if (!data.user) {
-    err.textContent = 'Registrazione non riuscita. Riprova.';
+    err.textContent = _L('Registrazione non riuscita. Riprova.','Registration failed. Please try again.');
     err.classList.add('show');
     return;
   }
@@ -572,18 +678,18 @@ async function doRegister() {
   const { error: profileErr } = await sb.rpc('create_profile_for_new_user', { uid: data.user.id, user_email: email, terms_accepted: true });
   if (profileErr) {
     console.error('create_profile_for_new_user error:', profileErr);
-    err.textContent = 'Account creato ma si è verificato un problema nella configurazione del profilo. Contatta il supporto.';
+    err.textContent = _L('Account creato ma si è verificato un problema nella configurazione del profilo. Contatta il supporto.','Account created but there was a problem setting up the profile. Please contact support.');
     err.classList.add('show');
     return;
   }
 
   if (data.session) {
-    ok.textContent = '✅ Account creato! Reindirizzamento...';
+    ok.textContent = '✅ ' + _L('Account creato! Reindirizzamento...','Account created! Redirecting...');
     ok.classList.add('show');
     setTimeout(() => checkAndRedirect(data.user), 1200);
   } else {
     // Email confirmation required
-    ok.textContent = '✅ Registrato! Controlla la tua email per confermare il tuo account.';
+    ok.textContent = '✅ ' + _L('Registrato! Controlla la tua email per confermare il tuo account.','Registered! Check your email to confirm your account.');
     ok.classList.add('show');
   }
 }
@@ -613,7 +719,7 @@ async function checkAndRedirect(user) {
     document.getElementById('loading').classList.remove('show');
     document.getElementById('auth-box').style.display='none';
     document.getElementById('waiting-box').classList.add('show');
-    document.getElementById('waiting-email').textContent='Account: '+user.email;
+    document.getElementById('waiting-email').textContent=_L('Account: ','Account: ')+user.email;
   }
 }
 
@@ -623,7 +729,7 @@ function checkDpaScroll() {
   const el = document.getElementById('dpa-scroll');
   if (el.scrollTop + el.clientHeight >= el.scrollHeight - 20) {
     document.getElementById('dpa-accept-btn').disabled = false;
-    document.getElementById('dpa-hint').textContent = '✓ Documento letto — puoi ora accettare';
+    document.getElementById('dpa-hint').textContent = '✓ ' + _L('Documento letto — puoi ora accettare','Document read — you can now accept');
     document.getElementById('dpa-hint').style.color = '#059669';
   }
 }
@@ -631,14 +737,14 @@ function checkDpaScroll() {
 async function acceptDPA() {
   const btn = document.getElementById('dpa-accept-btn');
   btn.disabled = true;
-  btn.textContent = 'Salvataggio...';
+  btn.textContent = _L('Salvataggio...','Saving...');
   const { error } = await sb.from('profiles')
     .update({ dpa_accepted_at: new Date().toISOString() })
     .eq('id', _dpaUserId);
   if (error) {
     btn.disabled = false;
-    btn.textContent = 'Accetto il DPA';
-    alert('Errore nel salvataggio dell\'accettazione. Riprova.');
+    btn.textContent = _L('Accetto il DPA','I accept the DPA');
+    alert(_L('Errore nel salvataggio dell\'accettazione. Riprova.','Error saving your acceptance. Please try again.'));
     return;
   }
   window.location.href = 'app.html';
@@ -661,21 +767,21 @@ async function doResetPassword() {
   const ok  = document.getElementById('reset-ok');
   const btn = document.getElementById('reset-btn');
   err.className = 'err'; ok.className = 'ok';
-  if (pw1.length < 8) { err.textContent = 'La password deve essere di almeno 8 caratteri.'; err.className = 'err show'; return; }
-  if (pw1 !== pw2) { err.textContent = 'Le password non coincidono.'; err.className = 'err show'; return; }
-  btn.disabled = true; btn.textContent = 'Salvataggio…';
+  if (pw1.length < 8) { err.textContent = _L('La password deve essere di almeno 8 caratteri.','Password must be at least 8 characters.'); err.className = 'err show'; return; }
+  if (pw1 !== pw2) { err.textContent = _L('Le password non coincidono.','Passwords do not match.'); err.className = 'err show'; return; }
+  btn.disabled = true; btn.textContent = _L('Salvataggio…','Saving…');
   try {
     const { error } = await sb.auth.updateUser({ password: pw1 });
     if (error) throw error;
-    ok.textContent = '✅ Password aggiornata! Ora puoi accedere con la nuova password.';
+    ok.textContent = '✅ ' + _L('Password aggiornata! Ora puoi accedere con la nuova password.','Password updated! You can now sign in with your new password.');
     ok.className = 'ok show';
     btn.disabled = false;
-    btn.textContent = 'Vai al login';
+    btn.textContent = _L('Vai al login','Go to login');
     btn.onclick = async () => { await sb.auth.signOut(); showLogin(); };
   } catch(e) {
-    err.textContent = 'Errore: ' + e.message;
+    err.textContent = _L('Errore: ','Error: ') + e.message;
     err.className = 'err show';
-    btn.disabled = false; btn.textContent = 'Salva nuova password';
+    btn.disabled = false; btn.textContent = _L('Salva nuova password','Save new password');
   }
 }
 

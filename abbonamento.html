@@ -239,7 +239,7 @@
     <div class="sub-hero" id="sub-hero">
       <div class="sub-hero-info">
         <h2 id="hero-title">NutriPlan Pro</h2>
-        <p id="hero-desc">Accesso completo a tutte le funzionalità della piattaforma.</p>
+        <p id="hero-desc"><span data-only-lang="it">Accesso completo a tutte le funzionalità della piattaforma.</span><span data-only-lang="en" style="display:none">Full access to all platform features.</span></p>
       </div>
       <div class="sub-badge-hero pro" id="hero-badge">⭐ Professional</div>
     </div>
@@ -255,7 +255,7 @@
     <div class="plans-grid">
       <div class="plan-card plan-pro">
         <div class="plan-name" style="color:#6366F1">⭐ NutriPlan Pro</div>
-        <div class="plan-price" id="price-display">€35<span>/mese</span></div>
+        <div class="plan-price" id="price-display">€35<span><span data-only-lang="it">/mese</span><span data-only-lang="en" style="display:none">/month</span></span></div>
         <div class="plan-period" id="period-display"><span data-only-lang="it">Fatturazione mensile · Disdici quando vuoi</span><span data-only-lang="en" style="display:none">Monthly billing · Cancel anytime</span></div>
         <div class="plan-annual-note" id="annual-note" style="display:none">💰 <span data-only-lang="it">Risparmio rispetto al mensile: €71 all'anno</span><span data-only-lang="en" style="display:none">Save vs monthly billing: €71/year</span></div>
         <ul class="plan-features">
@@ -293,16 +293,16 @@
       <div class="card" style="padding:20px 24px">
         <div class="grid-3" style="margin-bottom:16px" id="sub-details-grid">
           <div>
-            <div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Piano</div>
+            <div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px"><span data-only-lang="it">Piano</span><span data-only-lang="en" style="display:none">Plan</span></div>
             <div style="font-size:15px;font-weight:700;color:#4F46E5">⭐ Professional</div>
           </div>
           <div>
-            <div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Rinnovo</div>
+            <div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px"><span data-only-lang="it">Rinnovo</span><span data-only-lang="en" style="display:none">Renewal</span></div>
             <div style="font-size:15px;font-weight:700;color:var(--slate)" id="sub-renewal">—</div>
           </div>
           <div>
-            <div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Stato</div>
-            <div style="font-size:15px;font-weight:700;color:#16A34A" id="sub-status">✅ Attivo</div>
+            <div style="font-size:11px;font-weight:700;color:var(--slate-l);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px"><span data-only-lang="it">Stato</span><span data-only-lang="en" style="display:none">Status</span></div>
+            <div style="font-size:15px;font-weight:700;color:#16A34A" id="sub-status">✅ <span data-only-lang="it">Attivo</span><span data-only-lang="en" style="display:none">Active</span></div>
           </div>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -433,12 +433,12 @@ function toggleBilling() {
   document.getElementById('lbl-annual').classList.toggle('active', billingAnnual);
 
   if (billingAnnual) {
-    document.getElementById('price-display').innerHTML = '€29<span>/mese</span>';
-    document.getElementById('period-display').textContent = 'Fatturazione annuale (€350/anno) · Disdici quando vuoi';
+    document.getElementById('price-display').innerHTML = '€29<span>' + _L('/mese','/month') + '</span>';
+    document.getElementById('period-display').textContent = _L('Fatturazione annuale (€350/anno) · Disdici quando vuoi','Annual billing (€350/year) · Cancel anytime');
     document.getElementById('annual-note').style.display = 'block';
   } else {
-    document.getElementById('price-display').innerHTML = '€35<span>/mese</span>';
-    document.getElementById('period-display').textContent = 'Fatturazione mensile · Disdici quando vuoi';
+    document.getElementById('price-display').innerHTML = '€35<span>' + _L('/mese','/month') + '</span>';
+    document.getElementById('period-display').textContent = _L('Fatturazione mensile · Disdici quando vuoi','Monthly billing · Cancel anytime');
     document.getElementById('annual-note').style.display = 'none';
   }
 }
@@ -448,11 +448,11 @@ async function handleSubscribe() {
   if (currentPlan === 'pro') return;
   const btn = document.getElementById('cta-btn');
   btn.disabled = true;
-  btn.textContent = '⏳ Reindirizzamento a Stripe...';
+  btn.textContent = '⏳ ' + _L('Reindirizzamento a Stripe...','Redirecting to Stripe...');
 
   try {
     const { data: { session } } = await sb.auth.getSession();
-    if (!session) { toast('Effettua il login prima di abbonarti.', 'err'); btn.disabled = false; return; }
+    if (!session) { toast(_L('Effettua il login prima di abbonarti.','Please sign in before subscribing.'), 'err'); btn.disabled = false; return; }
 
     const plan = billingAnnual ? 'annual' : 'monthly';
     const res = await fetch(SUPABASE_URL + '/functions/v1/create-checkout-session', {
@@ -468,12 +468,12 @@ async function handleSubscribe() {
     if (data.url) {
       window.location.href = data.url;
     } else {
-      throw new Error(data.error || 'Impossibile creare la sessione di pagamento');
+      throw new Error(data.error || _L('Impossibile creare la sessione di pagamento','Could not create payment session'));
     }
   } catch (err) {
-    toast('❌ Errore: ' + err.message, 'err');
+    toast('❌ ' + _L('Errore: ','Error: ') + err.message, 'err');
     btn.disabled = false;
-    btn.textContent = '⭐ Inizia la prova gratuita';
+    btn.textContent = '⭐ ' + _L('Inizia la prova gratuita','Start free trial');
   }
 }
 
@@ -487,9 +487,9 @@ async function manageSubscription() {
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
-    else toast('Impossibile aprire il portale: ' + (data.error || ''), 'err');
+    else toast(_L('Impossibile aprire il portale: ','Could not open the portal: ') + (data.error || ''), 'err');
   } catch (err) {
-    toast('❌ Errore: ' + err.message, 'err');
+    toast('❌ ' + _L('Errore: ','Error: ') + err.message, 'err');
   }
 }
 

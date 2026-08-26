@@ -56,6 +56,9 @@
   /* Error */
   .error { text-align: center; padding: 60px 20px; color: #666; }
   .error h2 { font-size: 20px; margin-bottom: 8px; }
+  /* Lang toggle */
+  .lang-toggle { position: fixed; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 10; }
+  .lang-toggle button { padding: 5px 12px; border-radius: 8px; border: 1.5px solid #e5e7eb; background: white; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
   /* Print */
   @media print {
     body { background: white; }
@@ -63,14 +66,21 @@
     .doc-header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     .section-head { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     .day-head { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .no-print { display: none !important; }
   }
 </style>
 </head>
 <body>
+<div class="lang-toggle no-print">
+  <button onclick="setLang('it')" id="lang-btn-it">🇮🇹 IT</button>
+  <button onclick="setLang('en')" id="lang-btn-en">🇬🇧 EN</button>
+</div>
 <div class="doc-wrap" id="app">
-  <div class="error"><h2>⏳ Caricamento documento...</h2></div>
+  <div class="error"><h2>⏳ <span data-only-lang="it">Caricamento documento...</span><span data-only-lang="en" style="display:none">Loading document...</span></h2></div>
 </div>
 
+<script src="js/lang.min.js?v=2" defer></script>
+<script src="js/utils.min.js" defer></script>
 <script>
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function deepParse(v, max=4) {
@@ -109,7 +119,7 @@ function el(tag, attrs={}, ...children) {
 function secTable(title, rows, icon='') {
   const validRows = rows.filter(([,v]) => v!==''&&v!==null&&v!==undefined&&!Array.isArray(v)&&typeof v!=='object')
   if (!validRows.length) return null
-  const thead = el('thead',{},el('tr',{},...[['Campo','Valore']].map(
+  const thead = el('thead',{},el('tr',{},...[[_L('Campo','Field'),_L('Valore','Value')]].map(
     ([h]) => el('th',{},h)
   )))
   const tbody = el('tbody',{},...validRows.map(([k,v]) =>
@@ -123,43 +133,49 @@ function secTable(title, rows, icon='') {
 
 // ── Renderers ──────────────────────────────────────────────────────────────────
 const MEAL_LABELS = {
-  colazione:{label:'Colazione',emoji:'☀️'},
-  spuntino1:{label:'Spuntino mattina',emoji:'🍎'},spuntino_mattina:{label:'Spuntino mattina',emoji:'🍎'},
-  pranzo:{label:'Pranzo',emoji:'🍽️'},
-  spuntino2:{label:'Spuntino pomeriggio',emoji:'🥤'},spuntino_pomeriggio:{label:'Spuntino pomeriggio',emoji:'🥤'},
-  cena:{label:'Cena',emoji:'🌙'},
+  colazione:{it:'Colazione',en:'Breakfast',emoji:'☀️'},
+  spuntino1:{it:'Spuntino mattina',en:'Morning snack',emoji:'🍎'},spuntino_mattina:{it:'Spuntino mattina',en:'Morning snack',emoji:'🍎'},
+  pranzo:{it:'Pranzo',en:'Lunch',emoji:'🍽️'},
+  spuntino2:{it:'Spuntino pomeriggio',en:'Afternoon snack',emoji:'🥤'},spuntino_pomeriggio:{it:'Spuntino pomeriggio',en:'Afternoon snack',emoji:'🥤'},
+  cena:{it:'Cena',en:'Dinner',emoji:'🌙'},
 }
 const CALC_LABELS = {
-  peso:'Peso (kg)',altezza:'Altezza (cm)',eta:'Età',sesso:'Sesso',
-  peso_ideale:'Peso ideale (kg)',imc:'IMC',bmi:'BMI',
-  fabbisogno:'Fabbisogno kcal',kcal:'Kcal/die',
-  proteine:'Proteine (g)',carboidrati:'Carboidrati (g)',grassi:'Grassi (g)',
-  tipo:'Tipo',tdd:'TDD (UI)',metodo:'Metodo',
-  attivita:'Attività fisica',npasti:'N° pasti',luogo:'Luogo pasti',
-  appetito:'Appetito',allergie:'Allergie',
+  peso:{it:'Peso (kg)',en:'Weight (kg)'},altezza:{it:'Altezza (cm)',en:'Height (cm)'},eta:{it:'Età',en:'Age'},sesso:{it:'Sesso',en:'Sex'},
+  peso_ideale:{it:'Peso ideale (kg)',en:'Ideal weight (kg)'},imc:{it:'IMC',en:'BMI'},bmi:{it:'BMI',en:'BMI'},
+  fabbisogno:{it:'Fabbisogno kcal',en:'Energy requirement (kcal)'},kcal:{it:'Kcal/die',en:'Kcal/day'},
+  proteine:{it:'Proteine (g)',en:'Protein (g)'},carboidrati:{it:'Carboidrati (g)',en:'Carbohydrates (g)'},grassi:{it:'Grassi (g)',en:'Fat (g)'},
+  tipo:{it:'Tipo',en:'Type'},tdd:{it:'TDD (UI)',en:'TDD (IU)'},metodo:{it:'Metodo',en:'Method'},
+  attivita:{it:'Attività fisica',en:'Physical activity'},npasti:{it:'N° pasti',en:'No. of meals'},luogo:{it:'Luogo pasti',en:'Meal location'},
+  appetito:{it:'Appetito',en:'Appetite'},allergie:{it:'Allergie',en:'Allergies'},
+}
+function calcLabel(k) {
+  const d = CALC_LABELS[k]
+  return d ? _L(d.it, d.en) : k.replace(/_/g,' ')
 }
 
 function renderPiano(dati, meta) {
   const days = parseArr(dati.meals || dati.giorni)
   const frag = document.createDocumentFragment()
   if (!days.length) {
-    frag.appendChild(el('div',{class:'info-box blue'},'Nessun dettaglio pasti disponibile.'))
+    frag.appendChild(el('div',{class:'info-box blue'},_L('Nessun dettaglio pasti disponibile.','No meal details available.')))
     return frag
   }
   for (const day of days) {
     const meals = parseArr(day.meals)
     const dayEl = el('div',{class:'day-block'},
-      el('div',{class:'day-head'},'📅 ',day.nome||`Giorno`)
+      el('div',{class:'day-head'},'📅 ',day.nome||_L('Giorno','Day'))
     )
     for (const meal of meals) {
       const mKey = meal.id||meal.tipo||''
-      const m = MEAL_LABELS[mKey]||{label:meal.nome||mKey||'Pasto',emoji:'🍴'}
+      const mDef = MEAL_LABELS[mKey]
+      const mLabel = mDef ? _L(mDef.it, mDef.en) : (mKey || _L('Pasto','Meal'))
+      const mEmoji = mDef ? mDef.emoji : '🍴'
       const items = parseArr(meal.items||meal.foods||meal.alimenti||[])
       const kcal = meal.kcal||meal.calorie||null
       const note = meal.note||meal.notes||''
       const mealEl = el('div',{class:'meal-block'},
         el('div',{class:'meal-head'},
-          el('span',{class:'meal-name'},meal.emoji||m.emoji,' ',meal.nome||m.label),
+          el('span',{class:'meal-name'},meal.emoji||mEmoji,' ',meal.nome||mLabel),
           kcal?el('span',{class:'meal-kcal'},'🔥 ',kcal,' kcal'):null
         )
       )
@@ -171,7 +187,7 @@ function renderPiano(dati, meta) {
           )]
           if (food.altPrint?.length) {
             rows.push(el('tr',{class:'alt-row'},
-              el('td',{colspan:'2'},'Alt: '+food.altPrint.map(a=>`${a.nome} ${a.qt||''}g`).join(' / '))
+              el('td',{colspan:'2'},_L('Alt: ','Alt: ')+food.altPrint.map(a=>`${a.nome} ${a.qt||''}g`).join(' / '))
             ))
           }
           return rows
@@ -192,15 +208,15 @@ function renderRistorazione(dati) {
   const portate = parseArr(piano.portate||val.portate||[])
   const frag = document.createDocumentFragment()
   const infoRows = [
-    ['Tipo utenza', piano.tipo||val.tipo],
-    ['Utenza', piano.utenza||val.utenza],
-    ['Coperti', piano.coperti||val.coperti],
-    ['Kcal', piano.kcal||val.kcal],
-    ['Diete speciali', piano.diete||val.diete],
-    ['Allergeni', piano.allergeni||val.allergeni],
-    ['Note struttura', piano.note_struttura||val.note_struttura],
+    [_L('Tipo utenza','Facility type'), piano.tipo||val.tipo],
+    [_L('Utenza','Users'), piano.utenza||val.utenza],
+    [_L('Coperti','Covers'), piano.coperti||val.coperti],
+    [_L('Kcal','Kcal'), piano.kcal||val.kcal],
+    [_L('Diete speciali','Special diets'), piano.diete||val.diete],
+    [_L('Allergeni','Allergens'), piano.allergeni||val.allergeni],
+    [_L('Note struttura','Facility notes'), piano.note_struttura||val.note_struttura],
   ]
-  const infoTable = secTable('Struttura', infoRows, '📋')
+  const infoTable = secTable(_L('Struttura','Facility'), infoRows, '📋')
   if (infoTable) frag.appendChild(infoTable)
   if (portate.length) {
     const tbody = el('tbody',{},...portate.map((p,i) =>
@@ -211,9 +227,9 @@ function renderRistorazione(dati) {
       )
     ))
     frag.appendChild(el('div',{class:'section'},
-      el('div',{class:'section-head'},'🍽️ Portate'),
+      el('div',{class:'section-head'},'🍽️ '+_L('Portate','Courses')),
       el('div',{style:'overflow-x:auto'},el('table',{},
-        el('thead',{},el('tr',{},...['Portata','Porzione','Note'].map(h=>el('th',{},h)))),
+        el('thead',{},el('tr',{},...[_L('Portata','Course'),_L('Porzione','Portion'),_L('Note','Notes')].map(h=>el('th',{},h)))),
         tbody
       ))
     ))
@@ -230,9 +246,9 @@ function renderPediatria(dati) {
   const pasti = parseArr(pastiRaw)
   const piano = Object.fromEntries(Object.entries(pianoRaw).filter(([k])=>k!=='pasti'))
   const frag = document.createDocumentFragment()
-  const pazTable = secTable('Dati paziente', Object.entries(paz), '👶')
+  const pazTable = secTable(_L('Dati paziente','Patient data'), Object.entries(paz), '👶')
   if (pazTable) frag.appendChild(pazTable)
-  const pianoTable = secTable('Piano', Object.entries(piano), '📋')
+  const pianoTable = secTable(_L('Piano','Plan'), Object.entries(piano), '📋')
   if (pianoTable) frag.appendChild(pianoTable)
   if (pasti.length) {
     const tbody = el('tbody',{},...pasti.map((p,i)=>
@@ -247,9 +263,9 @@ function renderPediatria(dati) {
       )
     ))
     frag.appendChild(el('div',{class:'section'},
-      el('div',{class:'section-head'},'🍼 Schema pasti'),
+      el('div',{class:'section-head'},'🍼 '+_L('Schema pasti','Meal schedule')),
       el('div',{style:'overflow-x:auto'},el('table',{},
-        el('thead',{},el('tr',{},...['Pasto','Orario','Descrizione'].map(h=>el('th',{},h)))),
+        el('thead',{},el('tr',{},...[_L('Pasto','Meal'),_L('Orario','Time'),_L('Descrizione','Description')].map(h=>el('th',{},h)))),
         tbody
       ))
     ))
@@ -263,13 +279,13 @@ function renderCalcolo(tipo, dati) {
   if (!calcData||typeof calcData!=='object') return frag
   const flatRows = Object.entries(calcData)
     .filter(([,v]) => v!==''&&v!==null&&v!==undefined&&typeof v!=='object')
-    .map(([k,v]) => [CALC_LABELS[k]||k.replace(/_/g,' '),v])
-  const t = secTable('Dati clinici', flatRows, '📊')
+    .map(([k,v]) => [calcLabel(k),v])
+  const t = secTable(_L('Dati clinici','Clinical data'), flatRows, '📊')
   if (t) frag.appendChild(t)
   for (const [k,v] of Object.entries(calcData)) {
     if (!v||typeof v!=='object'||Array.isArray(v)) continue
     const nested = Object.entries(v).filter(([,vv])=>vv!==''&&vv!==null&&vv!==undefined&&typeof vv!=='object')
-    const nt = secTable(k.replace(/_/g,' '), nested.map(([kk,vv])=>[CALC_LABELS[kk]||kk.replace(/_/g,' '),vv]))
+    const nt = secTable(k.replace(/_/g,' '), nested.map(([kk,vv])=>[calcLabel(kk),vv]))
     if (nt) frag.appendChild(nt)
   }
   return frag
@@ -281,26 +297,26 @@ function renderConsiglio(dati) {
     frag.appendChild(el('div',{class:'info-box blue'},dati.descrizione||dati.indicazioni))
   }
   // Info generale (pasti, porzioni, idratazione)
-  const infoRows=[['Distribuzione pasti',dati.pasti],['Porzioni',dati.porzioni],['Idratazione',dati.idratazione]].filter(([,v])=>v)
-  if (infoRows.length) { const t=secTable('Indicazioni generali',infoRows,'ℹ️'); if(t) frag.appendChild(t) }
+  const infoRows=[[_L('Distribuzione pasti','Meal distribution'),dati.pasti],[_L('Porzioni','Portions'),dati.porzioni],[_L('Idratazione','Hydration'),dati.idratazione]].filter(([,v])=>v)
+  if (infoRows.length) { const t=secTable(_L('Indicazioni generali','General guidance'),infoRows,'ℹ️'); if(t) frag.appendChild(t) }
   // Alimenti (supporta sia i vecchi campi che i nuovi ok/no/mod)
   const consentiti = dati.alimenti_consentiti?.length ? dati.alimenti_consentiti : (dati.ok||[])
   const limitare   = dati.alimenti_limitare?.length   ? dati.alimenti_limitare   : (dati.mod||[])
   const evitare    = dati.alimenti_evitare?.length    ? dati.alimenti_evitare    : (dati.no||[])
   if (consentiti.length) frag.appendChild(el('div',{class:'list-section'},
-    el('div',{class:'list-head green'},'✅ Alimenti consigliati'),
+    el('div',{class:'list-head green'},'✅ '+_L('Alimenti consigliati','Recommended foods')),
     el('ul',{class:'items'},...consentiti.map(a=>el('li',{},a)))))
   if (limitare.length) frag.appendChild(el('div',{class:'list-section'},
-    el('div',{class:'list-head yellow'},'⚠️ Da limitare'),
+    el('div',{class:'list-head yellow'},'⚠️ '+_L('Da limitare','To limit')),
     el('ul',{class:'items'},...limitare.map(a=>el('li',{},a)))))
   if (evitare.length) frag.appendChild(el('div',{class:'list-section'},
-    el('div',{class:'list-head red'},'🚫 Da evitare'),
+    el('div',{class:'list-head red'},'🚫 '+_L('Da evitare','To avoid')),
     el('ul',{class:'items'},...evitare.map(a=>el('li',{},a)))))
   if (dati.pratici?.length) frag.appendChild(el('div',{class:'list-section'},
-    el('div',{class:'list-head green'},'💡 Consigli pratici'),
+    el('div',{class:'list-head green'},'💡 '+_L('Consigli pratici','Practical tips')),
     el('ul',{class:'items'},...dati.pratici.map(a=>el('li',{},a)))))
   if (dati.avvisi?.length) frag.appendChild(el('div',{class:'list-section'},
-    el('div',{class:'list-head red'},'🚨 Avvisi importanti'),
+    el('div',{class:'list-head red'},'🚨 '+_L('Avvisi importanti','Important warnings')),
     el('ul',{class:'items'},...dati.avvisi.map(a=>el('li',{},a)))))
   if (dati.note_paziente) frag.appendChild(el('div',{class:'note-box',style:'margin:0 0 16px'},'📝 '+dati.note_paziente))
   if (dati.note) frag.appendChild(el('div',{class:'note-box',style:'margin:0 0 16px'},'💡 '+dati.note))
@@ -315,7 +331,7 @@ function render() {
   const dataB64 = params.get('data')||''
 
   if (!dataB64) {
-    document.getElementById('app').innerHTML = '<div class="error"><h2>⚠️ Nessun documento</h2><p>Parametri mancanti nell\'URL</p></div>'
+    document.getElementById('app').innerHTML = '<div class="error"><h2>⚠️ '+_L('Nessun documento','No document')+'</h2><p>'+_L('Parametri mancanti nell\'URL','Missing parameters in the URL')+'</p></div>'
     return
   }
 
@@ -324,26 +340,27 @@ function render() {
     const json = decodeURIComponent(atob(dataB64))
     dati = deepParse(json)||{}
   } catch(e) {
-    document.getElementById('app').innerHTML = '<div class="error"><h2>⚠️ Errore decodifica</h2><p>'+e.message+'</p></div>'
+    document.getElementById('app').innerHTML = '<div class="error"><h2>⚠️ '+_L('Errore decodifica','Decoding error')+'</h2><p>'+e.message+'</p></div>'
     return
   }
 
   // Header meta
   const META = {
-    piano:       {icon:'🥗', cat:'Piano Alimentare'},
-    ristorazione:{icon:'🍽️', cat:'Menu Ristorazione Collettiva'},
-    pediatria:   {icon:'👶', cat:'Schema Nutrizionale Pediatrico'},
-    questionario:{icon:'📋', cat:'Questionario Clinico'},
-    consiglio:   {icon:'💊', cat:'Consiglio Nutrizionale'},
-    chetogenica: {icon:'🥑', cat:'Dieta Chetogenica'},
-    renale:      {icon:'🫘', cat:'Nefropatia / IRC'},
-    diabete:     {icon:'💉', cat:'Gestione Diabete'},
-    dca:         {icon:'🧠', cat:'DCA - Sessione'},
-    sport:       {icon:'🏋️', cat:'Nutrizione Sportiva'},
-    pancreas:    {icon:'🫀', cat:'Insufficienza Pancreatica'},
-    disfagia:    {icon:'🍵', cat:'Disfagia'},
+    piano:       {icon:'🥗', it:'Piano Alimentare', en:'Meal Plan'},
+    ristorazione:{icon:'🍽️', it:'Menu Ristorazione Collettiva', en:'Institutional Catering Menu'},
+    pediatria:   {icon:'👶', it:'Schema Nutrizionale Pediatrico', en:'Pediatric Nutrition Plan'},
+    questionario:{icon:'📋', it:'Questionario Clinico', en:'Clinical Questionnaire'},
+    consiglio:   {icon:'💊', it:'Consiglio Nutrizionale', en:'Nutritional Advice'},
+    chetogenica: {icon:'🥑', it:'Dieta Chetogenica', en:'Ketogenic Diet'},
+    renale:      {icon:'🫘', it:'Nefropatia / IRC', en:'Nephropathy / CKD'},
+    diabete:     {icon:'💉', it:'Gestione Diabete', en:'Diabetes Management'},
+    dca:         {icon:'🧠', it:'DCA - Sessione', en:'Eating Disorder Session'},
+    sport:       {icon:'🏋️', it:'Nutrizione Sportiva', en:'Sports Nutrition'},
+    pancreas:    {icon:'🫀', it:'Insufficienza Pancreatica', en:'Pancreatic Insufficiency'},
+    disfagia:    {icon:'🍵', it:'Disfagia', en:'Dysphagia'},
   }
-  const m = META[tipo]||{icon:'📄', cat:'Documento Clinico'}
+  const mDef = META[tipo]||{icon:'📄', it:'Documento Clinico', en:'Clinical Document'}
+  const m = { icon: mDef.icon, cat: _L(mDef.it, mDef.en) }
 
   const wrap = document.getElementById('app')
   wrap.innerHTML = ''
@@ -352,7 +369,7 @@ function render() {
   wrap.appendChild(el('div',{class:'doc-header'},
     el('div',{class:'category'},m.icon+' '+m.cat),
     el('div',{class:'title'},nota||m.cat),
-    el('div',{class:'subtitle'},new Date().toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'}))
+    el('div',{class:'subtitle'},new Date().toLocaleDateString(getLang(),{day:'numeric',month:'long',year:'numeric'}))
   ))
 
   // Content by tipo
@@ -393,12 +410,12 @@ function render() {
 
   // Footer
   wrap.appendChild(el('div',{class:'doc-footer'},
-    'Documento generato da NutriPlan Pro • ',
-    new Date().toLocaleDateString('it-IT')
+    _L('Documento generato da NutriPlan Pro • ','Document generated by NutriPlan Pro • '),
+    new Date().toLocaleDateString(getLang())
   ))
 }
 
-render()
+document.addEventListener('DOMContentLoaded', render)
 </script>
 </body>
 </html>

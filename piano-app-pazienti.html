@@ -30,10 +30,19 @@
   .pill-free{background:#dcfce7;color:#15803D}
   .pill-pro{background:#fef3c7;color:#92400e}
   .section-tag{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;margin-left:8px;vertical-align:middle}
+  .lang-toggle{display:flex;gap:6px;justify-content:flex-end;margin-bottom:14px}
+  .lang-toggle button{padding:5px 12px;border-radius:8px;border:1.5px solid var(--border);background:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
   @media(max-width:600px){.grid2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
+<div class="lang-toggle">
+  <button onclick="setLang('it')" id="lang-btn-it">🇮🇹 IT</button>
+  <button onclick="setLang('en')" id="lang-btn-en">🇬🇧 EN</button>
+</div>
+
+<div data-only-lang="it">
 
 <h1>📱 Piano Freemium — App Pazienti</h1>
 <p class="subtitle">Analisi competitiva e struttura del modello a pagamento. Aggiornato: maggio 2025</p>
@@ -248,5 +257,226 @@
 
 <p style="margin-top:24px;font-size:12px;color:var(--slate-l);text-align:center">NutriPlan Pro · Piano Strategico App Pazienti · Maggio 2025</p>
 
+</div>
+
+<div data-only-lang="en" style="display:none">
+
+<h1>📱 Freemium Plan — Patient App</h1>
+<p class="subtitle">Competitive analysis and structure of the paid model. Updated: May 2025</p>
+
+<div class="alert">
+  <b>Guiding principle:</b> It makes no sense to charge for features already available for free on Yazio, FatSecret, Cronometer or MyFitnessPal. The value of the Pro plan must be <b>exclusive and hard to replicate</b> — i.e. tied to the dietitian/patient system that only NutriPlan can offer.
+</div>
+
+<!-- COMPETITIVE ANALYSIS -->
+<h2>🔍 What competitors offer for free</h2>
+<div class="card" style="overflow-x:auto">
+  <table>
+    <thead><tr><th>Feature</th><th>Yazio</th><th>FatSecret</th><th>Cronometer</th><th>MyFitnessPal</th></tr></thead>
+    <tbody>
+      <tr><td>Basic food diary</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td></tr>
+      <tr><td>Calorie counting</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td></tr>
+      <tr><td>Macronutrients (P/F/C)</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td></tr>
+      <tr><td>Food database (millions of items)</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td></tr>
+      <tr><td>Barcode scanning</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td></tr>
+      <tr><td>Weight goal</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td></tr>
+      <tr><td>Weight tracking over time</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td><td>✅ Free</td></tr>
+      <tr><td>Detailed micronutrients</td><td>💰 Pro</td><td>✅ Free</td><td>✅ Free</td><td>💰 Pro</td></tr>
+      <tr><td>Predefined meal plans</td><td>💰 Pro</td><td>❌</td><td>❌</td><td>💰 Pro</td></tr>
+      <tr><td>Weekly reports</td><td>💰 Pro</td><td>✅ Free</td><td>✅ Free</td><td>💰 Pro</td></tr>
+      <tr><td>AI / suggestions</td><td>💰 Pro</td><td>❌</td><td>❌</td><td>💰 Pro</td></tr>
+      <tr><td>Connection with a dietitian</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Meal plan personalized by the dietitian</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Monitoring of specific conditions</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FREEMIUM STRUCTURE -->
+<h2>📋 Proposed Free vs Pro structure</h2>
+
+<div class="grid2">
+  <div class="card">
+    <h3 style="color:#15803D;font-size:15px;margin-bottom:14px">🔓 Free Plan</h3>
+    <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px">Available to everyone, always. Must be useful enough to drive daily use of the app.</p>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13px">
+      <li>✅ Food diary (7-day history)</li>
+      <li>✅ Calories and macronutrients (protein, fat, carbs, fiber)</li>
+      <li>✅ CREA+BDA food database (Italian)</li>
+      <li>✅ Food barcode scanning</li>
+      <li>✅ Body weight logging</li>
+      <li>✅ View of the dietitian's meal plan</li>
+      <li>✅ Chat with your dietitian</li>
+      <li>✅ Access to questionnaires sent by the dietitian</li>
+      <li>✅ Meal notifications from the dietitian</li>
+      <li>✅ Basic nutritional tips (static)</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="color:#d97706;font-size:15px;margin-bottom:14px">⭐ Pro Plan — €5.99/month</h3>
+    <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px">Exclusive features that competitors don't offer for free, or don't offer at all.</p>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13px">
+      <li>⭐ Unlimited food diary (full history)</li>
+      <li>⭐ Detailed micronutrients (vitamins, minerals)</li>
+      <li>⭐ Nutritional trend analysis (weekly/monthly charts)</li>
+      <li>⭐ PDF reports to send to the dietitian</li>
+      <li>⭐ Monitoring of condition-specific parameters (blood glucose, creatinine, etc.)</li>
+      <li>⭐ Personalized reminders (medication, weight, meals)</li>
+      <li>⭐ Wearable integration (Fitbit, Garmin, Apple Health)</li>
+      <li>⭐ Adherence analysis for the dietitian's plan (% of weeks)</li>
+      <li>⭐ Saved personal recipes</li>
+      <li>⭐ AI food-substitution suggestions</li>
+    </ul>
+  </div>
+</div>
+
+<!-- FEATURE BREAKDOWN -->
+<h2>📊 Detailed feature table</h2>
+<div class="card" style="overflow-x:auto">
+  <table>
+    <thead><tr><th>Feature</th><th>Plan</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>Food diary (7 days)</b></td>
+        <td><span class="badge badge-free">FREE</span></td>
+        <td><span class="reason">All competitors offer it for free — it's the core of the app</span></td>
+      </tr>
+      <tr>
+        <td><b>Calories + basic macronutrients</b></td>
+        <td><span class="badge badge-free">FREE</span></td>
+        <td><span class="reason">Offered free by competitors. Removing it would be counterproductive</span></td>
+      </tr>
+      <tr>
+        <td><b>Italian CREA+BDA database</b></td>
+        <td><span class="badge badge-free">FREE</span></td>
+        <td><span class="reason">Differentiator versus competitors (official Italian database)</span></td>
+      </tr>
+      <tr>
+        <td><b>View of the dietitian's plan</b></td>
+        <td><span class="badge badge-free">FREE</span></td>
+        <td><span class="reason">The main reason the patient uses the app — must be accessible</span></td>
+      </tr>
+      <tr>
+        <td><b>Chat with dietitian</b></td>
+        <td><span class="badge badge-free">FREE</span></td>
+        <td><span class="reason">The dietitian pays for NutriPlan Pro — the patient must be able to communicate</span></td>
+      </tr>
+      <tr>
+        <td><b>Unlimited food history</b></td>
+        <td><span class="badge badge-pro">PRO</span></td>
+        <td><span class="reason">Free = 7 days, Pro = unlimited. A concrete incentive to pay</span></td>
+      </tr>
+      <tr>
+        <td><b>Detailed micronutrients</b></td>
+        <td><span class="badge badge-pro">PRO</span></td>
+        <td><span class="reason">Cronometer offers it for free — but combined with condition monitoring it becomes exclusive</span></td>
+      </tr>
+      <tr>
+        <td><b>Weekly/monthly trend charts</b></td>
+        <td><span class="badge badge-pro">PRO</span></td>
+        <td><span class="reason">Longitudinal analysis — useful for chronic conditions (diabetes, kidney disease, etc.)</span></td>
+      </tr>
+      <tr>
+        <td><b>Condition parameter monitoring</b></td>
+        <td><span class="badge badge-pro">PRO</span></td>
+        <td><span class="reason">Exclusive. No competitor offers integrated blood-glucose tracking + dietitian plan</span></td>
+      </tr>
+      <tr>
+        <td><b>PDF report for the dietitian</b></td>
+        <td><span class="badge badge-pro">PRO</span></td>
+        <td><span class="reason">Useful for appointments. The patient brings the printed report — high perceived value</span></td>
+      </tr>
+      <tr>
+        <td><b>Plan adherence analysis</b></td>
+        <td><span class="badge badge-pro">PRO</span></td>
+        <td><span class="reason">Exclusive: automatic comparison between the prescribed plan and the logged diary</span></td>
+      </tr>
+      <tr>
+        <td><b>Personalized reminders</b></td>
+        <td><span class="badge badge-pro">PRO</span></td>
+        <td><span class="reason">Medication, morning weight, meals — customizable by the patient</span></td>
+      </tr>
+      <tr>
+        <td><b>Wearable integration</b></td>
+        <td><span class="badge badge-pro">PRO</span></td>
+        <td><span class="reason">Steps, calories burned, heart rate — enriches the analysis</span></td>
+      </tr>
+      <tr>
+        <td><b>AI food substitution</b></td>
+        <td><span class="badge badge-pro">PRO</span></td>
+        <td><span class="reason">Suggests alternatives compatible with the condition and the dietitian's plan</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PRICING RATIONALE -->
+<h2>💡 Why €5.99/month is right</h2>
+<div class="card">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+    <div style="text-align:center;padding:16px;background:#F8FAFC;border-radius:var(--r-sm)">
+      <div style="font-size:28px;font-weight:800;color:#6366f1">€5.99</div>
+      <div style="font-size:12px;color:var(--slate-m);margin-top:4px">NutriPlan App Pro</div>
+    </div>
+    <div style="text-align:center;padding:16px;background:#F8FAFC;border-radius:var(--r-sm)">
+      <div style="font-size:28px;font-weight:800;color:#d97706">€9.99</div>
+      <div style="font-size:12px;color:var(--slate-m);margin-top:4px">Yazio Premium</div>
+    </div>
+    <div style="text-align:center;padding:16px;background:#F8FAFC;border-radius:var(--r-sm)">
+      <div style="font-size:28px;font-weight:800;color:#d97706">€9.99</div>
+      <div style="font-size:12px;color:var(--slate-m);margin-top:4px">MyFitnessPal Premium</div>
+    </div>
+    <div style="text-align:center;padding:16px;background:#F8FAFC;border-radius:var(--r-sm)">
+      <div style="font-size:28px;font-weight:800;color:#15803D">€0</div>
+      <div style="font-size:12px;color:var(--slate-m);margin-top:4px">FatSecret / Cronometer</div>
+    </div>
+  </div>
+  <p style="margin-top:16px;font-size:13px;color:var(--slate-m);line-height:1.6">
+    At €5.99 we're <b>cheaper than premium competitors</b> while offering something they don't have: direct integration with the dietitian. Patients who use NutriPlan do so because their dietitian uses NutriPlan Pro — this creates a natural exit barrier and justifies the subscription even for those who would normally use FatSecret for free.
+  </p>
+  <p style="margin-top:10px;font-size:13px;color:var(--slate-m);line-height:1.6">
+    <b>Conversion strategy:</b> offer 30 days free to all patients of dietitians who use NutriPlan Pro. The dietitian becomes the acquisition channel — sending the invite link directly to the patient.
+  </p>
+</div>
+
+<!-- ECONOMIC MODEL -->
+<h2>📈 Revenue projection</h2>
+<div class="card" style="overflow-x:auto">
+  <table>
+    <thead><tr><th>Scenario</th><th>Active dietitians</th><th>Patients/dietitian</th><th>Pro conv. (est.)</th><th>Monthly app revenue</th></tr></thead>
+    <tbody>
+      <tr><td>Launch</td><td>10</td><td>20</td><td>15%</td><td>~€180/month</td></tr>
+      <tr><td>Growth</td><td>50</td><td>30</td><td>20%</td><td>~€1,800/month</td></tr>
+      <tr><td>Mature</td><td>200</td><td>40</td><td>25%</td><td>~€11,940/month</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:12px;font-size:12px;color:var(--slate-l)">Note: conservative estimate. Conversion increases the more useful the Pro features are for managing the specific condition.</p>
+</div>
+
+<!-- IMPLEMENTATION -->
+<h2>🛠️ Implementation plan</h2>
+<div class="card">
+  <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span style="background:#6366f1;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap">PHASE 1</span>
+      <div><b>Free MVP</b> — Basic diary + plan view + chat with dietitian. Goal: get the app adopted by all patients of existing dietitians.</div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span style="background:#0ea5e9;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap">PHASE 2</span>
+      <div><b>Monetization</b> — Add the Pro features (charts, PDF reports, condition monitoring). Activate Stripe in-app. Offer 30 days free.</div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span style="background:#10b981;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap">PHASE 3</span>
+      <div><b>Scale</b> — Wearable integration, AI, adherence analysis. Dynamic pricing for critical conditions (diabetes, kidney disease → higher perceived value).</div>
+    </div>
+  </div>
+</div>
+
+<p style="margin-top:24px;font-size:12px;color:var(--slate-l);text-align:center">NutriPlan Pro · Patient App Strategic Plan · May 2025</p>
+
+</div>
+
+<script src="js/lang.min.js?v=2" defer></script>
+<script src="js/utils.min.js" defer></script>
 </body>
 </html>

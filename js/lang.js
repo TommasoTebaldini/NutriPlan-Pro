@@ -607,6 +607,72 @@ function applyLang() {
   });
 }
 
+// ─── Safety net: re-apply applyLang() to dynamically-injected content ──
+// applyLang()/translateLabels() only run once, on DOMContentLoaded. Many pages
+// inject NEW DOM after that point (async Supabase fetches rendering a table,
+// a tab switch injecting a panel, any client-side re-render). If that new
+// markup uses data-only-lang/data-i18n* attributes but the page's own script
+// doesn't explicitly call applyLang() again afterwards, it's stuck showing
+// whatever language was hardcoded into the generated HTML. This MutationObserver
+// is a generic, page-independent safety net for that case: it watches for
+// added nodes carrying those attributes and re-runs applyLang() on them.
+//
+// translateLabels() is intentionally NOT re-run automatically here. It does
+// broad, repeated querySelectorAll() calls across ~20 different selectors
+// (every <label>, every table cell, every button, every <select><option>...)
+// and rewrites matched text nodes wholesale on every invocation. Re-running
+// that on every small mutation (e.g. a chat page appending one message, or a
+// table re-rendering one row at a time) would be comparatively expensive and
+// risks visible flicker as text is rewritten repeatedly during rapid
+// re-renders. applyLang(), by contrast, only touches elements that carry
+// explicit i18n attributes, which is cheap and safe to re-run frequently.
+// Pages with heavy async content that also need translateLabels()'s fuzzy
+// text-matching should keep calling it themselves after rendering (as already
+// done in several pages via the _L() helper) — this observer only guarantees
+// the lighter, attribute-driven path stays in sync automatically everywhere.
+let _langMutationScheduled = false;
+let _langMutationApplying = false;
+const _LANG_MARKUP_SELECTOR = '[data-only-lang],[data-i18n],[data-i18n-placeholder],[data-i18n-tooltip],[data-i18n-title],[data-i18n-html]';
+function _nodeHasLangMarkup(node) {
+  if (!node || node.nodeType !== 1) return false; // elements only — skip text/comment nodes
+  if (node.matches && node.matches(_LANG_MARKUP_SELECTOR)) return true;
+  if (node.querySelector && node.querySelector(_LANG_MARKUP_SELECTOR)) return true;
+  return false;
+}
+function _observeDynamicLang() {
+  if (!document.body || typeof MutationObserver === 'undefined') return;
+  if (document.body._langObserverActive) return; // don't attach twice
+  document.body._langObserverActive = true;
+  const observer = new MutationObserver(mutations => {
+    // Reentrancy guard: applyLang() itself mutates the DOM (textContent,
+    // style.display), which — in principle — could re-trigger this callback.
+    // In practice applyLang() only replaces text-node children of elements
+    // that already exist and already carry the i18n attribute (so the newly
+    // added node is a plain Text node, which _nodeHasLangMarkup() ignores),
+    // so this shouldn't actually recurse. This flag is a belt-and-braces
+    // guard in case that assumption is ever broken by a future edit.
+    if (_langMutationApplying) return;
+    let relevant = false;
+    for (const m of mutations) {
+      if (m.type !== 'childList') continue;
+      for (const node of m.addedNodes) {
+        if (_nodeHasLangMarkup(node)) { relevant = true; break; }
+      }
+      if (relevant) break;
+    }
+    if (!relevant || _langMutationScheduled) return;
+    _langMutationScheduled = true;
+    // Coalesce bursts of mutations (e.g. a table rendering row-by-row) into
+    // a single re-application per animation frame instead of one per node.
+    requestAnimationFrame(() => {
+      _langMutationScheduled = false;
+      _langMutationApplying = true;
+      try { applyLang(); } finally { _langMutationApplying = false; }
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
 // ─── Smart label translation (no per-element markup) ──
 /* eslint-disable no-misleading-character-class -- these character classes list emoji
    prefixes to strip one code point at a time (not to match a combined glyph as a
@@ -972,3 +1038,13 @@ document.addEventListener('DOMContentLoaded', function() {
   translateSidebarNav();
   translateLabels();
 });
+
+// ─── Start the dynamic-content observer for the whole page lifetime ──
+// Independent of the block above: document.body may already exist by the
+// time this script runs (e.g. lang.js is loaded near the end of <body>),
+// in which case we attach right away instead of waiting for DOMContentLoaded.
+if (document.body) {
+  _observeDynamicLang();
+} else {
+  document.addEventListener('DOMContentLoaded', _observeDynamicLang);
+}

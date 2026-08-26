@@ -45,11 +45,11 @@
         <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px" data-i18n="pp.profile_note">Inserisci i tuoi dati personali. Il tuo nutrizionista li vedrà per identificarti.</p>
         <div class="pp-field">
           <label data-i18n="pp.nome">Nome</label>
-          <input type="text" id="pp-nome" placeholder="es. Mario" maxlength="60">
+          <input type="text" id="pp-nome" placeholder="es. Mario / e.g. Mario" maxlength="60">
         </div>
         <div class="pp-field">
           <label data-i18n="pp.cognome">Cognome</label>
-          <input type="text" id="pp-cognome" placeholder="es. Rossi" maxlength="60">
+          <input type="text" id="pp-cognome" placeholder="es. Rossi / e.g. Smith" maxlength="60">
         </div>
         <div class="pp-field">
           <label data-i18n="pp.email">Email</label>
@@ -105,23 +105,23 @@
           </div>
           <div class="pp-field">
             <label>Pasti e alimentazione (descrivi brevemente)</label>
-            <textarea id="diary-notes" placeholder="Es: Colazione: yogurt con cereali. Pranzo: pasta al pomodoro..." rows="4" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;resize:vertical"></textarea>
+            <textarea id="diary-notes" placeholder="Es: Colazione: yogurt con cereali. Pranzo: pasta al pomodoro... / E.g.: Breakfast: yogurt with cereal. Lunch: pasta with tomato sauce..." rows="4" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;resize:vertical"></textarea>
           </div>
           <div class="pp-field">
             <label>Ore di sonno (opzionale)</label>
-            <input type="number" id="diary-sleep" placeholder="Es: 7.5" step="0.5" min="0" max="24" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;max-width:160px">
+            <input type="number" id="diary-sleep" placeholder="Es: 7.5 / E.g.: 7.5" step="0.5" min="0" max="24" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;max-width:160px">
           </div>
           <div class="pp-field">
             <label>Attività fisica (opzionale)</label>
-            <input type="text" id="diary-activity" placeholder="Es: camminata 30 min, palestra, nuoto..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
+            <input type="text" id="diary-activity" placeholder="Es: camminata 30 min, palestra, nuoto... / E.g.: 30 min walk, gym, swimming..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
           </div>
           <div class="pp-field">
             <label>Sintomi / Note aggiuntive (opzionale)</label>
-            <input type="text" id="diary-symptoms" placeholder="Es: gonfiore addominale, stanchezza..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
+            <input type="text" id="diary-symptoms" placeholder="Es: gonfiore addominale, stanchezza... / E.g.: bloating, fatigue..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
           </div>
           <div class="pp-field">
             <label>Peso corporeo kg (opzionale)</label>
-            <input type="number" id="diary-weight" placeholder="Es: 70.5" step="0.1" min="20" max="300" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;max-width:160px">
+            <input type="number" id="diary-weight" placeholder="Es: 70.5 / E.g.: 70.5" step="0.1" min="20" max="300" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;max-width:160px">
           </div>
           <button onclick="salvaDiario()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px">📓 Salva registrazione</button>
         </div>
@@ -175,11 +175,11 @@
       <div class="pp-section-body">
         <div id="macro-summary"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-          <div class="pp-field" style="margin-bottom:0"><label>Calorie (kcal)</label><input type="number" id="macro-kcal" placeholder="es. 1800" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
-          <div class="pp-field" style="margin-bottom:0"><label>Acqua (ml)</label><input type="number" id="macro-acqua" placeholder="es. 1500" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
-          <div class="pp-field" style="margin-bottom:0"><label>Proteine (g)</label><input type="number" id="macro-proteine" placeholder="es. 80" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
-          <div class="pp-field" style="margin-bottom:0"><label>Carboidrati (g)</label><input type="number" id="macro-carboidrati" placeholder="es. 200" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
-          <div class="pp-field" style="margin-bottom:0;grid-column:1/-1"><label>Grassi (g)</label><input type="number" id="macro-grassi" placeholder="es. 60" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;max-width:160px"></div>
+          <div class="pp-field" style="margin-bottom:0"><label>Calorie (kcal)</label><input type="number" id="macro-kcal" placeholder="es. 1800 / e.g. 1800" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0"><label>Acqua (ml)</label><input type="number" id="macro-acqua" placeholder="es. 1500 / e.g. 1500" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0"><label>Proteine (g)</label><input type="number" id="macro-proteine" placeholder="es. 80 / e.g. 80" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0"><label>Carboidrati (g)</label><input type="number" id="macro-carboidrati" placeholder="es. 200 / e.g. 200" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0;grid-column:1/-1"><label>Grassi (g)</label><input type="number" id="macro-grassi" placeholder="es. 60 / e.g. 60" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;max-width:160px"></div>
         </div>
         <button onclick="salvaMacro()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">💾 Salva</button>
         <div id="macro-micro-section"></div>
@@ -206,12 +206,12 @@
             </div>
             <div class="pp-field">
               <label>Tipo di attività</label>
-              <input type="text" id="att-tipo" placeholder="es. Camminata, Palestra, Nuoto…" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
+              <input type="text" id="att-tipo" placeholder="es. Camminata, Palestra, Nuoto… / e.g. Walking, Gym, Swimming…" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
               <div class="pp-field" style="margin-bottom:0">
                 <label>Durata (min)</label>
-                <input type="number" id="att-durata" placeholder="es. 45" min="1" max="600" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
+                <input type="number" id="att-durata" placeholder="es. 45 / e.g. 45" min="1" max="600" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
               </div>
               <div class="pp-field" style="margin-bottom:0">
                 <label>Intensità</label>
@@ -225,7 +225,7 @@
             </div>
             <div class="pp-field">
               <label>Note (opzionale)</label>
-              <input type="text" id="att-note" placeholder="es. corsa in parco, circuito in palestra…" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
+              <input type="text" id="att-note" placeholder="es. corsa in parco, circuito in palestra… / e.g. park run, gym circuit…" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
             </div>
             <button onclick="logAttivita()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">🏃 Registra</button>
           </div>
@@ -265,7 +265,7 @@
       <span style="font-size:18px" id="iv-icon">📄</span>
       <div class="iv-title" id="iv-title">Documento</div>
       <span class="iv-pageinfo" id="iv-pageinfo"></span>
-      <button class="iv-close" onclick="closeImageViewer()" title="Chiudi">×</button>
+      <button class="iv-close" onclick="closeImageViewer()" title="Chiudi / Close">×</button>
     </div>
     <div class="iv-body" id="iv-body">
       <img id="iv-img" alt="Pagina documento">
@@ -323,7 +323,7 @@ function parsePrintUrls(value) {
 let _ivUrls = [];
 let _ivIdx = 0;
 function openImageViewer(urls, title, icon) {
-  if (!urls || !urls.length) { toast('Documento non disponibile', 'err'); return; }
+  if (!urls || !urls.length) { toast(_L('Documento non disponibile','Document not available'), 'err'); return; }
   _ivUrls = urls;
   _ivIdx = 0;
   document.getElementById('iv-title').textContent = title || 'Documento';
@@ -466,7 +466,7 @@ async function salvaProfiloPaziente() {
   const cognome = (document.getElementById('pp-cognome').value || '').trim();
 
   if (!nome && !cognome) {
-    toast('Inserisci almeno il nome o il cognome', 'err');
+    toast(_L('Inserisci almeno il nome o il cognome','Enter at least your first or last name'), 'err');
     return;
   }
 
@@ -476,12 +476,12 @@ async function salvaProfiloPaziente() {
   }).eq('id', currentUser.id);
 
   if (error) {
-    toast('❌ Errore salvataggio: ' + error.message, 'err');
+    toast(_L('❌ Errore salvataggio: ','❌ Save error: ') + error.message, 'err');
     return;
   }
 
   currentProfile = { ...currentProfile, nome, cognome };
-  toast('✅ Dati personali salvati!', 'ok');
+  toast(_L('✅ Dati personali salvati!','✅ Personal data saved!'), 'ok');
 }
 
 // ═══════════════════════════════════════════════════
@@ -916,7 +916,7 @@ async function loadDiary() {
 
 async function salvaDiario() {
   if (!linkedCartelle.length) {
-    toast('Non sei collegato a nessun nutrizionista', 'err');
+    toast(_L('Non sei collegato a nessun nutrizionista','You are not linked to any dietitian'), 'err');
     return;
   }
 
@@ -929,7 +929,7 @@ async function salvaDiario() {
   const weightVal = document.getElementById('diary-weight').value;
 
   if (!notes && !mood) {
-    toast("Inserisci almeno l'umore o i pasti", 'err');
+    toast(_L("Inserisci almeno l'umore o i pasti","Enter at least your mood or meals"), 'err');
     return;
   }
 
@@ -956,7 +956,7 @@ async function salvaDiario() {
 
   const { error: wellErr } = await sb.from('daily_wellness').upsert(wellnessPayload, { onConflict: 'user_id,date' });
   if (wellErr) {
-    toast('❌ Errore salvataggio: ' + wellErr.message, 'err');
+    toast(_L('❌ Errore salvataggio: ','❌ Save error: ') + wellErr.message, 'err');
     return;
   }
 
@@ -973,7 +973,7 @@ async function salvaDiario() {
         weight: weight,
         weight_kg: weight
       }, { onConflict: 'user_id,date' });
-      if (wErr) toast('❌ Errore salvataggio peso: ' + wErr.message, 'err');
+      if (wErr) toast(_L('❌ Errore salvataggio peso: ','❌ Weight save error: ') + wErr.message, 'err');
     }
   }
 
@@ -985,7 +985,7 @@ async function salvaDiario() {
   document.getElementById('diary-symptoms').value = '';
   document.getElementById('diary-weight').value = '';
 
-  toast('✅ Registrazione salvata!', 'ok');
+  toast(_L('✅ Registrazione salvata!','✅ Entry saved!'), 'ok');
   await loadDiary();
 }
 
@@ -1038,8 +1038,8 @@ async function loadChat() {
         <div style="text-align:center;color:var(--slate-l);font-size:12.5px;padding:20px">Caricamento messaggi...</div>
       </div>
       <div class="pp-chat-input">
-        <textarea id="pp-chat-input" placeholder="Scrivi un messaggio..." rows="1" onkeydown="handleChatKey(event)"></textarea>
-        <button class="pp-chat-send" onclick="sendChatMessage()">Invia</button>
+        <textarea id="pp-chat-input" placeholder="${_L('Scrivi un messaggio...','Type a message...')}" rows="1" onkeydown="handleChatKey(event)"></textarea>
+        <button class="pp-chat-send" onclick="sendChatMessage()">${_L('Invia','Send')}</button>
       </div>
     </div>`;
 
@@ -1125,7 +1125,7 @@ async function sendChatMessage() {
   });
 
   if (error) {
-    toast('❌ Errore invio messaggio: ' + error.message, 'err');
+    toast(_L('❌ Errore invio messaggio: ','❌ Message send error: ') + error.message, 'err');
     input.value = content;
   }
 }
@@ -1221,12 +1221,12 @@ async function signConsent(consentId) {
     .eq('id', consentId);
 
   if (error) {
-    toast('❌ Errore firma: ' + error.message, 'err');
+    toast(_L('❌ Errore firma: ','❌ Signature error: ') + error.message, 'err');
     if (btn) { btn.disabled = false; btn.textContent = '✍️ Firma il consenso'; }
     return;
   }
 
-  toast('✅ Consenso firmato con successo!', 'ok');
+  toast(_L('✅ Consenso firmato con successo!','✅ Consent signed successfully!'), 'ok');
   await loadConsents();
 }
 
@@ -1416,7 +1416,7 @@ function salvaMacro() {
   const data = { kcal: getVal('macro-kcal'), proteine: getVal('macro-proteine'), carboidrati: getVal('macro-carboidrati'), grassi: getVal('macro-grassi'), acqua: getVal('macro-acqua'), ts: new Date().toISOString() };
   localStorage.setItem(macroTodayKey(), JSON.stringify(data));
   renderMacroSummary(data);
-  toast('✅ Dati macro salvati!', 'ok');
+  toast(_L('✅ Dati macro salvati!','✅ Macro data saved!'), 'ok');
 }
 
 function renderMacroSummary(d) {
@@ -1458,7 +1458,7 @@ function salvaMicro() {
   const getVal = k => { const el = document.getElementById('micro-' + k); return el ? (parseFloat(el.value) || 0) : 0; };
   ['fibra','sodio','calcio','ferro','vitc','vitd'].forEach(k => { stored[k] = getVal(k); });
   localStorage.setItem(macroTodayKey(), JSON.stringify(stored));
-  toast('✅ Micronutrienti salvati!', 'ok');
+  toast(_L('✅ Micronutrienti salvati!','✅ Micronutrients saved!'), 'ok');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1507,13 +1507,13 @@ async function loadAttivitaOggi() {
 }
 
 async function logAttivita() {
-  if (!linkedCartelle.length) { toast('Non sei collegato a nessun nutrizionista', 'err'); return; }
+  if (!linkedCartelle.length) { toast(_L('Non sei collegato a nessun nutrizionista','You are not linked to any dietitian'), 'err'); return; }
   const tipo = (document.getElementById('att-tipo')?.value || '').trim();
   const durata = document.getElementById('att-durata')?.value || '';
   const intensita = document.getElementById('att-intensita')?.value || '';
   const note = (document.getElementById('att-note')?.value || '').trim();
   const dateVal = document.getElementById('att-date')?.value || new Date().toISOString().split('T')[0];
-  if (!tipo) { toast('Inserisci il tipo di attività', 'err'); return; }
+  if (!tipo) { toast(_L('Inserisci il tipo di attività','Enter the activity type'), 'err'); return; }
 
   const actStr = `${tipo}${durata ? ' — ' + durata + ' min' : ''}${intensita ? ' (' + intensita + ')' : ''}${note ? ' — ' + note : ''}`;
   const { error } = await sb.from('daily_wellness').upsert({
@@ -1524,10 +1524,10 @@ async function logAttivita() {
     logged_at: new Date(dateVal).toISOString(),
     activity: actStr
   }, { onConflict: 'user_id,date' });
-  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+  if (error) { toast(_L('❌ Errore: ','❌ Error: ') + error.message, 'err'); return; }
   ['att-tipo','att-durata','att-note'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   if (document.getElementById('att-intensita')) document.getElementById('att-intensita').value = '';
-  toast('✅ Attività registrata!', 'ok');
+  toast(_L('✅ Attività registrata!','✅ Activity logged!'), 'ok');
   await loadAttivitaOggi();
 }
 

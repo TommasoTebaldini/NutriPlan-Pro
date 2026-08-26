@@ -205,7 +205,7 @@
     <div class="mhdr"><h2>🌐 <span data-only-lang="it">Importa Ricetta da Internet</span><span data-only-lang="en">Import Recipe from the Web</span></h2><button class="mclose" onclick="closeM('modal-url')">✕</button></div>
     <div class="mbody">
       <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:12px"><span data-only-lang="it">Inserisci l'URL di una ricetta online. DietPlan Pro cercherà di estrarre automaticamente gli ingredienti tramite AI.</span><span data-only-lang="en">Enter the URL of an online recipe. DietPlan Pro will try to automatically extract the ingredients via AI.</span></p>
-      <div class="fg" style="margin-bottom:10px"><label><span data-only-lang="it">URL Ricetta</span><span data-only-lang="en">Recipe URL</span></label><input type="url" id="import-url" placeholder="https://www.giallozafferano.it/..."></div>
+      <div class="fg" style="margin-bottom:10px"><label><span data-only-lang="it">URL Ricetta</span><span data-only-lang="en">Recipe URL</span></label><input type="url" id="import-url" placeholder="es. https://www.giallozafferano.it/... / e.g. https://www.bbcgoodfood.com/..."></div>
       <div id="import-status" style="display:none"></div>
       <div id="import-preview" style="display:none;margin-top:12px"></div>
     </div>
@@ -889,7 +889,7 @@ Restituisci SOLO un oggetto JSON valido con questa struttura:
     (ricetta.ingredienti || []).forEach(ing => addIngrediente(ing.nome, String(ing.qt)));
 
     status.innerHTML = `<div style="background:#F0FDF4;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#15803D">✅ ${_L('Ricetta importata:','Recipe imported:')} <b>${esc(ricetta.nome)}</b> (${(ricetta.ingredienti||[]).length} ${_L('ingredienti','ingredients')}). ${_L('Verifica e salva!','Check and save!')}</div>`;
-    toast('✅ Ricetta importata!', 'ok');
+    toast('✅ ' + _L('Ricetta importata!','Recipe imported!'), 'ok');
     requestAnimationFrame(aggTotali);
     editingRicettaId = null;
     document.getElementById('modal-r-title').innerHTML = '✏️ ' + _L('Nuova Ricetta (da URL)','New Recipe (from URL)');

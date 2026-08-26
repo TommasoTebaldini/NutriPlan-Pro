@@ -163,7 +163,7 @@
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Titolo sessione</label>
-    <input type="text" id="ped-nota" placeholder="es. Visita pediatrica..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:16px">
+    <input type="text" id="ped-nota" placeholder="es. Visita pediatrica... / e.g. Paediatric visit..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:16px">
   </div>
   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
     <button class="btn btn-primary btn-sm" onclick="salvaPediatria()" style="background:#7C3AED">💾 Salva in Cartella</button>
@@ -200,15 +200,15 @@
       </div>
       <div style="display:flex;flex-direction:column;gap:3px">
         <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Peso (kg)</label>
-        <input type="number" id="g-peso" placeholder="es. 18.5" step="0.1" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
+        <input type="number" id="g-peso" placeholder="es. 18.5 / e.g. 18.5" step="0.1" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
       </div>
       <div style="display:flex;flex-direction:column;gap:3px">
         <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Altezza (cm)</label>
-        <input type="number" id="g-altezza" placeholder="es. 110" step="0.5" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
+        <input type="number" id="g-altezza" placeholder="es. 110 / e.g. 110" step="0.5" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
       </div>
       <div style="display:flex;flex-direction:column;gap:3px">
         <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Circ. cranica (cm)</label>
-        <input type="number" id="g-cc" placeholder="es. 50" step="0.5" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
+        <input type="number" id="g-cc" placeholder="es. 50 / e.g. 50" step="0.5" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
       </div>
     </div>
     <div id="ped-quick-result" style="margin-top:12px;display:none">
@@ -326,12 +326,12 @@
     <div class="grid-3">
       <div class="nf"><label>Età (anni e mesi)</label>
         <div style="display:flex;gap:6px">
-          <input type="number" id="f-anni" placeholder="anni" min="0" max="18" style="flex:1" oninput="calcFabb()">
-          <input type="number" id="f-mesi" placeholder="mesi" min="0" max="11" style="flex:1" oninput="calcFabb()">
+          <input type="number" id="f-anni" placeholder="anni / years" min="0" max="18" style="flex:1" oninput="calcFabb()">
+          <input type="number" id="f-mesi" placeholder="mesi / months" min="0" max="11" style="flex:1" oninput="calcFabb()">
         </div>
       </div>
-      <div class="nf"><label>Peso (kg)</label><input type="number" id="f-peso" placeholder="es. 20" step="0.5" oninput="calcFabb()"></div>
-      <div class="nf"><label>Altezza (cm)</label><input type="number" id="f-altezza" placeholder="es. 115" oninput="calcFabb()"></div>
+      <div class="nf"><label>Peso (kg)</label><input type="number" id="f-peso" placeholder="es. 20 / e.g. 20" step="0.5" oninput="calcFabb()"></div>
+      <div class="nf"><label>Altezza (cm)</label><input type="number" id="f-altezza" placeholder="es. 115 / e.g. 115" oninput="calcFabb()"></div>
       <div class="nf"><label>Sesso</label><select id="f-sesso" onchange="calcFabb()"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
       <div class="nf"><label>Livello attività</label>
         <select id="f-laf" onchange="calcFabb()">
@@ -484,9 +484,9 @@
   <div class="grid-2">
     <div class="calc-box">
       <h3><span data-only-lang="it">🧮 Formule per il Metabolismo Basale (MB)</span><span data-only-lang="en" style="display:none">🧮 Basal Metabolic Rate (BMR) Equations</span></h3>
-      <div class="nf" style="margin-bottom:10px"><label>Peso (kg)</label><input type="number" id="fm-peso" placeholder="es. 20" step="0.5" oninput="calcFormule()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="fm-alt" placeholder="es. 115" oninput="calcFormule()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="fm-eta" placeholder="es. 6" oninput="calcFormule()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Peso (kg)</label><input type="number" id="fm-peso" placeholder="es. 20 / e.g. 20" step="0.5" oninput="calcFormule()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="fm-alt" placeholder="es. 115 / e.g. 115" oninput="calcFormule()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="fm-eta" placeholder="es. 6 / e.g. 6" oninput="calcFormule()"></div>
       <div class="nf" style="margin-bottom:10px"><label>Sesso</label><select id="fm-sesso" onchange="calcFormule()"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
       <div id="formule-result" style="display:none">
         <table class="food-table" style="margin-top:10px">
@@ -497,7 +497,7 @@
     </div>
     <div class="calc-box">
       <h3><span data-only-lang="it">💧 Fabbisogno Idrico Pediatrico</span><span data-only-lang="en" style="display:none">💧 Paediatric Fluid Requirements</span></h3>
-      <div class="nf" style="margin-bottom:10px"><label>Peso (kg)</label><input type="number" id="idro-peso" placeholder="es. 25" step="0.5" oninput="calcIdro()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Peso (kg)</label><input type="number" id="idro-peso" placeholder="es. 25 / e.g. 25" step="0.5" oninput="calcIdro()"></div>
       <div id="idro-result" style="display:none;margin-top:10px">
         <div style="background:#EDE9FE;border-radius:8px;padding:14px;margin-bottom:10px">
           <div style="font-size:12px;color:var(--slate-l)">Fabbisogno idrico (Holiday-Segar)</div>
@@ -728,14 +728,14 @@
       <div class="nf" style="margin-bottom:10px"><label>Motivo della consulenza</label>
         <select id="ped-piano-motivo"><option value="crescita">Crescita (ritardo o promozione)</option><option value="sovrappeso">Sovrappeso / Obesità pediatrica</option><option value="sottopeso">Sottopeso / Scarso accrescimento</option><option value="allergie">Allergie / Intolleranze alimentari</option><option value="neofobia">Neofobia alimentare / ARFID</option><option value="patologia">Patologia cronica (IBD, celiachia, FC...)</option><option value="prevenzione">Prevenzione e promozione della salute</option></select>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label><input type="number" id="ped-piano-kcal" placeholder="es. 1600" oninput="calcolaPedPiano()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Peso attuale (kg)</label><input type="number" id="ped-piano-peso" placeholder="es. 35" oninput="calcolaPedPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label><input type="number" id="ped-piano-kcal" placeholder="es. 1600 / e.g. 1600" oninput="calcolaPedPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Peso attuale (kg)</label><input type="number" id="ped-piano-peso" placeholder="es. 35 / e.g. 35" oninput="calcolaPedPiano()"></div>
       <div style="margin-bottom:0"><div style="background:#FAF5FF;border:1.5px solid #C4B5FD;border-radius:10px;padding:12px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
           <span style="background:#EDE9FE;color:#5B21B6;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">📋</span>
           <span style="font-size:11px;font-weight:800;color:#5B21B6;text-transform:uppercase;letter-spacing:.6px;font-family:'DM Sans',sans-serif"><span data-only-lang="it">Note Cliniche sul Paziente</span><span data-only-lang="en" style="display:none">Clinical Notes on Patient</span></span>
         </div>
-        <textarea id="ped-piano-note-cliniche" rows="3" placeholder="Diagnosi, allergie/intolleranze, farmaci, abitudini alimentari, preferenze/avversioni..." style="width:100%;padding:10px 12px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#8B5CF6'" onblur="this.style.borderColor='#C4B5FD'"></textarea>
+        <textarea id="ped-piano-note-cliniche" rows="3" placeholder="Diagnosi, allergie/intolleranze, farmaci, abitudini alimentari, preferenze/avversioni... / Diagnosis, allergies/intolerances, medications, eating habits, preferences/aversions..." style="width:100%;padding:10px 12px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#8B5CF6'" onblur="this.style.borderColor='#C4B5FD'"></textarea>
       </div></div>
     </div>
     <div class="calc-box">
@@ -778,14 +778,14 @@
           <span style="background:#EDE9FE;color:#5B21B6;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">💊</span>
           <span style="font-size:11px;font-weight:800;color:#5B21B6;text-transform:uppercase;letter-spacing:.6px"><span data-only-lang="it">Supplementazione Prescritta</span><span data-only-lang="en" style="display:none">Prescribed Supplementation</span></span>
         </div>
-        <textarea id="ped-piano-suppl" rows="4" placeholder="Vitamina D, Ferro, Omega-3, Calcio, Zinco — dosaggi e modalità..." style="width:100%;padding:10px 12px;border:1.5px solid #C4B5FD;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#8B5CF6'" onblur="this.style.borderColor='#C4B5FD'"></textarea>
+        <textarea id="ped-piano-suppl" rows="4" placeholder="Vitamina D, Ferro, Omega-3, Calcio, Zinco — dosaggi e modalità... / Vitamin D, Iron, Omega-3, Calcium, Zinc — dosage and method..." style="width:100%;padding:10px 12px;border:1.5px solid #C4B5FD;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#8B5CF6'" onblur="this.style.borderColor='#C4B5FD'"></textarea>
       </div>
       <div style="padding:16px 18px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <span style="background:#EDE9FE;color:#5B21B6;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">👨‍👩‍👧</span>
           <span style="font-size:11px;font-weight:800;color:#5B21B6;text-transform:uppercase;letter-spacing:.6px"><span data-only-lang="it">Educazione Alimentare / Famiglia</span><span data-only-lang="en" style="display:none">Food Education / Family</span></span>
         </div>
-        <textarea id="ped-piano-edu" rows="4" placeholder="Indicazioni per i genitori, strategie per neofobia, modelling alimentare, no premi con cibo..." style="width:100%;padding:10px 12px;border:1.5px solid #C4B5FD;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#8B5CF6'" onblur="this.style.borderColor='#C4B5FD'"></textarea>
+        <textarea id="ped-piano-edu" rows="4" placeholder="Indicazioni per i genitori, strategie per neofobia, modelling alimentare, no premi con cibo... / Guidance for parents, food neophobia strategies, food modelling, no food rewards..." style="width:100%;padding:10px 12px;border:1.5px solid #C4B5FD;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#8B5CF6'" onblur="this.style.borderColor='#C4B5FD'"></textarea>
       </div>
     </div>
     <div style="padding:14px 18px;background:white;border-top:1.5px solid #C4B5FD">
@@ -793,7 +793,7 @@
         <span style="background:#ECFDF5;color:#065F46;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📅</span>
         <span style="font-size:11px;font-weight:800;color:#065F46;text-transform:uppercase;letter-spacing:.6px"><span data-only-lang="it">Note Generali e Follow-up</span><span data-only-lang="en" style="display:none">General Notes &amp; Follow-up</span></span>
       </div>
-      <textarea id="ped-piano-note-generali" rows="2" placeholder="Rivalutazione tra: ... Parametri di crescita da monitorare: ..." style="width:100%;padding:10px 12px;border:1.5px solid #A7F3D0;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:#F0FDF4;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#A7F3D0'"></textarea>
+      <textarea id="ped-piano-note-generali" rows="2" placeholder="Rivalutazione tra: ... Parametri di crescita da monitorare: ... / Follow-up in: ... Growth parameters to monitor: ..." style="width:100%;padding:10px 12px;border:1.5px solid #A7F3D0;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:#F0FDF4;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#A7F3D0'"></textarea>
     </div>
   </div>
 </div>
@@ -854,7 +854,7 @@ function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStora
       <p style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste ancora nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova a salvare.</p>
       <textarea id="sql-setup-text" rows="14" readonly style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;background:#F8FAFC;box-sizing:border-box"></textarea>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast(_L('✅ SQL copiato!','✅ SQL copied!'),'ok'))">📋 Copia SQL</button>
         <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none">🔗 Apri Supabase Dashboard</a>
         <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')">Chiudi</button>
       </div>
@@ -1685,7 +1685,7 @@ ALTER TABLE note_specialistiche ADD COLUMN IF NOT EXISTS updated_at timestamptz 
   console.error('SQL da eseguire:\n' + sql);
   const modal = document.getElementById('modal-sql-setup');
   if (modal) { document.getElementById('sql-setup-text').value = sql; openM('modal-sql-setup'); }
-  else { toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err'); }
+  else { toast(_L('⚠️ Tabella DB mancante — SQL in console (F12)','⚠️ DB table missing — SQL in console (F12)'), 'err'); }
 }
 
 async function caricaPedDaNote(noteId) {

@@ -174,7 +174,7 @@
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Nota / Titolo sessione</label>
-    <input type="text" id="dg-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:16px">
+    <input type="text" id="dg-nota" placeholder="es. Prima visita, follow-up... / e.g. First visit, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:16px">
   </div>
   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
     <button class="btn btn-primary btn-sm" onclick="salvaDiabete()">💾 Salva in Cartella</button>
@@ -209,7 +209,7 @@
     <div class="calc-box">
       <h3><span data-only-lang="it">⚖️ Calcolo Rapporto I:C</span><span data-only-lang="en" style="display:none">⚖️ I:C Ratio Calculator</span></h3>
       <span class="calc-ref-note">&#9877;&#65039; Riferimento da letteratura scientifica &#8212; non costituisce prescrizione.</span>
-      <div class="nf" style="margin-bottom:10px"><label>Peso corporeo (kg)</label><input type="number" id="ic-peso" placeholder="es. 70" step="0.5" oninput="calcIC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Peso corporeo (kg)</label><input type="number" id="ic-peso" placeholder="es. 70 / e.g. 70" step="0.5" oninput="calcIC()"></div>
       <div class="nf" style="margin-bottom:10px"><label>Tipo diabete</label>
         <select id="ic-tipo" onchange="calcIC()">
           <option value="t1">Diabete Tipo 1</option>
@@ -217,7 +217,7 @@
           <option value="mody">MODY / altri</option>
         </select>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label>Dose totale giornaliera insulina (TDD, unità)</label><input type="number" id="ic-tdd" placeholder="es. 40" oninput="calcIC()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Dose totale giornaliera insulina (TDD, unità)</label><input type="number" id="ic-tdd" placeholder="es. 40 / e.g. 40" oninput="calcIC()"></div>
       <div class="nf" style="margin-bottom:10px"><label>Metodo calcolo</label>
         <select id="ic-metodo" onchange="calcIC()">
           <option value="500">Regola del 500 (CHO counting)</option>
@@ -236,11 +236,11 @@
     <div class="calc-box">
       <h3><span data-only-lang="it">💉 Calcolo Dose Insulina per Pasto</span><span data-only-lang="en" style="display:none">💉 Meal Insulin Dose Calculator</span></h3>
       <span class="calc-ref-note">&#9877;&#65039; Riferimento da letteratura scientifica &#8212; non costituisce prescrizione.</span>
-      <div class="nf" style="margin-bottom:10px"><label>CHO del pasto (g)</label><input type="number" id="pasto-cho" placeholder="es. 60" oninput="calcDose()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Rapporto I:C del pasto</label><input type="number" id="pasto-ic" placeholder="es. 10" oninput="calcDose()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Glicemia attuale (mg/dL)</label><input type="number" id="pasto-glic" placeholder="es. 160" oninput="calcDose()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Target glicemia (mg/dL)</label><input type="number" id="pasto-target" placeholder="es. 100" value="100" oninput="calcDose()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Fattore di sensibilità insulinica FSI (mg/dL per 1U)</label><input type="number" id="pasto-fsi" placeholder="es. 50" oninput="calcDose()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>CHO del pasto (g)</label><input type="number" id="pasto-cho" placeholder="es. 60 / e.g. 60" oninput="calcDose()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Rapporto I:C del pasto</label><input type="number" id="pasto-ic" placeholder="es. 10 / e.g. 10" oninput="calcDose()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Glicemia attuale (mg/dL)</label><input type="number" id="pasto-glic" placeholder="es. 160 / e.g. 160" oninput="calcDose()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Target glicemia (mg/dL)</label><input type="number" id="pasto-target" placeholder="es. 100 / e.g. 100" value="100" oninput="calcDose()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Fattore di sensibilità insulinica FSI (mg/dL per 1U)</label><input type="number" id="pasto-fsi" placeholder="es. 50 / e.g. 50" oninput="calcDose()"></div>
       <div id="dose-result" style="background:#F0FDF4;border-radius:8px;padding:14px;margin-top:10px;display:none">
         <div style="display:flex;gap:16px;flex-wrap:wrap">
           <div><div style="font-size:11.5px;color:var(--slate-l)" data-only-lang="it">Dose per CHO</div><div style="font-size:11.5px;color:var(--slate-l)" data-only-lang="en" style="display:none">CHO dose</div><div class="result-big" id="dose-cho" style="color:#15803D">—</div></div>
@@ -257,7 +257,7 @@
     <span class="calc-ref-note">&#9877;&#65039; Riferimento da letteratura scientifica &#8212; non costituisce prescrizione.</span>
     <div class="alert-info alert-box" style="margin-bottom:12px">Il FSI indica di quanti mg/dL scende la glicemia con 1 unità di insulina rapida.</div>
     <div class="grid-3">
-      <div class="nf"><label>TDD (unità/die)</label><input type="number" id="fsi-tdd" placeholder="es. 40" oninput="calcFSI()"></div>
+      <div class="nf"><label>TDD (unità/die)</label><input type="number" id="fsi-tdd" placeholder="es. 40 / e.g. 40" oninput="calcFSI()"></div>
       <div class="nf">
         <label>Metodo</label>
         <select id="fsi-metodo" onchange="calcFSI()">
@@ -305,7 +305,7 @@
     <div style="background:#EFF6FF;border-radius:8px;padding:14px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
       <div><div style="font-size:12px;color:var(--slate-l)" data-only-lang="it">Totale CHO pasto</div><div style="font-size:12px;color:var(--slate-l)" data-only-lang="en" style="display:none">Total meal CHO</div><div class="result-big" id="cho-tot">0 g</div></div>
       <div><div style="font-size:12px;color:var(--slate-l)" data-only-lang="it">Con I:C</div><div style="font-size:12px;color:var(--slate-l)" data-only-lang="en" style="display:none">With I:C</div>
-        <input type="number" id="cho-ic-val" placeholder="I:C es. 10" style="width:80px;padding:5px 8px;border:1.5px solid #BFDBFE;border-radius:6px;font-family:inherit;font-size:16px" oninput="calcCHODose()">
+        <input type="number" id="cho-ic-val" placeholder="I:C es. 10 / I:C e.g. 10" style="width:80px;padding:5px 8px;border:1.5px solid #BFDBFE;border-radius:6px;font-family:inherit;font-size:16px" oninput="calcCHODose()">
       </div>
       <div><div style="font-size:12px;color:var(--slate-l)" data-only-lang="it">Dose insulina stimata</div><div style="font-size:12px;color:var(--slate-l)" data-only-lang="en" style="display:none">Estimated insulin dose</div><div class="result-big" id="cho-dose" style="color:#15803D">— U</div></div>
     </div>
@@ -348,7 +348,7 @@
   </div>
   <div class="nf no-print" style="margin-bottom:16px;max-width:300px">
     <label>Cerca alimento</label>
-    <input type="text" id="porz-search" placeholder="es. pasta, pane, mela..." oninput="filterPorzioni()">
+    <input type="text" id="porz-search" placeholder="es. pasta, pane, mela... / e.g. pasta, bread, apple..." oninput="filterPorzioni()">
   </div>
   <div id="porzioni-grid"></div>
 </div>
@@ -424,7 +424,7 @@
           </div>
           <div>
             <label style="font-size:11px;font-weight:700;color:#78350F;display:block;margin-bottom:4px">Target glicemia</label>
-            <input type="text" id="dep-target" placeholder="es. 100 mg/dL" style="width:100%;border:none;border-bottom:2px solid #F59E0B;outline:none;background:transparent;font-size:13px;padding:2px 0">
+            <input type="text" id="dep-target" placeholder="es. 100 mg/dL / e.g. 100 mg/dL" style="width:100%;border:none;border-bottom:2px solid #F59E0B;outline:none;background:transparent;font-size:13px;padding:2px 0">
           </div>
           <div>
             <label style="font-size:11px;font-weight:700;color:#78350F;display:block;margin-bottom:4px">FSI</label>
@@ -583,14 +583,14 @@
       <div class="nf" style="margin-bottom:10px"><label>Terapia insulinica</label>
         <select id="dg-piano-insulina"><option value="basal_bolus">Basal-Bolus (MDI)</option><option value="csii">Pompa (CSII)</option><option value="basale">Solo basale</option><option value="nessuna">Non insulino-dipendente</option></select>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label><input type="number" id="dg-piano-kcal" placeholder="es. 1800" oninput="calcolaDgPiano()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>CHO target totale (g/die)</label><input type="number" id="dg-piano-cho-tot" placeholder="es. 220" oninput="calcolaDgPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label><input type="number" id="dg-piano-kcal" placeholder="es. 1800 / e.g. 1800" oninput="calcolaDgPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>CHO target totale (g/die)</label><input type="number" id="dg-piano-cho-tot" placeholder="es. 220 / e.g. 220" oninput="calcolaDgPiano()"></div>
       <div style="margin-bottom:10px;background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:12px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
           <span style="background:#DBEAFE;color:#1D4ED8;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">📋</span>
           <span style="font-size:11px;font-weight:800;color:#1D4ED8;text-transform:uppercase;letter-spacing:.6px;font-family:'DM Sans',sans-serif"><span data-only-lang="it">Note Cliniche sul Paziente</span><span data-only-lang="en" style="display:none">Clinical Notes on Patient</span></span>
         </div>
-        <textarea id="dg-piano-note-cliniche" rows="3" placeholder="HbA1c, TIR attuale, complicanze, altri farmaci..." style="width:100%;padding:10px 12px;border:1.5px solid #BFDBFE;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#BFDBFE'"></textarea>
+        <textarea id="dg-piano-note-cliniche" rows="3" placeholder="HbA1c, TIR attuale, complicanze, altri farmaci... / HbA1c, current TIR, complications, other medications..." style="width:100%;padding:10px 12px;border:1.5px solid #BFDBFE;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#BFDBFE'"></textarea>
       </div>
     </div>
     <div class="calc-box">
@@ -627,14 +627,14 @@
           <span style="background:#DBEAFE;color:#1D4ED8;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🚫</span>
           <span style="font-size:11px;font-weight:800;color:#1D4ED8;text-transform:uppercase;letter-spacing:.6px"><span data-only-lang="it">Alimenti da Limitare / Monitorare</span><span data-only-lang="en" style="display:none">Foods to Limit / Monitor</span></span>
         </div>
-        <textarea id="dg-piano-limita" rows="4" placeholder="Alimenti ad alto IG da limitare, porzioni critiche..." style="width:100%;padding:10px 12px;border:1.5px solid #BFDBFE;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#BFDBFE'"></textarea>
+        <textarea id="dg-piano-limita" rows="4" placeholder="Alimenti ad alto IG da limitare, porzioni critiche... / High-GI foods to limit, critical portions..." style="width:100%;padding:10px 12px;border:1.5px solid #BFDBFE;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#BFDBFE'"></textarea>
       </div>
       <div style="padding:16px 18px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <span style="background:#DBEAFE;color:#1D4ED8;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🏃</span>
           <span style="font-size:11px;font-weight:800;color:#1D4ED8;text-transform:uppercase;letter-spacing:.6px"><span data-only-lang="it">Attività Fisica — Indicazioni Nutrizionali</span><span data-only-lang="en" style="display:none">Physical Activity — Nutritional Guidance</span></span>
         </div>
-        <textarea id="dg-piano-sport" rows="4" placeholder="Timing del pasto pre-attività, gestione ipoglicemia da sforzo..." style="width:100%;padding:10px 12px;border:1.5px solid #BFDBFE;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#BFDBFE'"></textarea>
+        <textarea id="dg-piano-sport" rows="4" placeholder="Timing del pasto pre-attività, gestione ipoglicemia da sforzo... / Pre-activity meal timing, exercise-induced hypoglycaemia management..." style="width:100%;padding:10px 12px;border:1.5px solid #BFDBFE;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#BFDBFE'"></textarea>
       </div>
     </div>
     <div style="padding:14px 18px;background:white;border-top:1.5px solid #BFDBFE">
@@ -642,7 +642,7 @@
         <span style="background:#ECFDF5;color:#065F46;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📅</span>
         <span style="font-size:11px;font-weight:800;color:#065F46;text-transform:uppercase;letter-spacing:.6px"><span data-only-lang="it">Note Generali e Piano di Follow-up</span><span data-only-lang="en" style="display:none">General Notes &amp; Follow-up Plan</span></span>
       </div>
-      <textarea id="dg-piano-note-generali" rows="2" placeholder="Prossima rivalutazione, obiettivi TIR, HbA1c target..." style="width:100%;padding:10px 12px;border:1.5px solid #A7F3D0;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:#F0FDF4;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#A7F3D0'"></textarea>
+      <textarea id="dg-piano-note-generali" rows="2" placeholder="Prossima rivalutazione, obiettivi TIR, HbA1c target... / Next reassessment, TIR goals, target HbA1c..." style="width:100%;padding:10px 12px;border:1.5px solid #A7F3D0;border-radius:10px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:#F0FDF4;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#A7F3D0'"></textarea>
     </div>
   </div>
 </div>
@@ -681,14 +681,14 @@ function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStora
         + '<span style="font-size:20px;flex-shrink:0">' + m.icon + '</span>'
         + '<input type="text" id="dg-m' + m.id + '-nome" value="' + m.nome + '" style="flex:1;min-width:100px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none">'
         + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
-        + '<input type="text" id="dg-m' + m.id + '-ora" value="' + m.ora + '" placeholder="Ora" style="width:60px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">'
+        + '<input type="text" id="dg-m' + m.id + '-ora" value="' + m.ora + '" placeholder="' + _L('Ora','Time') + '" style="width:60px;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:13px;font-family:inherit;outline:none">'
         + '<span style="font-size:11px;font-weight:700;color:#1D4ED8">CHO:</span>'
         + '<input type="number" id="dg-m' + m.id + '-cho" value="' + m.cho + '" placeholder="g" style="width:60px;padding:5px 8px;border:1.5px solid #93C5FD;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;outline:none;color:#1D4ED8">'
         + '<span style="font-size:11px;color:var(--slate-l)">g</span>'
         + '</div>'
         + '</div>'
-        + '<textarea id="dg-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti (es. Pane integrale 80g=40gCHO, Latte 250mL=12gCHO, Frutta 150g=18gCHO)..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:16px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
-        + '<input type="text" id="dg-m' + m.id + '-note" placeholder="Note: ' + m.note + '" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
+        + '<textarea id="dg-m' + m.id + '-alimenti" rows="2" placeholder="Alimenti (es. Pane integrale 80g=40gCHO, Latte 250mL=12gCHO, Frutta 150g=18gCHO)... / Foods (e.g. Wholemeal bread 80g=40gCHO, Milk 250mL=12gCHO, Fruit 150g=18gCHO)..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:6px;font-size:16px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:6px"></textarea>'
+        + '<input type="text" id="dg-m' + m.id + '-note" placeholder="' + _L('Note: ','Note: ') + m.note + '" style="width:100%;padding:5px 8px;border:1.5px solid var(--border-d);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--slate-m);box-sizing:border-box">'
         + '</div>';
     }).join('');
   });
@@ -945,7 +945,7 @@ function renderCHOItems() {
   if (!choItems.length) { c.innerHTML = ''; return; }
   c.innerHTML = choItems.map((it, i) => `
     <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
-      <input type="text" value="${esc(it.nome)}" placeholder="Alimento" 
+      <input type="text" value="${esc(it.nome)}" placeholder="${_L('Alimento','Food')}"
         oninput="choItems[${i}].nome=this.value"
         style="flex:2;padding:7px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-family:inherit;font-size:16px;outline:none">
       <input type="number" value="${it.cho||''}" placeholder="g CHO"
@@ -1169,7 +1169,7 @@ ALTER TABLE note_specialistiche ADD COLUMN IF NOT EXISTS updated_at timestamptz 
     document.getElementById('sql-setup-text').value = sql;
     openM('modal-sql-setup');
   } else {
-    toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err');
+    toast(_L('⚠️ Tabella DB mancante — SQL in console (F12)', '⚠️ DB table missing — SQL in console (F12)'), 'err');
   }
 }
 

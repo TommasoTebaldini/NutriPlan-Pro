@@ -127,11 +127,11 @@
 
 <!-- TABS -->
 <div class="gdpr-tabs">
-  <button class="gdpr-tab active" onclick="switchTab('registro')">📋 Registro Trattamenti</button>
-  <button class="gdpr-tab" onclick="switchTab('oblio')">🗑️ Diritto all'Oblio</button>
-  <button class="gdpr-tab" onclick="switchTab('privacy')">📄 Informativa Privacy</button>
-  <button class="gdpr-tab" onclick="switchTab('stats')">📊 Statistiche</button>
-  <button class="gdpr-tab" onclick="switchTab('portabilita')">📤 Portabilità</button>
+  <button class="gdpr-tab active" onclick="switchTab('registro')">📋 <span data-only-lang="it">Registro Trattamenti</span><span data-only-lang="en" style="display:none">Processing Register</span></button>
+  <button class="gdpr-tab" onclick="switchTab('oblio')">🗑️ <span data-only-lang="it">Diritto all'Oblio</span><span data-only-lang="en" style="display:none">Right to Erasure</span></button>
+  <button class="gdpr-tab" onclick="switchTab('privacy')">📄 <span data-only-lang="it">Informativa Privacy</span><span data-only-lang="en" style="display:none">Privacy Policy</span></button>
+  <button class="gdpr-tab" onclick="switchTab('stats')">📊 <span data-only-lang="it">Statistiche</span><span data-only-lang="en" style="display:none">Statistics</span></button>
+  <button class="gdpr-tab" onclick="switchTab('portabilita')">📤 <span data-only-lang="it">Portabilità</span><span data-only-lang="en" style="display:none">Portability</span></button>
 </div>
 
 <!-- Error banner (hidden by default, shown on load failure) -->
@@ -152,7 +152,7 @@
     <h3>📋 <span data-only-lang="it">Registro Trattamenti Pazienti</span><span data-only-lang="en" style="display:none">Patient Treatment Registry</span></h3>
     <!-- Barra ricerca e filtri -->
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
-      <input type="search" id="gdpr-search-input" placeholder="🔍 Cerca paziente..." oninput="gdprSearch(this.value)" style="flex:1;min-width:180px;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;outline:none;color:var(--slate)">
+      <input type="search" id="gdpr-search-input" placeholder="🔍 Cerca paziente... / Search patient..." oninput="gdprSearch(this.value)" style="flex:1;min-width:180px;padding:8px 12px;border:1.5px solid var(--border-d);border-radius:8px;font-size:13px;font-family:inherit;outline:none;color:var(--slate)">
       <div style="display:flex;gap:3px;background:#F1F5F9;border-radius:8px;padding:3px;flex-shrink:0">
         <button id="gdpr-filter-all" class="gdpr-filter-btn active" onclick="gdprSetFilter('all')"><span data-only-lang="it">Tutti</span><span data-only-lang="en" style="display:none">All</span></button>
         <button id="gdpr-filter-yes" class="gdpr-filter-btn" onclick="gdprSetFilter('yes')">✅ <span data-only-lang="it">Con consenso</span><span data-only-lang="en" style="display:none">With consent</span></button>
@@ -172,7 +172,7 @@
           </tr>
         </thead>
         <tbody id="registro-tbody">
-          <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--slate-l)">⏳ Caricamento...</td></tr>
+          <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--slate-l)">⏳ Caricamento... / Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -184,10 +184,11 @@
   <div class="gdpr-card">
     <h3>🗑️ <span data-only-lang="it">Diritto all'Oblio — Art. 17 GDPR</span><span data-only-lang="en" style="display:none">Right to Erasure — Art. 17 GDPR</span></h3>
     <div style="background:#FEF2F2;border-radius:8px;padding:12px 14px;margin-bottom:14px;border-left:3px solid #EF4444;font-size:12.5px;color:#7F1D1D;line-height:1.6">
-      <strong>⚠️ Attenzione:</strong> L'eliminazione è <strong>irreversibile</strong>. Vengono eliminati: cartella, piani, NCPt, BIA, schede valutazione, note specialistiche, esami biochimici, allegati e collegamento paziente. Per procedere verrà richiesto di digitare il nome del paziente per conferma.
+      <span data-only-lang="it"><strong>⚠️ Attenzione:</strong> L'eliminazione è <strong>irreversibile</strong>. Vengono eliminati: cartella, piani, NCPt, BIA, schede valutazione, note specialistiche, esami biochimici, allegati e collegamento paziente. Per procedere verrà richiesto di digitare il nome del paziente per conferma.</span>
+      <span data-only-lang="en" style="display:none"><strong>⚠️ Warning:</strong> Deletion is <strong>irreversible</strong>. The following are deleted: patient file, plans, NCPt, BIA, assessment records, clinical notes, lab results, attachments and the patient link. You will be asked to type the patient's name to confirm before proceeding.</span>
     </div>
     <div id="oblio-list">
-      <div style="text-align:center;padding:24px;color:var(--slate-l);font-size:13px">⏳ Caricamento...</div>
+      <div style="text-align:center;padding:24px;color:var(--slate-l);font-size:13px">⏳ Caricamento... / Loading...</div>
     </div>
   </div>
 </div>
@@ -197,16 +198,17 @@
   <div class="gdpr-card">
     <h3>📊 <span data-only-lang="it">Statistiche GDPR</span><span data-only-lang="en" style="display:none">GDPR Statistics</span></h3>
     <div id="stats-content" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px">
-      <div style="text-align:center;padding:20px;color:var(--slate-l)">⏳ Caricamento...</div>
+      <div style="text-align:center;padding:20px;color:var(--slate-l)">⏳ Caricamento... / Loading...</div>
     </div>
   </div>
   <div class="gdpr-card">
     <h3>⏳ <span data-only-lang="it">Conservazione Dati — Art. 5 GDPR</span><span data-only-lang="en" style="display:none">Data Retention — Art. 5 GDPR</span></h3>
     <div style="font-size:12px;color:var(--slate-m);margin-bottom:14px;line-height:1.6">
-      I dati sanitari devono essere conservati per 10 anni dall'ultima prestazione. Di seguito i pazienti con cartella aperta da più di 8 anni (prossimi alla scadenza) o da più di 10 anni (in scadenza/scaduti).
+      <span data-only-lang="it">I dati sanitari devono essere conservati per 10 anni dall'ultima prestazione. Di seguito i pazienti con cartella aperta da più di 8 anni (prossimi alla scadenza) o da più di 10 anni (in scadenza/scaduti).</span>
+      <span data-only-lang="en" style="display:none">Health data must be retained for 10 years from the last service provided. Below are patients whose file was opened more than 8 years ago (approaching the deadline) or more than 10 years ago (due/overdue).</span>
     </div>
     <div id="retention-list">
-      <div style="text-align:center;padding:16px;color:var(--slate-l)">⏳ Caricamento...</div>
+      <div style="text-align:center;padding:16px;color:var(--slate-l)">⏳ Caricamento... / Loading...</div>
     </div>
   </div>
 </div>
@@ -216,26 +218,30 @@
   <div class="gdpr-card">
     <h3>📤 <span data-only-lang="it">Portabilità dei Dati — Art. 20 GDPR</span><span data-only-lang="en" style="display:none">Data Portability — Art. 20 GDPR</span></h3>
     <div style="font-size:12px;color:var(--slate-m);margin-bottom:16px;line-height:1.6">
-      Il paziente ha diritto di ricevere i propri dati in formato strutturato e leggibile da macchina. Seleziona un paziente per esportarne i dati anagrafici e la cartella clinica in formato JSON.
+      <span data-only-lang="it">Il paziente ha diritto di ricevere i propri dati in formato strutturato e leggibile da macchina. Seleziona un paziente per esportarne i dati anagrafici e la cartella clinica in formato JSON.</span>
+      <span data-only-lang="en" style="display:none">The patient has the right to receive their data in a structured, machine-readable format. Select a patient to export their personal and clinical data as JSON.</span>
     </div>
     <div class="fg" style="margin-bottom:14px">
-      <label style="font-size:12px;font-weight:700;color:var(--slate-m)">Seleziona paziente:</label>
+      <label style="font-size:12px;font-weight:700;color:var(--slate-m)"><span data-only-lang="it">Seleziona paziente:</span><span data-only-lang="en" style="display:none">Select patient:</span></label>
       <select id="portabilita-select" style="width:100%;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;margin-top:6px;background:white">
-        <option value="">— Seleziona un paziente —</option>
+        <option value="">— Seleziona un paziente — / — Select a patient —</option>
       </select>
     </div>
-    <button class="btn btn-sm" onclick="esportaDatiPaziente()" style="background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;border:none;gap:6px">📤 Esporta dati in JSON</button>
+    <button class="btn btn-sm" onclick="esportaDatiPaziente()" style="background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;border:none;gap:6px">📤 <span data-only-lang="it">Esporta dati in JSON</span><span data-only-lang="en" style="display:none">Export data as JSON</span></button>
     <div id="portabilita-status" style="margin-top:12px"></div>
   </div>
   <div class="gdpr-card">
     <h3>📋 <span data-only-lang="it">Log Richieste Accesso (DSAR)</span><span data-only-lang="en" style="display:none">Access Request Log (DSAR)</span></h3>
     <div style="font-size:12px;color:var(--slate-m);margin-bottom:14px;line-height:1.6">
-      Tieni traccia delle richieste di accesso ai dati ricevute dai pazienti (Data Subject Access Requests). Conserva questo registro per almeno 3 anni.
+      <span data-only-lang="it">Tieni traccia delle richieste di accesso ai dati ricevute dai pazienti (Data Subject Access Requests). Conserva questo registro per almeno 3 anni.</span>
+      <span data-only-lang="en" style="display:none">Keep track of data access requests received from patients (Data Subject Access Requests). Retain this log for at least 3 years.</span>
     </div>
     <div id="dsar-list" style="margin-bottom:12px">
-      <div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna richiesta registrata.</div>
+      <div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">
+        <span data-only-lang="it">Nessuna richiesta registrata.</span><span data-only-lang="en" style="display:none">No requests logged.</span>
+      </div>
     </div>
-    <button class="btn btn-ghost btn-sm" onclick="aggiungiDSAR()">+ Registra nuova richiesta</button>
+    <button class="btn btn-ghost btn-sm" onclick="aggiungiDSAR()">+ <span data-only-lang="it">Registra nuova richiesta</span><span data-only-lang="en" style="display:none">Log new request</span></button>
   </div>
 </div>
 
@@ -247,6 +253,7 @@
       <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
     </div>
     <div class="privacy-text">
+      <div data-only-lang="it">
       <h4>1. Titolare del Trattamento</h4>
       Il titolare del trattamento è il professionista nutrizionista (di seguito "il Titolare") che utilizza la piattaforma DietPlan Pro per la gestione delle cartelle cliniche dei pazienti.
 
@@ -286,9 +293,52 @@
 
       <h4>9. Contatto</h4>
       Per esercitare i propri diritti, l'interessato può contattare il Titolare tramite i recapiti comunicati all'atto della presa in carico.
+      </div>
+      <div data-only-lang="en" style="display:none">
+      <h4>1. Data Controller</h4>
+      The data controller is the nutrition professional (hereinafter "the Controller") who uses the DietPlan Pro platform to manage patient clinical records.
+
+      <h4>2. Data Processed</h4>
+      The Controller processes the following categories of personal data:<br>
+      — <strong>Identification data</strong>: first name, last name, date of birth, sex, tax ID<br>
+      — <strong>Health data (special category under Art. 9 GDPR)</strong>: diagnoses, conditions, anthropometric measurements (weight, height, BIA), lab results, meal plans, clinical notes<br>
+      — <strong>Contact data</strong> (if provided): email address for access to the patient area
+
+      <h4>3. Purposes of Processing</h4>
+      Data is processed for:<br>
+      a) Provision of clinical nutrition services (legal basis: performance of a contract, Art. 6.1.b GDPR)<br>
+      b) Compliance with legal obligations (legal basis: Art. 6.1.c GDPR)<br>
+      c) Management of the therapeutic relationship and clinical communication (legal basis: explicit consent, Art. 9.2.a GDPR)
+
+      <h4>4. Data Retention</h4>
+      Health data is retained for 10 years from the date of the last service provided, unless specific regulatory obligations apply.
+
+      <h4>5. Data Subject Rights</h4>
+      The data subject may exercise the following rights:<br>
+      — Access to data (Art. 15 GDPR)<br>
+      — Rectification (Art. 16 GDPR)<br>
+      — Erasure / Right to be forgotten (Art. 17 GDPR)<br>
+      — Restriction of processing (Art. 18 GDPR)<br>
+      — Data portability (Art. 20 GDPR)<br>
+      — Objection to processing (Art. 21 GDPR)<br>
+      — Withdrawal of consent at any time
+
+      <h4>6. Data Protection Officer (DPO)</h4>
+      Not mandatory for sole practitioners. The controller manages data protection directly.
+
+      <h4>7. Transfers</h4>
+      Data is stored on Supabase infrastructure (EU). It is not transferred to third countries without adequate safeguards.
+
+      <h4>8. Data Breaches</h4>
+      In the event of a personal data breach, the Controller will notify the supervisory authority within 72 hours (Art. 33 GDPR) and, if necessary, the data subjects (Art. 34 GDPR).
+
+      <h4>9. Contact</h4>
+      To exercise their rights, the data subject may contact the Controller using the contact details provided when care began.
+      </div>
     </div>
     <div style="margin-top:12px;font-size:11.5px;color:var(--slate-l);font-style:italic">
-      Questa è una bozza di informativa. Personalizzare con i dati del titolare del trattamento e far validare da un consulente legale/DPO prima dell'uso.
+      <span data-only-lang="it">Questa è una bozza di informativa. Personalizzare con i dati del titolare del trattamento e far validare da un consulente legale/DPO prima dell'uso.</span>
+      <span data-only-lang="en" style="display:none">This is a draft privacy notice. Customize it with the data controller's details and have it validated by a legal/DPO advisor before use.</span>
     </div>
   </div>
 </div>
@@ -299,20 +349,21 @@
 <!-- MODAL: CONFERMA OBLIO -->
 <div class="modal-bg" id="modal-oblio">
   <div class="modal" style="max-width:400px">
-    <div class="mhdr"><h2>🗑️ Diritto all'Oblio</h2><button class="mclose" onclick="closeM('modal-oblio')">✕</button></div>
+    <div class="mhdr"><h2>🗑️ <span data-only-lang="it">Diritto all'Oblio</span><span data-only-lang="en" style="display:none">Right to Erasure</span></h2><button class="mclose" onclick="closeM('modal-oblio')">✕</button></div>
     <div class="mbody" style="padding:20px 22px">
       <div style="background:#FEF2F2;border-radius:8px;padding:12px;margin-bottom:14px;font-size:12.5px;color:#7F1D1D;border-left:3px solid #EF4444;line-height:1.6">
-        ⚠️ Stai per eliminare <strong>irreversibilmente</strong> tutti i dati del paziente:<br>
+        <span data-only-lang="it">⚠️ Stai per eliminare <strong>irreversibilmente</strong> tutti i dati del paziente:</span>
+        <span data-only-lang="en" style="display:none">⚠️ You are about to <strong>irreversibly</strong> delete all data for patient:</span><br>
         <strong id="oblio-nome-display" style="font-size:14px;color:#DC2626"></strong>
       </div>
       <div class="fg" style="margin-bottom:0">
-        <label style="font-size:12px;font-weight:700;color:var(--slate-m)">Digita il nome del paziente per confermare:</label>
-        <input type="text" id="oblio-confirm-input" placeholder="Nome del paziente..." style="width:100%;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;margin-top:6px;box-sizing:border-box" oninput="checkOblioConfirm()">
+        <label style="font-size:12px;font-weight:700;color:var(--slate-m)"><span data-only-lang="it">Digita il nome del paziente per confermare:</span><span data-only-lang="en" style="display:none">Type the patient's name to confirm:</span></label>
+        <input type="text" id="oblio-confirm-input" placeholder="Nome del paziente... / Patient's name..." style="width:100%;padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;margin-top:6px;box-sizing:border-box" oninput="checkOblioConfirm()">
       </div>
     </div>
     <div class="mfoot">
-      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-oblio')">Annulla</button>
-      <button class="btn btn-sm" id="oblio-confirm-btn" disabled onclick="eseguiOblio()" style="background:#DC2626;color:white;border-color:#DC2626;opacity:.5">🗑️ Elimina tutto</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-oblio')"><span data-only-lang="it">Annulla</span><span data-only-lang="en" style="display:none">Cancel</span></button>
+      <button class="btn btn-sm" id="oblio-confirm-btn" disabled onclick="eseguiOblio()" style="background:#DC2626;color:white;border-color:#DC2626;opacity:.5">🗑️ <span data-only-lang="it">Elimina tutto</span><span data-only-lang="en" style="display:none">Delete everything</span></button>
     </div>
   </div>
 </div>
@@ -409,19 +460,19 @@ async function loadGDPRData() {
   }
 
   try {
-    setDiag('🔄 Verifica sessione...', 'info');
+    setDiag(_L('🔄 Verifica sessione...', '🔄 Checking session...'), 'info');
     const authResp = await sb.auth.getSession();
     const session = authResp?.data?.session;
     if (authResp?.error) throw new Error('Auth: ' + authResp.error.message);
     if (!session?.user) {
-      setDiag('⚠️ Sessione non trovata — reindirizzamento...', 'err');
+      setDiag(_L('⚠️ Sessione non trovata — reindirizzamento...', '⚠️ Session not found — redirecting...'), 'err');
       setTimeout(() => { window.location.href = 'index.html'; }, 1800);
       return;
     }
 
     const userId = session.user.id;
     const email = session.user.email || userId.slice(0, 8);
-    setDiag('🔄 Caricamento cartelle (' + email + ')...', 'info');
+    setDiag(_L('🔄 Caricamento cartelle (', '🔄 Loading patient files (') + email + ')...', 'info');
 
     // Carica cartelle + consensi digitali (patient_documents) + mapping paziente→cartella in parallelo
     const [cartelleRes, docsRes, linksRes] = await Promise.all([
@@ -453,7 +504,7 @@ async function loadGDPRData() {
 
     _allCartelle = (cartelleRes.data || []).map(c => ({ ...c, _gdprDigitale: _gdprDigitaleMap[c.id] || null }));
     const nPaz = _allCartelle.length;
-    setDiag('✅ ' + nPaz + (nPaz === 1 ? ' cartella caricata' : ' cartelle caricate'), 'ok');
+    setDiag('✅ ' + nPaz + (nPaz === 1 ? _L(' cartella caricata', ' patient file loaded') : _L(' cartelle caricate', ' patient files loaded')), 'ok');
 
     if (errEl) errEl.style.display = 'none';
     try { renderRegistro(); } catch(re) { console.error('renderRegistro:', re); }
@@ -461,12 +512,12 @@ async function loadGDPRData() {
     try { renderSummaryBar(); } catch(re) { console.error('renderSummaryBar:', re); }
   } catch(e) {
     console.error('loadGDPRData error:', e);
-    setDiag('❌ Errore: ' + (e.message || String(e)), 'err');
-    if (errEl) { errEl.textContent = '⚠️ Errore caricamento: ' + (e.message || String(e)); errEl.style.display = 'block'; }
+    setDiag(_L('❌ Errore: ', '❌ Error: ') + (e.message || String(e)), 'err');
+    if (errEl) { errEl.textContent = _L('⚠️ Errore caricamento: ', '⚠️ Loading error: ') + (e.message || String(e)); errEl.style.display = 'block'; }
     const tbody = document.getElementById('registro-tbody');
-    if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#DC2626;padding:24px">⚠️ Errore: ' + (e.message || String(e)) + '</td></tr>';
+    if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#DC2626;padding:24px">⚠️ ' + _L('Errore: ', 'Error: ') + (e.message || String(e)) + '</td></tr>';
     const oblioEl = document.getElementById('oblio-list');
-    if (oblioEl) oblioEl.innerHTML = '<div style="text-align:center;padding:24px;color:#DC2626">⚠️ Errore caricamento dati.</div>';
+    if (oblioEl) oblioEl.innerHTML = '<div style="text-align:center;padding:24px;color:#DC2626">⚠️ ' + _L('Errore caricamento dati.', 'Error loading data.') + '</div>';
   }
 }
 
@@ -474,7 +525,7 @@ function renderRegistro() {
   const tbody = document.getElementById('registro-tbody');
   const filtered = getFilteredCartelle();
   if (!filtered.length) {
-    var emptyMsg = _allCartelle.length ? 'Nessun paziente corrisponde alla ricerca.' : 'Nessuna cartella paziente.';
+    var emptyMsg = _allCartelle.length ? _L('Nessun paziente corrisponde alla ricerca.', 'No patient matches the search.') : _L('Nessuna cartella paziente.', 'No patient files.');
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--slate-l)">' + emptyMsg + '</td></tr>';
     return;
   }
@@ -487,25 +538,25 @@ function renderRegistro() {
     const isConsented = hasManual || hasDigital;
     const yearsOld = (now - new Date(c.created_at)) / (1000 * 60 * 60 * 24 * 365);
     const retentionBadge = yearsOld >= 10
-      ? '<span class="tag-mini" style="background:#FEE2E2;color:#991B1B">⚠️ >10 anni</span>'
-      : yearsOld >= 8 ? '<span class="tag-mini" style="background:#FEF3C7;color:#92400E">⏰ >8 anni</span>' : '';
+      ? '<span class="tag-mini" style="background:#FEE2E2;color:#991B1B">⚠️ ' + _L('>10 anni', '>10 years') + '</span>'
+      : yearsOld >= 8 ? '<span class="tag-mini" style="background:#FEF3C7;color:#92400E">⏰ ' + _L('>8 anni', '>8 years') + '</span>' : '';
     // Data e fonte del consenso più recente
     let consentDateStr = '—';
     let consentSource = '';
     if (hasDigital) {
-      consentDateStr = new Date(c._gdprDigitale).toLocaleDateString('it');
-      consentSource = '<span title="Firmato digitalmente dall\'app paziente" style="display:inline-block;background:#DBEAFE;color:#1D4ED8;font-size:10px;font-weight:700;padding:1px 5px;border-radius:5px;margin-left:4px">📱 App</span>';
+      consentDateStr = new Date(c._gdprDigitale).toLocaleDateString(getLang());
+      consentSource = '<span title="' + _L('Firmato digitalmente dall\'app paziente', 'Digitally signed via the patient app') + '" style="display:inline-block;background:#DBEAFE;color:#1D4ED8;font-size:10px;font-weight:700;padding:1px 5px;border-radius:5px;margin-left:4px">📱 App</span>';
     } else if (hasManual && c.gdpr_consenso_at) {
-      consentDateStr = new Date(c.gdpr_consenso_at).toLocaleDateString('it');
-      consentSource = '<span title="Registrato manualmente dal dietista" style="display:inline-block;background:#F0FDF4;color:#15803D;font-size:10px;font-weight:700;padding:1px 5px;border-radius:5px;margin-left:4px">📋 Carta</span>';
+      consentDateStr = new Date(c.gdpr_consenso_at).toLocaleDateString(getLang());
+      consentSource = '<span title="' + _L('Registrato manualmente dal dietista', 'Manually recorded by the dietitian') + '" style="display:inline-block;background:#F0FDF4;color:#15803D;font-size:10px;font-weight:700;padding:1px 5px;border-radius:5px;margin-left:4px">📋 ' + _L('Carta', 'Paper') + '</span>';
     }
     return '<tr' + (yearsOld >= 10 ? ' style="background:#FFF5F5"' : yearsOld >= 8 ? ' style="background:#FFFBEB"' : '') + '>' +
       '<td style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(c.nome || '') + (retentionBadge ? ' ' + retentionBadge : '') + '</td>' +
       '<td style="font-family:monospace;font-size:12px;color:var(--slate-m)">' + esc(c.codice_fiscale || '—') + '</td>' +
       '<td style="line-height:1.6">' + (tagsHtml || '<span style="color:var(--slate-l);font-size:11.5px">—</span>') + '</td>' +
-      '<td style="font-size:12px;white-space:nowrap">' + new Date(c.created_at).toLocaleDateString('it') + '</td>' +
+      '<td style="font-size:12px;white-space:nowrap">' + new Date(c.created_at).toLocaleDateString(getLang()) + '</td>' +
       '<td style="text-align:center">' +
-        '<input type="checkbox" class="consent-cb" ' + (isConsented ? 'checked' : '') + ' onchange="toggleConsenso(\'' + c.id + '\',this.checked)" title="' + (hasDigital ? 'Firmato digitalmente dall\'app il ' + new Date(c._gdprDigitale).toLocaleDateString('it') : 'Spunta per registrare consenso su carta') + '">' +
+        '<input type="checkbox" class="consent-cb" ' + (isConsented ? 'checked' : '') + ' onchange="toggleConsenso(\'' + c.id + '\',this.checked)" title="' + (hasDigital ? _L('Firmato digitalmente dall\'app il ', 'Digitally signed via the app on ') + new Date(c._gdprDigitale).toLocaleDateString(getLang()) : _L('Spunta per registrare consenso su carta', 'Check to record consent on paper')) + '">' +
         (hasDigital ? '<span style="display:block;font-size:9px;color:#1D4ED8;margin-top:1px;font-weight:700;white-space:nowrap">📱 App</span>' : '') +
       '</td>' +
       '<td style="font-size:12px;color:' + (isConsented ? '#0F766E' : 'var(--slate-l)') + ';white-space:nowrap">' + consentDateStr + consentSource + '</td>' +
@@ -524,15 +575,15 @@ function renderSummaryBar() {
 
 function renderOblio() {
   const el = document.getElementById('oblio-list');
-  if (!_allCartelle.length) { el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--slate-l);font-size:13px">Nessuna cartella paziente.</div>'; return; }
+  if (!_allCartelle.length) { el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--slate-l);font-size:13px">' + _L('Nessuna cartella paziente.', 'No patient files.') + '</div>'; return; }
   el.innerHTML = _allCartelle.map(c => {
     const tags = Array.isArray(c.tags) ? c.tags.slice(0,3).join(', ') : '';
     return '<div class="oblio-row">' +
       '<div style="flex:1;min-width:0">' +
         '<div style="font-weight:700;font-size:13px;color:var(--slate)">' + esc(c.nome || '') + '</div>' +
-        '<div style="font-size:11.5px;color:var(--slate-l)">' + (c.codice_fiscale ? 'CF: ' + c.codice_fiscale + ' · ' : '') + new Date(c.created_at).toLocaleDateString('it') + (tags ? ' · ' + tags : '') + '</div>' +
+        '<div style="font-size:11.5px;color:var(--slate-l)">' + (c.codice_fiscale ? 'CF: ' + c.codice_fiscale + ' · ' : '') + new Date(c.created_at).toLocaleDateString(getLang()) + (tags ? ' · ' + tags : '') + '</div>' +
       '</div>' +
-      '<button class="btn btn-sm" style="background:#DC2626;color:white;border-color:#DC2626;flex-shrink:0" onclick="apriOblio(\'' + c.id + '\',\'' + (c.nome||'').replace(/'/g,"\\'") + '\')">🗑️ Elimina tutti i dati</button>' +
+      '<button class="btn btn-sm" style="background:#DC2626;color:white;border-color:#DC2626;flex-shrink:0" onclick="apriOblio(\'' + c.id + '\',\'' + (c.nome||'').replace(/'/g,"\\'") + '\')">🗑️ ' + _L('Elimina tutti i dati', 'Delete all data') + '</button>' +
       '</div>';
   }).join('');
 }
@@ -541,11 +592,11 @@ async function toggleConsenso(cartellaId, val) {
   let { error } = await sb.from('cartelle').update({ gdpr_consenso: val, gdpr_consenso_at: val ? new Date().toISOString() : null }).eq('id', cartellaId);
   if (error && (error.message || '').includes('gdpr_consenso')) {
     // Colonna non ancora migrata — eseguire: ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS gdpr_consenso BOOLEAN DEFAULT FALSE; ADD COLUMN IF NOT EXISTS gdpr_consenso_at TIMESTAMPTZ;
-    toast('⚠️ Colonna GDPR mancante — esegui la migrazione SQL in Supabase', 'info');
+    toast(_L('⚠️ Colonna GDPR mancante — esegui la migrazione SQL in Supabase', '⚠️ GDPR column missing — run the SQL migration in Supabase'), 'info');
     return;
   }
-  if (error) { toast('Errore aggiornamento consenso: ' + error.message, 'err'); return; }
-  toast(val ? '✅ Consenso registrato' : '❌ Consenso revocato', val ? 'ok' : 'info');
+  if (error) { toast(_L('Errore aggiornamento consenso: ', 'Error updating consent: ') + error.message, 'err'); return; }
+  toast(val ? _L('✅ Consenso registrato', '✅ Consent recorded') : _L('❌ Consenso revocato', '❌ Consent withdrawn'), val ? 'ok' : 'info');
   // update local
   const c = _allCartelle.find(x => x.id === cartellaId);
   if (c) c.gdpr_consenso = val;
@@ -560,12 +611,12 @@ function renderStats() {
   const over10 = _allCartelle.filter(c => (now - new Date(c.created_at)) / (1000*60*60*24*365) >= 10).length;
 
   document.getElementById('stats-content').innerHTML = [
-    { label: 'Pazienti totali', val: total, icon: '👥', col: '#1D4ED8', bg: '#EFF6FF' },
-    { label: 'Con consenso', val: conCount, icon: '✅', col: '#0F766E', bg: '#CCFBF1' },
-    { label: 'Senza consenso', val: total - conCount, icon: '⚠️', col: '#DC2626', bg: '#FEE2E2' },
-    { label: '% consensi', val: pct + '%', icon: '📊', col: '#7C3AED', bg: '#F5F3FF' },
-    { label: '>8 anni (attenzione)', val: over8, icon: '⏰', col: '#92400E', bg: '#FEF3C7' },
-    { label: '>10 anni (verifica)', val: over10, icon: '❗', col: '#B91C1C', bg: '#FEE2E2' },
+    { label: _L('Pazienti totali', 'Total patients'), val: total, icon: '👥', col: '#1D4ED8', bg: '#EFF6FF' },
+    { label: _L('Con consenso', 'With consent'), val: conCount, icon: '✅', col: '#0F766E', bg: '#CCFBF1' },
+    { label: _L('Senza consenso', 'Without consent'), val: total - conCount, icon: '⚠️', col: '#DC2626', bg: '#FEE2E2' },
+    { label: _L('% consensi', '% consent'), val: pct + '%', icon: '📊', col: '#7C3AED', bg: '#F5F3FF' },
+    { label: _L('>8 anni (attenzione)', '>8 years (attention)'), val: over8, icon: '⏰', col: '#92400E', bg: '#FEF3C7' },
+    { label: _L('>10 anni (verifica)', '>10 years (review)'), val: over10, icon: '❗', col: '#B91C1C', bg: '#FEE2E2' },
   ].map(s => '<div style="background:' + s.bg + ';border-radius:12px;padding:18px 14px;text-align:center">' +
     '<div style="font-size:28px;margin-bottom:6px">' + s.icon + '</div>' +
     '<div style="font-size:22px;font-weight:800;color:' + s.col + '">' + s.val + '</div>' +
@@ -574,7 +625,7 @@ function renderStats() {
   const el = document.getElementById('retention-list');
   const atRisk = _allCartelle.filter(c => (now - new Date(c.created_at)) / (1000*60*60*24*365) >= 8);
   if (!atRisk.length) {
-    el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">✅ Nessun paziente prossimo alla scadenza di conservazione.</div>';
+    el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">✅ ' + _L('Nessun paziente prossimo alla scadenza di conservazione.', 'No patients approaching the retention deadline.') + '</div>';
     return;
   }
   el.innerHTML = atRisk.map(c => {
@@ -582,24 +633,24 @@ function renderStats() {
     const over10 = parseFloat(yrs) >= 10;
     return '<div class="oblio-row" style="border-color:' + (over10 ? '#FCA5A5' : '#FDE68A') + ';background:' + (over10 ? '#FFF5F5' : '#FFFBEB') + '">' +
       '<div style="flex:1;min-width:0">' +
-        '<div style="font-weight:700;font-size:13px;color:var(--slate)">' + esc(c.nome || '') + (over10 ? ' <span style="color:#DC2626">⚠️ SCADUTO</span>' : '') + '</div>' +
-        '<div style="font-size:11.5px;color:var(--slate-l)">Cartella aperta il ' + new Date(c.created_at).toLocaleDateString('it') + ' · ' + yrs + ' anni · ' + (c.gdpr_consenso ? '✅ Con consenso' : '❌ Senza consenso') + '</div>' +
+        '<div style="font-weight:700;font-size:13px;color:var(--slate)">' + esc(c.nome || '') + (over10 ? ' <span style="color:#DC2626">⚠️ ' + _L('SCADUTO', 'OVERDUE') + '</span>' : '') + '</div>' +
+        '<div style="font-size:11.5px;color:var(--slate-l)">' + _L('Cartella aperta il ', 'File opened on ') + new Date(c.created_at).toLocaleDateString(getLang()) + ' · ' + yrs + ' ' + _L('anni', 'years') + ' · ' + (c.gdpr_consenso ? '✅ ' + _L('Con consenso', 'With consent') : '❌ ' + _L('Senza consenso', 'Without consent')) + '</div>' +
       '</div>' +
-      '<button class="btn btn-ghost btn-sm" onclick="apriOblio(\'' + c.id + '\',\'' + (c.nome||'').replace(/'/g,"\\'") + '\')">🗑️ Gestisci oblio</button>' +
+      '<button class="btn btn-ghost btn-sm" onclick="apriOblio(\'' + c.id + '\',\'' + (c.nome||'').replace(/'/g,"\\'") + '\')">🗑️ ' + _L('Gestisci oblio', 'Manage erasure') + '</button>' +
       '</div>';
   }).join('');
 }
 
 function renderPortabilita() {
   const sel = document.getElementById('portabilita-select');
-  sel.innerHTML = '<option value="">— Seleziona un paziente —</option>' +
+  sel.innerHTML = '<option value="">— ' + _L('Seleziona un paziente', 'Select a patient') + ' —</option>' +
     _allCartelle.map(c => '<option value="' + c.id + '">' + esc(c.nome || '') + (c.codice_fiscale ? ' (' + c.codice_fiscale + ')' : '') + '</option>').join('');
   renderDSAR();
 }
 
 async function esportaDatiPaziente() {
   const cartellaId = document.getElementById('portabilita-select').value;
-  if (!cartellaId) { toast('Seleziona un paziente', 'info'); return; }
+  if (!cartellaId) { toast(_L('Seleziona un paziente', 'Select a patient'), 'info'); return; }
   const cart = _allCartelle.find(c => c.id === cartellaId);
   showLoading(true);
   try {
@@ -628,23 +679,23 @@ async function esportaDatiPaziente() {
     a.download = 'dati_paziente_' + (cart.nome || 'export').replace(/\s+/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.json';
     a.click();
     URL.revokeObjectURL(url);
-    document.getElementById('portabilita-status').innerHTML = '<div style="background:#F0FDF4;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#0F766E;border:1px solid #86EFAC">✅ Esportazione completata. Il file JSON contiene tutti i dati clinici del paziente.</div>';
+    document.getElementById('portabilita-status').innerHTML = '<div style="background:#F0FDF4;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#0F766E;border:1px solid #86EFAC">✅ ' + _L('Esportazione completata. Il file JSON contiene tutti i dati clinici del paziente.', 'Export complete. The JSON file contains all of the patient\'s clinical data.') + '</div>';
   } catch(e) {
-    document.getElementById('portabilita-status').innerHTML = '<div style="background:#FEF2F2;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#DC2626;border:1px solid #FCA5A5">⚠️ Errore esportazione: ' + (e.message || e) + '</div>';
+    document.getElementById('portabilita-status').innerHTML = '<div style="background:#FEF2F2;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#DC2626;border:1px solid #FCA5A5">⚠️ ' + _L('Errore esportazione: ', 'Export error: ') + (e.message || e) + '</div>';
   } finally {
     showLoading(false);
   }
 }
 
 function esportaConsensiCSV() {
-  const rows = [['Nome','CF','Data creazione','Consenso','Data consenso','Tag']];
+  const rows = [[_L('Nome','Name'), _L('CF','Tax ID'), _L('Data creazione','Date created'), _L('Consenso','Consent'), _L('Data consenso','Consent date'), _L('Tag','Tags')]];
   _allCartelle.forEach(c => {
     rows.push([
       c.nome || '',
       c.codice_fiscale || '',
-      new Date(c.created_at).toLocaleDateString('it'),
-      c.gdpr_consenso ? 'Sì' : 'No',
-      c.gdpr_consenso_at ? new Date(c.gdpr_consenso_at).toLocaleDateString('it') : '',
+      new Date(c.created_at).toLocaleDateString(getLang()),
+      c.gdpr_consenso ? _L('Sì','Yes') : _L('No','No'),
+      c.gdpr_consenso_at ? new Date(c.gdpr_consenso_at).toLocaleDateString(getLang()) : '',
       (Array.isArray(c.tags) ? c.tags : []).join('; '),
     ]);
   });
@@ -656,26 +707,26 @@ function esportaConsensiCSV() {
   a.download = 'registro_consensi_gdpr_' + new Date().toISOString().slice(0,10) + '.csv';
   a.click();
   URL.revokeObjectURL(url);
-  toast('✅ CSV esportato', 'ok');
+  toast('✅ ' + _L('CSV esportato', 'CSV exported'), 'ok');
 }
 
 let _dsarLog = (() => { try { return JSON.parse(localStorage.getItem('gdpr_dsar_log') || '[]'); } catch(e) { return []; } })();
 function renderDSAR() {
   const el = document.getElementById('dsar-list');
-  if (!_dsarLog.length) { el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">Nessuna richiesta registrata.</div>'; return; }
+  if (!_dsarLog.length) { el.innerHTML = '<div style="color:var(--slate-l);font-size:12.5px;font-style:italic;padding:8px 4px">' + _L('Nessuna richiesta registrata.', 'No requests logged.') + '</div>'; return; }
   el.innerHTML = _dsarLog.map((d, i) => '<div class="oblio-row">' +
     '<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px">' + esc(d.paziente) + ' · ' + esc(d.tipo) + '</div>' +
     '<div style="font-size:11.5px;color:var(--slate-l)">' + esc(d.data) + ' · ' + esc(d.note || '') + '</div></div>' +
     '<button class="btn btn-ghost btn-xs" onclick="_dsarLog.splice(' + i + ',1);localStorage.setItem(\'gdpr_dsar_log\',JSON.stringify(_dsarLog));renderDSAR()">🗑️</button></div>').join('');
 }
 function aggiungiDSAR() {
-  const paziente = prompt('Nome paziente:'); if (!paziente) return;
-  const tipo = prompt('Tipo richiesta (es. Accesso, Rettifica, Cancellazione, Portabilità):') || 'Accesso';
-  const note = prompt('Note (opzionale):') || '';
-  _dsarLog.unshift({ paziente, tipo, data: new Date().toLocaleDateString('it'), note });
+  const paziente = prompt(_L('Nome paziente:', 'Patient name:')); if (!paziente) return;
+  const tipo = prompt(_L('Tipo richiesta (es. Accesso, Rettifica, Cancellazione, Portabilità):', 'Request type (e.g. Access, Rectification, Erasure, Portability):')) || _L('Accesso', 'Access');
+  const note = prompt(_L('Note (opzionale):', 'Notes (optional):')) || '';
+  _dsarLog.unshift({ paziente, tipo, data: new Date().toLocaleDateString(getLang()), note });
   localStorage.setItem('gdpr_dsar_log', JSON.stringify(_dsarLog));
   renderDSAR();
-  toast('Richiesta DSAR registrata', 'ok');
+  toast(_L('Richiesta DSAR registrata', 'DSAR request logged'), 'ok');
 }
 
 function apriOblio(id, nome) {
@@ -730,19 +781,19 @@ async function eseguiOblio() {
       const { error } = await run();
       if (error) {
         showLoading(false);
-        toast(`⚠️ Cancellazione interrotta a "${label}": ${error.message}. Nessun dato successivo è stato toccato — riprova.`, 'err');
+        toast(_L(`⚠️ Cancellazione interrotta a "${label}": ${error.message}. Nessun dato successivo è stato toccato — riprova.`, `⚠️ Deletion stopped at "${label}": ${error.message}. No further data was touched — please retry.`), 'err');
         return;
       }
     }
     showLoading(false);
-    toast('🗑️ Tutti i dati del paziente eliminati', 'ok');
+    toast('🗑️ ' + _L('Tutti i dati del paziente eliminati', 'All patient data deleted'), 'ok');
     _allCartelle = _allCartelle.filter(c => c.id !== id);
     renderRegistro();
     renderOblio();
     _oblioTarget = null;
   } catch(e) {
     showLoading(false);
-    toast('Errore durante l\'eliminazione: ' + (e.message || e), 'err');
+    toast(_L('Errore durante l\'eliminazione: ', 'Error during deletion: ') + (e.message || e), 'err');
   }
 }
 </script>

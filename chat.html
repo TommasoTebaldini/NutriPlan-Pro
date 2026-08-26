@@ -1128,13 +1128,13 @@ function renderDiaryOverview() {
     <div style="margin-top:14px;border-radius:12px;overflow:hidden;border:1.5px solid #FBCFE8;box-shadow:0 2px 8px rgba(190,24,93,.07)">
       <div style="background:linear-gradient(135deg,#9D174D,#BE185D);padding:10px 14px;display:flex;align-items:center;gap:8px">
         <span style="font-size:16px">🧠</span>
-        <span style="font-size:13px;font-weight:700;color:white">Diario Benessere</span>
-        <span style="font-size:11px;color:rgba(255,255,255,.75);margin-left:4px">— ${displayDates.length} giorni</span>
+        <span style="font-size:13px;font-weight:700;color:white">${_L('Diario Benessere','Wellness Diary')}</span>
+        <span style="font-size:11px;color:rgba(255,255,255,.75);margin-left:4px">— ${displayDates.length} ${_L('giorni','days')}</span>
       </div>
       <div style="overflow-x:auto">
         <table style="border-collapse:collapse;width:100%;min-width:${tableW2}px;background:white">
           <thead><tr>
-            <th style="${stickyCol}background:#FDF2F8;border-bottom:2px solid #BE185D;font-size:10.5px;font-weight:700;color:#9D174D;z-index:4;white-space:nowrap">PARAMETRO</th>
+            <th style="${stickyCol}background:#FDF2F8;border-bottom:2px solid #BE185D;font-size:10.5px;font-weight:700;color:#9D174D;z-index:4;white-space:nowrap">${_L('PARAMETRO','PARAMETER')}</th>
             ${wCols}
           </tr></thead>
           <tbody>${wRows}</tbody>
@@ -1149,14 +1149,14 @@ function renderDiaryOverview() {
       <table style="border-collapse:collapse;width:100%;min-width:${tableW}px">
         <thead>
           <tr>
-            <th style="${stickyCol}background:#F8FAFC;border-bottom:3px solid #E2E8F0;font-size:11px;font-weight:700;color:#64748B;z-index:4">PASTO</th>
+            <th style="${stickyCol}background:#F8FAFC;border-bottom:3px solid #E2E8F0;font-size:11px;font-weight:700;color:#64748B;z-index:4">${_L('PASTO','MEAL')}</th>
             ${dayHeaders}
           </tr>
         </thead>
         <tbody>${rowsHtml}</tbody>
         <tfoot>
           <tr>
-            <td style="${stickyCol}background:#F0FDF4;border-top:2px solid #16A34A;font-size:11px;font-weight:700;color:#15803D">RIEPILOGO</td>
+            <td style="${stickyCol}background:#F0FDF4;border-top:2px solid #16A34A;font-size:11px;font-weight:700;color:#15803D">${_L('RIEPILOGO','SUMMARY')}</td>
             ${summaryRow}
           </tr>
         </tfoot>
@@ -1224,7 +1224,7 @@ function renderMessages() {
     const delay = shouldAnimate ? Math.min((idx - animFrom) * 0.03, 0.3) : 0;
     const animStyle = shouldAnimate ? `animation:chatMsgIn .24s cubic-bezier(.16,1,.3,1) ${delay}s both` : '';
     // Read receipt for sent messages
-    const readReceipt = isSent ? (m.read_at ? '<span style="color:#22D3EE;font-size:11px;margin-left:4px" title="Letto">✓✓</span>' : '<span style="color:rgba(255,255,255,.5);font-size:11px;margin-left:4px" title="Non letto">✓✓</span>') : '';
+    const readReceipt = isSent ? (m.read_at ? '<span style="color:#22D3EE;font-size:11px;margin-left:4px" title="' + _L('Letto','Read') + '">✓✓</span>' : '<span style="color:rgba(255,255,255,.5);font-size:11px;margin-left:4px" title="' + _L('Non letto','Unread') + '">✓✓</span>') : '';
     // Scheduled message badge
     const scheduledBadge = (m.status === 'scheduled') ? `<div style="background:#FEF9C3;border-radius:4px;padding:2px 6px;font-size:10px;color:#854D0E;margin-bottom:4px">📅 Programmato per: ${new Date(m.scheduled_at).toLocaleString('it',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>` : '';
     // Voice message content
@@ -1309,7 +1309,7 @@ function setupRealtime(patientId) {
     }, () => {
       if (currentChatTab === 'informazioni') {
         loadInformazioni();
-        toast('🔄 Profilo paziente aggiornato', 'info');
+        toast(_L('🔄 Profilo paziente aggiornato','🔄 Patient profile updated'), 'info');
       }
     })
     .subscribe();
@@ -1525,7 +1525,7 @@ function saveNewTpl() {
   localStorage.setItem(TPL_STORAGE_KEY, JSON.stringify(saved));
   _tplActiveCat = catName;
   renderTplPanel();
-  toast('✅ Template salvato!', 'ok');
+  toast(_L('✅ Template salvato!','✅ Template saved!'), 'ok');
 }
 
 // ─── Fine Template messaggi ────────────────────────────────────────────────
@@ -1558,11 +1558,11 @@ async function toggleVoiceRecord() {
     _mediaRecorder.start();
     _voiceRecording = true;
     if (btn) { btn.textContent = '⏹️'; btn.style.background = '#FEE2E2'; }
-    toast('🎤 Registrazione in corso... Clicca ⏹️ per fermare', 'info');
+    toast(_L('🎤 Registrazione in corso... Clicca ⏹️ per fermare','🎤 Recording in progress... Click ⏹️ to stop'), 'info');
     // Auto-stop after 60 seconds
     setTimeout(() => { if (_voiceRecording && _mediaRecorder) _mediaRecorder.stop(); }, 60000);
   } catch(e) {
-    toast('❌ Accesso microfono negato: ' + e.message, 'err');
+    toast(_L('❌ Accesso microfono negato: ','❌ Microphone access denied: ') + e.message, 'err');
   }
 }
 
@@ -1593,9 +1593,9 @@ async function sendVoiceMessage(blob) {
       status: 'sent'
     });
     if (error) throw error;
-    toast('🎤 Messaggio vocale inviato!', 'ok');
+    toast(_L('🎤 Messaggio vocale inviato!','🎤 Voice message sent!'), 'ok');
   } catch(e) {
-    toast('❌ Errore invio vocale: ' + e.message, 'err');
+    toast(_L('❌ Errore invio vocale: ','❌ Error sending voice message: ') + e.message, 'err');
   }
   showLoading(false);
 }
@@ -1632,7 +1632,7 @@ function setSchedule(type) {
   if (bar) { bar.style.display = 'flex'; }
   const dtInput = document.getElementById('schedule-dt');
   if (dtInput && _scheduledAt) dtInput.value = _scheduledAt.slice(0, 16);
-  toast('📅 Messaggio programmato per: ' + new Date(_scheduledAt).toLocaleString('it'), 'info');
+  toast(_L('📅 Messaggio programmato per: ','📅 Message scheduled for: ') + new Date(_scheduledAt).toLocaleString('it'), 'info');
 }
 
 function cancelSchedule() {
@@ -1755,11 +1755,11 @@ async function sendMessage() {
     if (msgPayload.status === 'scheduled' && (error.code === '42703' || error.code === 'PGRST204')) {
       toast('❌ ' + _L('Programmazione non disponibile: esegui la SEZIONE 30 di supabase_setup.sql','Scheduling unavailable: run SECTION 30 of supabase_setup.sql'), 'err');
     } else {
-      toast('❌ Errore invio messaggio: ' + error.message, 'err');
+      toast(_L('❌ Errore invio messaggio: ','❌ Error sending message: ') + error.message, 'err');
     }
     input.value = content;
   } else if (msgPayload.status === 'scheduled') {
-    toast('📅 Messaggio programmato!', 'ok');
+    toast(_L('📅 Messaggio programmato!','📅 Message scheduled!'), 'ok');
   } else if (data) {
     // Show it immediately instead of waiting for the realtime echo, which may be
     // delayed or missed entirely if the websocket is disconnected/reconnecting.
@@ -2086,8 +2086,8 @@ async function openFirmaDocumento(documentId) {
     context: 'documento',
     onSave: async (dataUrl, signedAt) => {
       const { error } = await sb.from('patient_documents').update({ signed_at: signedAt, signature_data: dataUrl, signature_accepted: true }).eq('id', documentId);
-      if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
-      toast('✅ Documento firmato in studio!', 'ok');
+      if (error) { toast(_L('❌ Errore: ','❌ Error: ') + error.message, 'err'); return; }
+      toast(_L('✅ Documento firmato in studio!','✅ Document signed in office!'), 'ok');
       if (selectedPatientId) loadPatientPanel(selectedPatientId);
     }
   });
@@ -2110,9 +2110,9 @@ async function openFirmaConsenso(consentId) {
     onSave: async (dataUrl, signedAt) => {
       if (consentId) {
         const { error } = await sb.from('patient_consents').update({ signed_at: signedAt, signature_data_url: dataUrl }).eq('id', consentId);
-        if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
+        if (error) { toast(_L('❌ Errore: ','❌ Error: ') + error.message, 'err'); return; }
       }
-      toast('✅ Consenso firmato in studio!', 'ok');
+      toast(_L('✅ Consenso firmato in studio!','✅ Consent signed in office!'), 'ok');
       if (selectedPatientId) loadPatientPanel(selectedPatientId);
     }
   });
@@ -2130,8 +2130,8 @@ async function createConsent(cartellaId, patientName, dietEmail) {
     visible_to_patient: true,
     consent_version: '1.0'
   });
-  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
-  toast('📤 Modulo inviato al paziente per la firma', 'ok');
+  if (error) { toast(_L('❌ Errore: ','❌ Error: ') + error.message, 'err'); return; }
+  toast(_L('📤 Modulo inviato al paziente per la firma','📤 Form sent to the patient for signature'), 'ok');
   loadPrivacy();
 }
 
@@ -2165,8 +2165,8 @@ async function saveConsentForPatient(consentId) {
   if (!editor || !consentId) return;
   const newText = editor.innerHTML;
   const {error} = await sb.from('patient_consents').update({consent_text: newText}).eq('id', consentId);
-  if (error) { toast('❌ Errore: ' + error.message, 'err'); return; }
-  toast('✅ Testo aggiornato per questo paziente', 'ok');
+  if (error) { toast(_L('❌ Errore: ','❌ Error: ') + error.message, 'err'); return; }
+  toast(_L('✅ Testo aggiornato per questo paziente','✅ Text updated for this patient'), 'ok');
   loadPrivacy();
 }
 
@@ -2175,20 +2175,20 @@ async function saveConsentAsTemplate() {
   if (!editor) return;
   const newText = editor.innerHTML;
   const {error: pErr} = await sb.from('profiles').update({consent_template: newText}).eq('id', currentUser.id);
-  if (pErr) { toast('❌ Errore salvataggio modello: ' + pErr.message, 'err'); return; }
+  if (pErr) { toast(_L('❌ Errore salvataggio modello: ','❌ Error saving template: ') + pErr.message, 'err'); return; }
   const {error: cErr} = await sb.from('patient_consents')
     .update({consent_text: newText})
     .eq('dietitian_id', currentUser.id)
     .is('signed_at', null);
-  if (cErr) { toast('⚠️ Modello salvato, errore su consensi esistenti: ' + cErr.message, 'warn'); return; }
-  toast('✅ Modello salvato e applicato a tutti i consensi non ancora firmati', 'ok');
+  if (cErr) { toast(_L('⚠️ Modello salvato, errore su consensi esistenti: ','⚠️ Template saved, error on existing consents: ') + cErr.message, 'warn'); return; }
+  toast(_L('✅ Modello salvato e applicato a tutti i consensi non ancora firmati','✅ Template saved and applied to all unsigned consents'), 'ok');
   loadPrivacy();
 }
 
 async function revokeConsent(consentId) {
-  if (!confirm('Annullare l\'invio del modulo? Il paziente non potrà più firmarlo.')) return;
+  if (!confirm(_L('Annullare l\'invio del modulo? Il paziente non potrà più firmarlo.','Cancel sending the form? The patient will no longer be able to sign it.'))) return;
   await sb.from('patient_consents').delete().eq('id', consentId);
-  toast('🗑️ Modulo rimosso', 'ok');
+  toast(_L('🗑️ Modulo rimosso','🗑️ Form removed'), 'ok');
   loadPrivacy();
 }
 
@@ -2200,7 +2200,7 @@ function printPrivacy() {
   const printWin = window.open('', 'privacy-print', 'width=900,height=800');
   if (!printWin) { window.print(); return; }
   printWin.document.write(`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
-    <title>Consenso Privacy — ${esc(p?.name||'Paziente')}</title>
+    <title>${_L('Consenso Privacy','Privacy Consent')} — ${esc(p?.name||_L('Paziente','Patient'))}</title>
     <style>
       body{font-family:'Segoe UI',sans-serif;font-size:12px;color:#0f172a;margin:2cm;line-height:1.75}
       h2{font-size:16px;margin-bottom:6px} h3{font-size:13px;font-weight:700;margin:14px 0 5px}
@@ -2208,11 +2208,11 @@ function printPrivacy() {
       .sig-line{border-top:1px solid #94A3B8;margin-top:40px;width:280px;padding-top:4px;font-size:11px;color:#64748B}
       @page{size:A4;margin:2cm}
     </style></head><body>
-    <h2>NutriPlan Pro — Informativa e Consenso al Trattamento dei Dati Personali</h2>
+    <h2>NutriPlan Pro — ${_L('Informativa e Consenso al Trattamento dei Dati Personali','Notice and Consent to Personal Data Processing')}</h2>
     ${content.innerHTML}
     <div style="margin-top:32px;display:flex;gap:60px">
-      <div><div class="sig-line">Firma del Professionista</div></div>
-      <div><div class="sig-line">Firma del Paziente / Data</div></div>
+      <div><div class="sig-line">${_L('Firma del Professionista','Practitioner Signature')}</div></div>
+      <div><div class="sig-line">${_L('Firma del Paziente / Data','Patient Signature / Date')}</div></div>
     </div>
   </body></html>`);
   printWin.document.close();
@@ -3045,7 +3045,7 @@ function _scribeShowStep(step) {
 }
 
 function openAiScribe() {
-  if (!selectedPatientId) { toast('Seleziona un paziente', 'err'); return; }
+  if (!selectedPatientId) { toast(_L('Seleziona un paziente','Select a patient'), 'err'); return; }
   aiScribeInit();
   document.getElementById('scribe-consent-check').checked = false;
   document.getElementById('scribe-start-btn').disabled = true;
@@ -3065,7 +3065,7 @@ async function scribeStartRecording() {
   try {
     _scribeStream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch (e) {
-    toast('❌ Impossibile accedere al microfono: ' + e.message, 'err');
+    toast(_L('❌ Impossibile accedere al microfono: ','❌ Unable to access microphone: ') + e.message, 'err');
     return;
   }
   _scribeChunks = [];
@@ -3107,7 +3107,7 @@ async function scribeProcessRecording() {
   const blob = new Blob(_scribeChunks, { type: 'audio/webm' });
   _scribeChunks = []; // rilasciata subito dopo aver costruito il blob da inviare
   if (blob.size === 0) {
-    toast('❌ Nessun audio registrato', 'err');
+    toast(_L('❌ Nessun audio registrato','❌ No audio recorded'), 'err');
     _scribeShowStep('consent');
     return;
   }
@@ -3120,9 +3120,9 @@ async function scribeProcessRecording() {
       body: JSON.stringify({ audioBase64: base64, mimeType: 'audio/webm', consentAcquired: true }),
     });
     const json = await res.json();
-    if (!res.ok) throw new Error(json.error || 'Errore trascrizione');
+    if (!res.ok) throw new Error(json.error || _L('Errore trascrizione','Transcription error'));
     if (!json.transcript) {
-      toast('⚠️ ' + (json.warning || 'Nessun parlato riconosciuto'), 'warn');
+      toast('⚠️ ' + (json.warning || _L('Nessun parlato riconosciuto','No speech recognized')), 'warn');
       _scribeShowStep('consent');
       return;
     }
@@ -3142,7 +3142,7 @@ async function scribeProcessRecording() {
 
 async function scribeSaveNote() {
   const p = chatPatients.find(x => x.id === selectedPatientId);
-  if (!p?.cartellaId || !currentUser) { toast('Cartella paziente non trovata', 'err'); return; }
+  if (!p?.cartellaId || !currentUser) { toast(_L('Cartella paziente non trovata','Patient file not found'), 'err'); return; }
   const soap = {
     soggettivo: document.getElementById('scribe-soggettivo').value.trim(),
     obiettivo: document.getElementById('scribe-obiettivo').value.trim(),
@@ -3161,7 +3161,7 @@ async function scribeSaveNote() {
       visible_to_patient: false,
     });
     if (error) throw error;
-    toast('✅ Nota SOAP salvata in cartella clinica', 'ok');
+    toast(_L('✅ Nota SOAP salvata in cartella clinica','✅ SOAP note saved to clinical file'), 'ok');
     closeAiScribe();
   } catch (e) {
     toast('❌ ' + e.message, 'err');

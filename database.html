@@ -118,7 +118,7 @@
 </div>
 <main id="main"><div class="page-content">
   <div class="db-filters" style="margin-bottom:12px">
-    <input type="text" id="db-search" class="db-search" placeholder="Cerca alimento..." oninput="filterDB()" style="max-width:320px">
+    <input type="text" id="db-search" class="db-search" placeholder="Cerca alimento... / Search food..." oninput="filterDB()" style="max-width:320px">
     <select id="db-cat" class="db-cat" onchange="filterDB()"><option value="" data-i18n="db.all_cats">Tutte le categorie</option></select>
     <select id="db-src" class="db-cat" onchange="filterDB()">
       <option value="">Tutte le fonti</option>
@@ -171,7 +171,7 @@
 <div id="modal-add-food" onclick="if(event.target===this)closeAddFood()">
   <div class="mbox">
     <div class="mhead">
-      <h3 id="modal-food-title">➕ Aggiungi alimento al database personale</h3>
+      <h3 id="modal-food-title">➕ <span data-only-lang="it">Aggiungi alimento al database personale</span><span data-only-lang="en" style="display:none">Add food to personal database</span></h3>
       <button class="mclose" onclick="closeAddFood()" style="font-size:20px">×</button>
     </div>
     <div class="mbody">
@@ -537,7 +537,7 @@ async function saveFood() {
     }
   }
 
-  if (error) { toast('Errore: ' + error.message, 'err'); return; }
+  if (error) { toast(_L('Errore: ','Error: ') + error.message, 'err'); return; }
 
   _asDatabase.clear();
   closeAddFood();
@@ -549,7 +549,7 @@ async function saveFood() {
 function deleteCustomFood(id) {
   customConfirm(_L('Eliminare questo alimento dal database personale?','Delete this food from personal database?'), async () => {
     const { error } = await sb.from('alimenti_custom').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
-    if (error) { toast('Errore: ' + error.message, 'err'); return; }
+    if (error) { toast(_L('Errore: ','Error: ') + error.message, 'err'); return; }
     await sb.from('public_foods').delete().eq('source_id', id);
     toast(_L('Alimento eliminato','Food deleted'), 'ok');
     await loadCustomFoods();

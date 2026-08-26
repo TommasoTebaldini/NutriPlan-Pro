@@ -182,7 +182,7 @@
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
     <label>📝 Nota / Titolo sessione</label>
-    <input type="text" id="keto-nota" placeholder="es. Prima visita, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
+    <input type="text" id="keto-nota" placeholder="es. Prima visita, follow-up... / e.g. First visit, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
   </div>
   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
     <button class="btn btn-primary btn-sm" onclick="salvaKeto()" style="background:linear-gradient(135deg,#7C3AED,#6D28D9)">💾 Salva in Cartella</button>
@@ -448,9 +448,9 @@
   <div class="grid-2">
     <div class="calc-box">
       <h3><span data-only-lang="it">👤 Dati Paziente</span><span data-only-lang="en" style="display:none">👤 Patient Data</span></h3>
-      <div class="nf" style="margin-bottom:10px"><label>Peso attuale (kg)</label><input type="number" id="k-peso" placeholder="es. 75" step="0.5" oninput="calcKeto()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="k-altezza" placeholder="es. 170" oninput="calcKeto()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="k-eta" placeholder="es. 35" oninput="calcKeto()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Peso attuale (kg)</label><input type="number" id="k-peso" placeholder="es. 75 / e.g. 75" step="0.5" oninput="calcKeto()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="k-altezza" placeholder="es. 170 / e.g. 170" oninput="calcKeto()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="k-eta" placeholder="es. 35 / e.g. 35" oninput="calcKeto()"></div>
       <div class="nf" style="margin-bottom:10px">
         <label>Sesso</label>
         <select id="k-sesso" onchange="calcKeto()">
@@ -507,8 +507,8 @@
       <div class="alert-info alert-box" style="margin-bottom:12px;display:none" data-only-lang="en">
         The <b>GKI (Glucose Ketone Index)</b> = Blood glucose (mmol/L) ÷ β-hydroxybutyrate (mmol/L). Indicator of therapeutic ketotic state. Lower = deeper ketosis.
       </div>
-      <div class="nf" style="margin-bottom:10px"><label>Glicemia capillare (mg/dL)</label><input type="number" id="gki-glic" placeholder="es. 90" oninput="calcGKI()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>β-idrossibutirrato ematico (mmol/L)</label><input type="number" id="gki-keton" placeholder="es. 1.5" step="0.1" oninput="calcGKI()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>Glicemia capillare (mg/dL)</label><input type="number" id="gki-glic" placeholder="es. 90 / e.g. 90" oninput="calcGKI()"></div>
+      <div class="nf" style="margin-bottom:10px"><label>β-idrossibutirrato ematico (mmol/L)</label><input type="number" id="gki-keton" placeholder="es. 1.5 / e.g. 1.5" step="0.1" oninput="calcGKI()"></div>
       <div id="gki-result" style="display:none" class="gki-result">
         <div style="font-size:12px;opacity:.8;margin-bottom:4px">GKI calcolato</div>
         <div style="font-size:36px;font-weight:700" id="gki-val">—</div>
@@ -1633,20 +1633,20 @@ ALTER TABLE note_specialistiche ADD COLUMN IF NOT EXISTS updated_at timestamptz 
   console.error('SQL da eseguire:\n' + sql);
   const modal = document.getElementById('modal-sql-setup');
   if (modal) { document.getElementById('sql-setup-text').value = sql; openM('modal-sql-setup'); }
-  else { toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err'); }
+  else { toast(_L('⚠️ Tabella DB mancante — SQL in console (F12)','⚠️ DB table missing — SQL in console (F12)'), 'err'); }
 }
 
 async function caricaKetoDaNote(noteId) {
   showLoading(true);
   const {data, error} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
   showLoading(false);
-  if (error || !data) { toast('❌ Impossibile caricare la scheda', 'err'); return; }
+  if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load record'), 'err'); return; }
   editingKetoNoteId = noteId;
   await _cwSetById('keto-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('keto-nota');
   if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiKeto(JSON.parse(data.dati || '{}')); } catch(e) {}
-  toast('✅ Scheda Chetogenica caricata', 'ok');
+  toast(_L('✅ Scheda Chetogenica caricata','✅ Ketogenic record loaded'), 'ok');
 }
 
 // Init

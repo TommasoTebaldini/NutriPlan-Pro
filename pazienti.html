@@ -274,7 +274,7 @@ async function ensureChartJs() {
       <p style="font-size:12.5px;color:var(--slate-m);margin-bottom:14px"><span data-only-lang="it">Cerca il paziente per email. Il paziente deve essere registrato sull'app.</span><span data-only-lang="en">Search for the patient by email. The patient must be registered on the app.</span></p>
       <div class="fg" style="margin-bottom:12px">
         <label>Email paziente</label>
-        <input type="email" id="collega-email" placeholder="email@esempio.com" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+        <input type="email" id="collega-email" placeholder="email@esempio.com / email@example.com" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
       </div>
       <div id="collega-result" style="min-height:30px"></div>
     </div>
@@ -294,7 +294,7 @@ async function ensureChartJs() {
       <p style="font-size:12px;color:var(--slate-l);margin-bottom:14px;line-height:1.5">Il paziente riceverà in automatico un promemoria push/email di check-in se non registra il peso nell'app entro la cadenza scelta, e un avviso quando il percorso sta per terminare.</p>
       <div class="fg" style="margin-bottom:12px">
         <label>Nome percorso *</label>
-        <input type="text" id="percorso-nome" placeholder="es. Percorso dimagrimento 12 settimane" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+        <input type="text" id="percorso-nome" placeholder="es. Percorso dimagrimento 12 settimane / e.g. 12-week weight loss program" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
       </div>
       <div style="display:flex;gap:10px">
         <div class="fg" style="flex:1;margin-bottom:12px">
@@ -324,11 +324,11 @@ async function ensureChartJs() {
       </p>
       <div class="fg" style="margin-bottom:12px">
         <label>Titolo *</label>
-        <input type="text" id="modulo-titolo" placeholder="es. Contratto di consulenza nutrizionale" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+        <input type="text" id="modulo-titolo" placeholder="es. Contratto di consulenza nutrizionale / e.g. Nutrition consulting contract" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
       </div>
       <div class="fg">
         <label>Testo del documento *</label>
-        <textarea id="modulo-contenuto" rows="8" placeholder="Scrivi qui il testo completo del modulo/contratto..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;resize:vertical"></textarea>
+        <textarea id="modulo-contenuto" rows="8" placeholder="Scrivi qui il testo completo del modulo/contratto... / Write the full text of the form/contract here..." style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;resize:vertical"></textarea>
       </div>
     </div>
     <div class="mfoot">
@@ -1526,7 +1526,7 @@ async function renderCartellaDetail(id) {
             : '<button class="btn btn-sm" style="background:var(--teal);color:white" onclick="openCollegaPaziente(\'' + cart.id + '\')">🔗 ' + _L('Collega paziente','Link patient') + '</button>')
         + '<div style="flex:1"></div>'
         + '<button onclick="esportaPDFCartella()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">📄 PDF</button>'
-        + (patientId ? '<button onclick="openFSEExport(window._currentCartellaData&&window._currentCartellaData.cart||{})" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#0F766E,#064E3B);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0" title="Esporta documento FSE 2.0 (CDA R2)">🏥 FSE 2.0</button>' : '')
+        + (patientId ? '<button onclick="openFSEExport(window._currentCartellaData&&window._currentCartellaData.cart||{})" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#0F766E,#064E3B);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0" title="' + _L('Esporta documento FSE 2.0 (CDA R2)','Export FSE 2.0 document (CDA R2)') + '">🏥 FSE 2.0</button>' : '')
         + (patientId ? '<button onclick="inviaPrivacy(\'' + patientId + '\',\'' + cart.id + '\')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#0F766E,#14B8A6);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">📄 Privacy</button><button onclick="inviaGDPR(\'' + patientId + '\',\'' + cart.id + '\')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#1E293B,#475569);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">🔒 GDPR</button><button onclick="openInviaModulo(\'' + patientId + '\',\'' + cart.id + '\')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#7C3AED,#A855F7);color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">✍️ Modulo</button>' : '')
         + '</div>' : ''}
     </div>
@@ -2000,8 +2000,8 @@ function copiaPianoAI() {
     p.notes ? '\nNota: ' + p.notes : '',
   ];
   navigator.clipboard.writeText(lines.join('\n')).then(() => {
-    toast('Testo copiato negli appunti', 'ok');
-  }).catch(() => toast('Impossibile copiare', 'err'));
+    toast(_L('Testo copiato negli appunti','Text copied to clipboard'), 'ok');
+  }).catch(() => toast(_L('Impossibile copiare','Unable to copy'), 'err'));
 }
 
 async function salvaPianoAI() {
@@ -2039,10 +2039,10 @@ async function salvaPianoAI() {
       const { error: e2 } = await sb.from('diet_meals').insert(mealsPayload);
       if (e2) throw e2;
     }
-    toast('Piano salvato e assegnato al paziente', 'ok');
+    toast(_L('Piano salvato e assegnato al paziente','Plan saved and assigned to patient'), 'ok');
     closeM('modal-ai-piano');
   } catch (e) {
-    toast('Errore salvataggio: ' + e.message, 'err');
+    toast(_L('Errore salvataggio: ','Save error: ') + e.message, 'err');
   } finally {
     btn.disabled = false; btn.textContent = '💾 Salva come piano assegnato';
   }

@@ -45,8 +45,16 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
 </head>
 <body>
 <div class="container">
-  <a class="back-link" href="index.html">← Torna al login</a>
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:0">
+    <a class="back-link" href="index.html" style="margin-bottom:0" data-only-lang="it">← Torna al login</a>
+    <a class="back-link" href="index.html" style="margin-bottom:0;display:none" data-only-lang="en">← Back to login</a>
+    <div style="display:flex;gap:6px">
+      <button onclick="setLang('it')" id="lang-btn-it" style="padding:5px 12px;border-radius:8px;border:1.5px solid #E2E8F0;background:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🇮🇹 IT</button>
+      <button onclick="setLang('en')" id="lang-btn-en" style="padding:5px 12px;border-radius:8px;border:1.5px solid #E2E8F0;background:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🇬🇧 EN</button>
+    </div>
+  </div>
 
+<div data-only-lang="it">
   <h1>Informativa sulla Privacy</h1>
   <p class="subtitle">Ai sensi degli artt. 13 e 14 del Regolamento (UE) 2016/679 (GDPR) e del D.Lgs. 196/2003 come modificato dal D.Lgs. 101/2018</p>
 
@@ -252,5 +260,216 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
 
   <p class="last-update">Ultimo aggiornamento: Luglio 2026 — NutriPlan-Pro</p>
 </div>
+
+<div data-only-lang="en" style="display:none">
+  <h1>Privacy Policy</h1>
+  <p class="subtitle">Pursuant to Articles 13 and 14 of Regulation (EU) 2016/679 (GDPR) and Italian Legislative Decree 196/2003 as amended by Legislative Decree 101/2018</p>
+
+  <span class="badge">GDPR Compliant</span>
+
+  <div class="draft-banner">
+    ⚠️ <strong>Draft pending legal validation.</strong> This text was drafted to accurately reflect how the platform actually works (data processed, providers, purposes), but <strong>it does not replace advice from a lawyer/DPO</strong> — required before final publication, especially given that health data is involved (special category, Art. 9 GDPR). Fields marked <span class="todo">TO BE COMPLETED</span> must be filled in with real data not yet available (VAT number, address, etc.).
+  </div>
+
+  <p>This notice describes how <strong>NutriPlan-Pro</strong> (the practice-management software for dietitians/nutritionists, hereinafter also "the Platform") collects, uses and protects the personal data of the users who access it. For the notice covering the dedicated patient app, see the privacy notice published within the app itself.</p>
+
+  <hr class="section-divider">
+
+  <h2>1. Data Controller and Data Processor</h2>
+  <p>This platform involves two distinct roles under the GDPR, depending on the category of data:</p>
+  <ul>
+    <li><strong>Professional's data (account, billing, platform usage):</strong> the Data Controller is <strong>NutriPlan-Pro</strong> — <span class="todo">TO BE COMPLETED</span> (Name / Company name, VAT number pending registration, address), reachable at the email address <span class="todo">TO BE COMPLETED</span> (a professional address on the domain, replacing the current development-stage address).</li>
+    <li><strong>Patient data entered by the professional</strong> (clinical records, meal plans, health data): the <strong>Data Controller is the healthcare professional</strong> who activated the account and enters the data in the course of their practice, as the holder of the therapeutic relationship with the patient. <strong>NutriPlan-Pro acts as Data Processor</strong> (Art. 28 GDPR) on the professional's behalf, under the data processing agreement available for every account (see "Related documents" section below).</li>
+  </ul>
+  <p>For any request concerning the processing of their clinical data, the patient should first contact their own professional (the Controller); for requests concerning the professional's own data or the platform's technical operation, contact NutriPlan-Pro as indicated above.</p>
+
+  <hr class="section-divider">
+
+  <h2>2. Types of Data Processed</h2>
+
+  <h3>2.1 Operator Data (Dietitians/Professionals)</h3>
+  <ul>
+    <li><strong>Registration data:</strong> email address, password (stored encrypted).</li>
+    <li><strong>Profile data:</strong> first name, last name, professional registration number.</li>
+    <li><strong>Usage data:</strong> access logs, connection times, features used.</li>
+  </ul>
+
+  <h3>2.2 Patient Data</h3>
+  <div class="highlight-box">
+    <p>⚠️ Patient data entered into the platform constitutes <strong>personal data concerning health</strong> under Art. 9 GDPR (special categories of data). The professional entering such data is responsible for GDPR compliance towards their own patients.</p>
+  </div>
+  <ul>
+    <li>Identification data: first name, last name, date of birth, sex, tax ID (if entered).</li>
+    <li>Anthropometric data: weight, height, BMI, body composition (BIA).</li>
+    <li>Clinical data: conditions, allergies, intolerances, pharmacological therapies, lab results, clinical timeline.</li>
+    <li>Personalized meal plans, prescribed diets, recipes and food/wellness diary (mood, energy, stress, sleep, hydration, menstrual cycle if filled in by the patient).</li>
+    <li>Nutritional questionnaires, assessment records and visit reports.</li>
+    <li>Clinical notes and the professional's remarks, attachments/documents uploaded to the file.</li>
+    <li>1:1 and group chat messages (text, voice notes, images) between professional and patient, including any scheduled messages.</li>
+    <li>If active: billing data for the professional's subscription (not patient payment data, which never passes through this platform) — see point 5.2.</li>
+  </ul>
+
+  <hr class="section-divider">
+
+  <h2>3. Purposes and Legal Bases of Processing</h2>
+  <div style="overflow-x:auto">
+  <table>
+    <thead>
+      <tr><th>Purpose</th><th>Legal Basis</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Provision of the meal-plan management service</td>
+        <td>Performance of a contract (Art. 6.1.b GDPR)</td>
+      </tr>
+      <tr>
+        <td>Account management and authentication</td>
+        <td>Performance of a contract (Art. 6.1.b GDPR)</td>
+      </tr>
+      <tr>
+        <td>Processing of patients' health data by the professional</td>
+        <td>Preventive or occupational medicine purposes (Art. 9.2.h GDPR)</td>
+      </tr>
+      <tr>
+        <td>Platform security and fraud prevention</td>
+        <td>Legitimate interest of the Controller (Art. 6.1.f GDPR)</td>
+      </tr>
+      <tr>
+        <td>Compliance with legal obligations</td>
+        <td>Legal obligation (Art. 6.1.c GDPR)</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <hr class="section-divider">
+
+  <h2>4. Data Retention</h2>
+  <ul>
+    <li><strong>Account and profile data:</strong> retained for the duration of the contractual relationship and for the 10 years following termination of the service (legal obligations for healthcare documentation).</li>
+    <li><strong>Patient data:</strong> retained for the period necessary to provide healthcare services and in any case in compliance with the clinical-documentation retention obligations set by applicable regulations.</li>
+    <li><strong>Access logs:</strong> retained for a maximum of 12 months.</li>
+  </ul>
+
+  <hr class="section-divider">
+
+  <h2>5. Recipients and Data Transfers</h2>
+  <p>Personal data may be disclosed to the following categories of recipients:</p>
+
+  <h3>5.1 Technical Service Providers (Processors/Sub-processors)</h3>
+  <div style="overflow-x:auto">
+  <table>
+    <thead>
+      <tr><th>Provider</th><th>Service</th><th>Location</th><th>Safeguards</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Supabase Inc.</strong></td>
+        <td>Database, authentication and file storage (attachments, voice notes)</td>
+        <td>USA (EU servers available)</td>
+        <td>Standard Contractual Clauses (SCC) + Supabase DPA</td>
+      </tr>
+      <tr>
+        <td><strong>Vercel Inc.</strong></td>
+        <td>Hosting and web infrastructure</td>
+        <td>USA</td>
+        <td>Standard Contractual Clauses (SCC) + Vercel DPA</td>
+      </tr>
+      <tr>
+        <td><strong>Groq Inc.</strong></td>
+        <td>AI Assistant (processing of nutrition queries — no patient data sent automatically)</td>
+        <td>USA</td>
+        <td>Standard Contractual Clauses (SCC)</td>
+      </tr>
+      <tr>
+        <td><strong>Stripe Inc.</strong> <span class="todo">if active</span></td>
+        <td>Processing of the professional's subscription payments (card and PayPal via Stripe Checkout). NutriPlan-Pro never stores card data.</td>
+        <td>USA/EU</td>
+        <td>Standard Contractual Clauses (SCC) + Stripe DPA</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:12.5px;color:var(--muted, #64748B)">The complete list of sub-processors, with their contacts and links to their respective DPAs, is maintained in the <a href="legal/sub-responsabili.html">sub-processors register</a>.</p>
+
+  <div class="highlight-box">
+    <p>⚠️ <strong>Important:</strong> The AI Assistant only processes questions voluntarily entered by the operator. Never send patient-identifying data (name, tax ID, etc.) to the AI functions.</p>
+  </div>
+
+  <h3>5.2 Payments (when active)</h3>
+  <p>The professional's subscription payment is handled entirely by Stripe (which also supports PayPal within its own Checkout). NutriPlan-Pro only receives from Stripe the subscription status (active/expired) and a customer identifier — never the card number or PayPal credentials.</p>
+
+  <hr class="section-divider">
+
+  <h2>6. Data Subject Rights</h2>
+  <p>Under Articles 15–22 GDPR, every data subject has the right to:</p>
+  <ul>
+    <li><strong>Access:</strong> obtain confirmation that their data is being processed and receive a copy of it (Art. 15).</li>
+    <li><strong>Rectification:</strong> request correction of inaccurate or incomplete data (Art. 16).</li>
+    <li><strong>Erasure ("right to be forgotten"):</strong> request deletion of data (Art. 17), subject to legally mandated retention obligations.</li>
+    <li><strong>Restriction:</strong> request restriction of processing (Art. 18).</li>
+    <li><strong>Portability:</strong> receive their data in a structured, machine-readable format (Art. 20).</li>
+    <li><strong>Objection:</strong> object to processing based on legitimate interest (Art. 21).</li>
+    <li><strong>Withdrawal of consent:</strong> withdraw consent at any time, without affecting the lawfulness of processing carried out before the withdrawal.</li>
+  </ul>
+  <p>To exercise their rights, contact the Data Controller. If the response is unsatisfactory, a complaint may be lodged with the <strong>Italian Data Protection Authority (Garante per la protezione dei dati personali)</strong> (<a href="https://www.garanteprivacy.it" target="_blank" rel="noopener noreferrer">www.garanteprivacy.it</a>).</p>
+
+  <hr class="section-divider">
+
+  <h2>7. Data Security</h2>
+  <p>DietPlan Pro adopts appropriate technical and organizational measures to protect personal data from unauthorized access, loss, disclosure or alteration, including:</p>
+  <ul>
+    <li>Password encryption (bcrypt hashing via Supabase Auth).</li>
+    <li>Encrypted communications via TLS/HTTPS on all connections.</li>
+    <li>Row Level Security (RLS) in the database: each user can only access their own data.</li>
+    <li>Access to API endpoints restricted to authenticated users with a valid session.</li>
+    <li>HTTP security headers (CSP, HSTS, X-Frame-Options, etc.).</li>
+    <li>Account approval system: new accounts require authorization from an administrator.</li>
+  </ul>
+
+  <hr class="section-divider">
+
+  <h2>8. Cookies and Tracking Technologies</h2>
+  <p>DietPlan Pro exclusively uses:</p>
+  <ul>
+    <li><strong>Technical session cookies</strong> (localStorage) necessary to maintain the user's authentication session. No profiling cookies or third-party advertising cookies are used.</li>
+  </ul>
+
+  <hr class="section-divider">
+
+  <h2>9. Minors</h2>
+  <p>The service is intended exclusively for adult healthcare professionals. No data of users under 18 is knowingly collected as platform users. Clinical data of minor patients entered by the professional is processed under the professional's own responsibility, in compliance with applicable rules on the protection of minors' data.</p>
+
+  <hr class="section-divider">
+
+  <h2>10. Changes to This Notice</h2>
+  <p>The Controller reserves the right to make changes to this notice at any time. Changes will be published on this page with an indication of the update date. In the event of substantial changes, registered users will be notified by email.</p>
+
+  <hr class="section-divider">
+
+  <h2>11. Related Documents</h2>
+  <ul>
+    <li><a href="termini.html">Terms of Service</a> — contractual conditions for using the platform.</li>
+    <li><a href="legal/registro-trattamenti.html">Register of Processing Activities</a> (Art. 30 GDPR).</li>
+    <li><a href="legal/dpa-responsabile-trattamento.html">Data Processing Agreement</a> (Art. 28 GDPR) between the professional (Controller) and NutriPlan-Pro (Processor).</li>
+    <li><a href="legal/dpia.html">Data Protection Impact Assessment</a> (DPIA, Art. 35 GDPR).</li>
+    <li><a href="legal/sub-responsabili.html">Register of sub-processors</a>.</li>
+    <li><a href="legal/politica-conservazione-audit.html">Audit Log and Data Retention Policy</a>.</li>
+    <li><a href="legal/valutazione-hosting-italia-ue.html">Italy/EU Hosting Assessment</a> (technical/regulatory analysis, not a data-processing document).</li>
+    <li><a href="legal/iso27001-percorso-certificazione.html">ISO 27001 Certification Roadmap</a> and <a href="legal/iso27001-politica-sicurezza-informazioni.html">Information Security Policy</a> (scoping stage, not yet a certification).</li>
+  </ul>
+
+  <div class="contact-box">
+    <h3>📩 Privacy Contacts</h3>
+    <p>To exercise your rights or for any question regarding the processing of personal data, contact the Data Controller at the email address communicated when the service was activated.</p>
+    <p style="margin-top:10px">Italian Data Protection Authority: <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener noreferrer">www.garanteprivacy.it</a></p>
+  </div>
+
+  <p class="last-update">Last updated: July 2026 — NutriPlan-Pro</p>
+</div>
+</div>
+
+<script src="js/lang.min.js?v=2" defer></script>
+<script src="js/utils.min.js" defer></script>
 </body>
 </html>

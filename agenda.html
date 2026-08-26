@@ -160,7 +160,7 @@
   <span data-only-lang="it" style="flex:1;min-width:200px;color:#92400E;font-size:0.92em"><strong>Google Calendar disconnesso.</strong> La sessione è scaduta — riconnetti per sincronizzare i nuovi appuntamenti.</span>
   <span data-only-lang="en" style="flex:1;min-width:200px;color:#92400E;font-size:0.92em"><strong>Google Calendar disconnected.</strong> The session has expired — reconnect to sync new appointments.</span>
   <button onclick="connectGoogleCalendar();hideGcalReconnectBanner()" style="background:#F59E0B;color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:0.9em;font-weight:600;white-space:nowrap">📅 Riconnetti</button>
-  <button onclick="hideGcalReconnectBanner()" style="background:none;border:none;cursor:pointer;font-size:1.1em;color:#92400E;padding:4px 8px" title="Chiudi">✕</button>
+  <button onclick="hideGcalReconnectBanner()" style="background:none;border:none;cursor:pointer;font-size:1.1em;color:#92400E;padding:4px 8px" title="Chiudi / Close">✕</button>
 </div>
 
 <!-- STATS BAR -->
@@ -233,7 +233,7 @@
           <option value="urgente">🚨 Urgente</option>
         </select></div>
       <div class="nf" style="margin-bottom:8px"><label><span data-only-lang="it">Paziente / Titolo</span><span data-only-lang="en">Patient / Title</span></label>
-        <input type="text" id="ev-paziente" placeholder="Nome paziente o titolo evento"></div>
+        <input type="text" id="ev-paziente" placeholder="Nome paziente o titolo evento / Patient name or event title"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
         <div class="nf"><label><span data-only-lang="it">Data</span><span data-only-lang="en">Date</span></label><input type="date" id="ev-data"></div>
         <div class="nf"><label><span data-only-lang="it">Ora</span><span data-only-lang="en">Time</span></label><input type="time" id="ev-ora" value="09:00"></div>
@@ -256,7 +256,7 @@
         </select>
       </div>
       <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Note</span><span data-only-lang="en">Notes</span></label>
-        <textarea id="ev-note" rows="2" placeholder="Note appuntamento..."></textarea></div>
+        <textarea id="ev-note" rows="2" placeholder="Note appuntamento... / Appointment notes..."></textarea></div>
       <div class="nf" style="margin-bottom:12px">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
           <input type="checkbox" id="ev-video-toggle" onchange="toggleVideoSection('ev')" style="width:15px;height:15px;cursor:pointer">
@@ -310,7 +310,7 @@
           <option value="urgente">🚨 Urgente</option>
         </select></div>
       <div class="nf" style="margin-bottom:8px"><label><span data-only-lang="it">Paziente / Titolo</span><span data-only-lang="en">Patient / Title</span></label>
-        <input type="text" id="edit-ev-paziente" placeholder="Nome paziente o titolo evento"></div>
+        <input type="text" id="edit-ev-paziente" placeholder="Nome paziente o titolo evento / Patient name or event title"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
         <div class="nf"><label><span data-only-lang="it">Data</span><span data-only-lang="en">Date</span></label><input type="date" id="edit-ev-data"></div>
         <div class="nf"><label><span data-only-lang="it">Ora</span><span data-only-lang="en">Time</span></label><input type="time" id="edit-ev-ora"></div>
@@ -324,7 +324,7 @@
           <option value="120">2 ore</option>
         </select></div>
       <div class="nf"><label><span data-only-lang="it">Note</span><span data-only-lang="en">Notes</span></label>
-        <textarea id="edit-ev-note" rows="2" placeholder="Note appuntamento..."></textarea></div>
+        <textarea id="edit-ev-note" rows="2" placeholder="Note appuntamento... / Appointment notes..."></textarea></div>
       <div class="nf" style="margin-top:8px">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
           <input type="checkbox" id="edit-ev-video-toggle" onchange="toggleVideoSection('edit-ev')" style="width:15px;height:15px;cursor:pointer">
@@ -535,7 +535,7 @@ async function loadPatientAppointments() {
 }
 
 async function cancelPatientAppt(apptId) {
-  if (!confirm('Rimuovere questo appuntamento dall\'agenda? Il paziente vedrà l\'annullamento nell\'app.')) return;
+  if (!confirm(_L('Rimuovere questo appuntamento dall\'agenda? Il paziente vedrà l\'annullamento nell\'app.','Remove this appointment from the calendar? The patient will see the cancellation in the app.'))) return;
   try {
     const { error } = await sb.from('appointments')
       .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
@@ -546,9 +546,9 @@ async function cancelPatientAppt(apptId) {
     closeM('modal-event');
     renderCalendar();
     updateStats();
-    toast('🗑️ Appuntamento rimosso', 'info');
+    toast(_L('🗑️ Appuntamento rimosso','🗑️ Appointment removed'), 'info');
   } catch(e) {
-    toast('❌ Errore: ' + e.message, 'err');
+    toast('❌ ' + _L('Errore: ','Error: ') + e.message, 'err');
   }
 }
 // Formats a stored YYYY-MM-DD string for display in local timezone
@@ -690,7 +690,7 @@ async function saveEvents() {
       if (error) throw error;
     } catch(e) {
       console.warn('Supabase saveEvents error:', e.message);
-      toast('⚠️ Errore salvataggio sul server: ' + e.message, 'err');
+      toast(_L('⚠️ Errore salvataggio sul server: ','⚠️ Server save error: ') + e.message, 'err');
     }
   }
 }
@@ -738,7 +738,7 @@ async function loadEventsFromSupabase() {
           }
         } catch(e) {
           console.warn('loadEventsFromSupabase: failed to push local events:', e.message);
-          toast('⚠️ Sincronizzazione fallita: ' + e.message, 'err');
+          toast(_L('⚠️ Sincronizzazione fallita: ','⚠️ Sync failed: ') + e.message, 'err');
         }
       }
       return;
@@ -764,12 +764,12 @@ async function loadEventsFromSupabase() {
         }
       } catch(e) {
         console.warn('loadEventsFromSupabase: failed to push local-only events:', e.message);
-        toast('⚠️ Sincronizzazione fallita: ' + e.message, 'err');
+        toast('⚠️ ' + _L('Sincronizzazione fallita: ','Sync failed: ') + e.message, 'err');
       }
     }
   } catch(e) {
     console.warn('loadEventsFromSupabase error:', e.message);
-    toast('⚠️ Impossibile caricare gli appuntamenti dal server: ' + e.message, 'err');
+    toast(_L('⚠️ Impossibile caricare gli appuntamenti dal server: ','⚠️ Unable to load appointments from server: ') + e.message, 'err');
   }
 }
 
@@ -1073,7 +1073,7 @@ async function saveEvent() {
   // Check notification permission
   if(Notification.permission === 'default') {
     Notification.requestPermission().then(p => {
-      if(p === 'granted') toast('🔔 Notifiche attivate!','ok');
+      if(p === 'granted') toast(_L('🔔 Notifiche attivate!','🔔 Notifications enabled!'),'ok');
     });
   }
 }
@@ -1130,7 +1130,7 @@ async function deleteCurrentEvent() {
       if (error) throw error;
     } catch(e) {
       console.warn('Supabase delete error:', e.message);
-      toast('⚠️ Errore eliminazione sul server: ' + e.message, 'err');
+      toast(_L('⚠️ Errore eliminazione sul server: ','⚠️ Server delete error: ') + e.message, 'err');
     }
   }
   // Remove from Google Calendar if the event was synced there
@@ -1500,10 +1500,10 @@ function initGoogleCalendar(loginHint) {
     scope: 'https://www.googleapis.com/auth/calendar',
     callback: async (response) => {
       if (response.error) {
-        const msg = response.error === 'access_denied' ? 'Accesso negato — hai annullato l\'autorizzazione.' :
-          response.error === 'popup_closed_by_user' ? 'Finestra chiusa prima dell\'autorizzazione.' :
-          response.error === 'popup_blocked_by_browser' ? 'Popup bloccato dal browser — abilita i popup per questo sito.' :
-          'Errore OAuth: ' + response.error;
+        const msg = response.error === 'access_denied' ? _L('Accesso negato — hai annullato l\'autorizzazione.','Access denied — you cancelled the authorisation.') :
+          response.error === 'popup_closed_by_user' ? _L('Finestra chiusa prima dell\'autorizzazione.','Window closed before authorisation.') :
+          response.error === 'popup_blocked_by_browser' ? _L('Popup bloccato dal browser — abilita i popup per questo sito.','Popup blocked by the browser — enable popups for this site.') :
+          _L('Errore OAuth: ','OAuth error: ') + response.error;
         toast('❌ ' + msg, 'err');
         console.error('[GCal OAuth error]', response.error, response);
         return;
@@ -1552,7 +1552,7 @@ function connectGoogleCalendar() {
     });
   } else {
     if (!gcalTokenClient) {
-      toast('⚠️ Google Identity Services non ancora caricato. Riprova tra un momento.', 'err');
+      toast(_L('⚠️ Google Identity Services non ancora caricato. Riprova tra un momento.','⚠️ Google Identity Services not loaded yet. Try again in a moment.'), 'err');
       return;
     }
     gcalTokenClient.requestAccessToken();
@@ -1734,12 +1734,12 @@ async function syncAllEventsToGCal() {
     if (gcalId) count++;
   }
   if (count > 0) {
-    toast(`📅 ${count} appuntament${count === 1 ? 'o' : 'i'} sincronizzat${count === 1 ? 'o' : 'i'} su Google Calendar!`, 'ok');
+    toast(_L(`📅 ${count} appuntament${count === 1 ? 'o' : 'i'} sincronizzat${count === 1 ? 'o' : 'i'} su Google Calendar!`, `📅 ${count} appointment${count === 1 ? '' : 's'} synced to Google Calendar!`), 'ok');
   } else {
     // If gcalToken was cleared during the loop, the session expired mid-sync
     const msg = !gcalToken
-      ? '⚠️ Sessione Google Calendar scaduta durante la sincronizzazione. Riconnetti per riprovare.'
-      : '⚠️ Sincronizzazione Google Calendar non riuscita. Verifica la connessione e riprova.';
+      ? _L('⚠️ Sessione Google Calendar scaduta durante la sincronizzazione. Riconnetti per riprovare.','⚠️ Google Calendar session expired during sync. Reconnect to try again.')
+      : _L('⚠️ Sincronizzazione Google Calendar non riuscita. Verifica la connessione e riprova.','⚠️ Google Calendar sync failed. Check your connection and try again.');
     toast(msg, 'err');
   }
 }
@@ -1778,12 +1778,12 @@ async function autoSyncCalendar() {
   const statusEl = document.getElementById('auto-sync-status');
 
   if (!email) {
-    toast('Inserisci la tua email per continuare', 'err');
+    toast(_L('Inserisci la tua email per continuare','Enter your email to continue'), 'err');
     if (emailInput) emailInput.focus();
     return;
   }
   if (!currentUser) {
-    toast('Devi essere autenticato per sincronizzare il calendario', 'err');
+    toast(_L('Devi essere autenticato per sincronizzare il calendario','You must be signed in to sync the calendar'), 'err');
     return;
   }
 
@@ -1837,7 +1837,7 @@ async function autoSyncCalendar() {
 
   const calUrls = await getCalendarUrl();
   if (!calUrls) {
-    toast('Errore generazione link calendario', 'err');
+    toast(_L('Errore generazione link calendario','Error generating calendar link'), 'err');
     if (tempWin) tempWin.close();
     return;
   }
@@ -1850,7 +1850,7 @@ async function autoSyncCalendar() {
       statusEl.textContent = '✅ Google Calendar aperto! Clicca "Aggiungi" per abbonarti in sola lettura.';
       statusEl.style.display = '';
     }
-    toast('📅 Google Calendar aperto — clicca "Aggiungi" per completare!', 'ok');
+    toast(_L('📅 Google Calendar aperto — clicca "Aggiungi" per completare!','📅 Google Calendar opened — click "Add" to finish!'), 'ok');
   } else {
     // Apple Calendar / Outlook / other: webcal:// protocol handler
     if (tempWin) { tempWin.location.href = webcalUrl; } else { window.open(webcalUrl); }
@@ -1858,7 +1858,7 @@ async function autoSyncCalendar() {
       statusEl.textContent = '✅ Link di abbonamento aperto! Accetta la richiesta nel tuo calendario per completare la sincronizzazione.';
       statusEl.style.display = '';
     }
-    toast('📅 Calendario aperto — accetta la richiesta per completare!', 'ok');
+    toast(_L('📅 Calendario aperto — accetta la richiesta per completare!','📅 Calendar opened — accept the request to finish!'), 'ok');
   }
 }
 
@@ -1896,11 +1896,11 @@ function copySyncUrl() {
   const url = document.getElementById('sync-url-input').value;
   if (!url) return;
   navigator.clipboard.writeText(url).then(() => {
-    toast('📋 URL copiato negli appunti!', 'ok');
+    toast(_L('📋 URL copiato negli appunti!','📋 URL copied to clipboard!'), 'ok');
   }).catch(() => {
     document.getElementById('sync-url-input').select();
     document.execCommand('copy');
-    toast('📋 URL copiato!', 'ok');
+    toast(_L('📋 URL copiato!','📋 URL copied!'), 'ok');
   });
 }
 
@@ -1911,7 +1911,7 @@ function openInCalendar() {
 }
 
 function exportICal() {
-  if (!events.length) { toast('Nessun appuntamento da esportare', 'err'); return; }
+  if (!events.length) { toast(_L('Nessun appuntamento da esportare','No appointments to export'), 'err'); return; }
   const pad = n => String(n).padStart(2, '0');
   function toICalDate(dateStr, timeStr) {
     const [y, m, d] = dateStr.split('-').map(Number);
@@ -2006,7 +2006,7 @@ function exportICal() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  toast('📥 Calendario esportato! Importalo in Google Calendar, Apple Calendar o Outlook.', 'ok');
+  toast(_L('📥 Calendario esportato! Importalo in Google Calendar, Apple Calendar o Outlook.','📥 Calendar exported! Import it into Google Calendar, Apple Calendar or Outlook.'), 'ok');
 }
 </script>
 </body>

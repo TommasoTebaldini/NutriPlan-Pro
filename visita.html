@@ -165,7 +165,7 @@
         </div>
         <div class="fg">
           <label>Titolo / Oggetto visita</label>
-          <input type="text" id="v-titolo" placeholder="es. Prima visita nutrizionale — impostazione piano personalizzato" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+          <input type="text" id="v-titolo" placeholder="es. Prima visita nutrizionale — impostazione piano personalizzato / e.g. First nutrition visit — setting up a personalised plan" style="width:100%;padding:8px 11px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
         </div>
       </div>
 
@@ -433,10 +433,10 @@ async function loadSavedVisite() {
     return `<div class="visita-item" onclick="openSavedVisita('${v.id}')">
       <span style="font-size:24px;flex-shrink:0">🩺</span>
       <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(v.nota||'Resoconto visita')}</div>
+        <div style="font-weight:700;font-size:13px;color:var(--slate)">${esc(v.nota||_L('Resoconto visita','Visit notes'))}</div>
         <div style="font-size:11.5px;color:var(--slate-l)">${dateStr}${tipoStr?' · '+tipoStr:''}</div>
       </div>
-      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();eliminaVisita('${v.id}')" title="Elimina">🗑️</button>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();eliminaVisita('${v.id}')" title="${_L('Elimina','Delete')}">🗑️</button>
     </div>`;
   }).join('');
 }

@@ -171,7 +171,7 @@
   </div>
   <div style="flex:0 0 auto;display:flex;align-items:center;gap:6px">
     <span style="font-size:10.5px;font-weight:700;color:var(--slate-m);white-space:nowrap">📝 <span data-only-lang="it">Nota / Titolo sessione</span><span data-only-lang="en" style="display:none">Note / Session title</span></span>
-    <input type="text" id="qbar-note" placeholder="es. Prima visita, follow-up..." style="width:200px;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:12.5px;font-family:inherit;outline:none">
+    <input type="text" id="qbar-note" placeholder="es. Prima visita, follow-up... / e.g. First visit, follow-up..." style="width:200px;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:7px;font-size:12.5px;font-family:inherit;outline:none">
   </div>
   <div style="display:flex;gap:6px;flex-shrink:0;align-items:center">
     <button class="btn btn-primary btn-sm" onclick="salvaQFromBar()">💾 <span data-only-lang="it">Salva in Cartella</span><span data-only-lang="en" style="display:none">Save to File</span></button>
@@ -182,8 +182,8 @@
 <!-- SEARCH BAR -->
 <div class="no-print" style="margin-bottom:16px;position:relative" id="q-search-wrap">
   <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none">🔍</span>
-  <input type="text" id="q-search-input" placeholder="Cerca questionario... (es. MUST, PHQ-9, PREDIMED, SARC-F)" oninput="debouncedQSearch(this.value)" style="width:100%;padding:10px 12px 10px 38px;border:1.5px solid var(--border-d);border-radius:10px;font-size:13px;font-family:inherit;color:var(--slate);outline:none;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:border-color .15s;box-sizing:border-box" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border-d)'">
-  <button onclick="clearQSearch()" id="q-search-clear" style="display:none;position:absolute;right:2px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--slate-l);min-width:40px;min-height:40px" title="Cancella ricerca">✕</button>
+  <input type="text" id="q-search-input" placeholder="Cerca questionario... (es. MUST, PHQ-9, PREDIMED, SARC-F) / Search questionnaire..." oninput="debouncedQSearch(this.value)" style="width:100%;padding:10px 12px 10px 38px;border:1.5px solid var(--border-d);border-radius:10px;font-size:13px;font-family:inherit;color:var(--slate);outline:none;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:border-color .15s;box-sizing:border-box" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border-d)'">
+  <button onclick="clearQSearch()" id="q-search-clear" style="display:none;position:absolute;right:2px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--slate-l);min-width:40px;min-height:40px" title="Cancella ricerca / Clear search">✕</button>
 </div>
 
 <!-- ══════════════════════════════════════════════
@@ -711,19 +711,19 @@
       <div class="info-box ib-teal" style="font-size:12px"><span data-only-lang="it">GNRI (Bouillanne et al., 2005) è un indice nutrizionale per anziani basato su albumina sierica e peso. Formula: GNRI = [1.519 × albumina(g/L)] + [41.7 × (peso attuale/peso ideale)]. Stratifica il rischio di morbilità e mortalità in pazienti anziani ospedalizzati.</span><span data-only-lang="en" style="display:none">GNRI (Bouillanne et al., 2005) is a nutritional index for the elderly based on serum albumin and weight. Formula: GNRI = [1.519 × albumin(g/L)] + [41.7 × (current weight/ideal weight)]. Stratifies morbidity and mortality risk in hospitalised elderly patients.</span></div>
       <div class="q-item">
         <label>Albumina sierica (g/L)</label>
-        <input type="number" id="gnri-albumina" class="q-num-input" style="width:100px" min="10" max="60" step="0.1" placeholder="es. 35" oninput="calcGNRI()">
+        <input type="number" id="gnri-albumina" class="q-num-input" style="width:100px" min="10" max="60" step="0.1" placeholder="es. 35 / e.g. 35" oninput="calcGNRI()">
       </div>
       <div class="q-item">
         <label>Peso attuale (kg)</label>
-        <input type="number" id="gnri-peso-att" class="q-num-input" style="width:100px" min="20" max="200" step="0.1" placeholder="es. 68" oninput="calcGNRI()">
+        <input type="number" id="gnri-peso-att" class="q-num-input" style="width:100px" min="20" max="200" step="0.1" placeholder="es. 68 / e.g. 68" oninput="calcGNRI()">
       </div>
       <div class="q-item">
         <label>Peso ideale (kg) — Formula di Lorentz o inserire manualmente</label>
-        <input type="number" id="gnri-peso-id" class="q-num-input" style="width:100px" min="20" max="200" step="0.1" placeholder="es. 72" oninput="calcGNRI()">
+        <input type="number" id="gnri-peso-id" class="q-num-input" style="width:100px" min="20" max="200" step="0.1" placeholder="es. 72 / e.g. 72" oninput="calcGNRI()">
         <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div>
             <div style="font-size:11px;color:var(--slate-l);margin-bottom:4px">Statura (cm) per calcolo peso ideale</div>
-            <input type="number" id="gnri-statura" class="q-num-input" style="width:100px" placeholder="es. 165" oninput="calcPesoIdealeGNRI()">
+            <input type="number" id="gnri-statura" class="q-num-input" style="width:100px" placeholder="es. 165 / e.g. 165" oninput="calcPesoIdealeGNRI()">
           </div>
           <div>
             <div style="font-size:11px;color:var(--slate-l);margin-bottom:4px">Sesso</div>
@@ -1451,7 +1451,7 @@
       <p style="font-size:13px;color:var(--slate-m);margin-bottom:12px">La tabella <b>note_specialistiche</b> non esiste ancora nel database Supabase. Copia il seguente SQL ed eseguilo nell'<b>SQL Editor</b> del tuo pannello Supabase, poi riprova a salvare.</p>
       <textarea id="sql-setup-text" rows="14" readonly style="width:100%;padding:10px;border:1.5px solid var(--border-d);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;background:#F8FAFC;box-sizing:border-box"></textarea>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('sql-setup-text').value).then(()=>toast('✅ '+_L('SQL copiato!','SQL copied!'),'ok'))">📋 <span data-only-lang="it">Copia SQL</span><span data-only-lang="en" style="display:none">Copy SQL</span></button>
         <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none">🔗 Apri Supabase Dashboard</a>
         <button class="btn btn-ghost btn-sm" onclick="closeM('modal-sql-setup')">Chiudi</button>
       </div>
@@ -2919,7 +2919,7 @@ CREATE POLICY "Own note" ON note_specialistiche FOR ALL USING (auth.uid() = user
   console.error('SQL da eseguire:\n' + sql);
   const modal = document.getElementById('modal-sql-setup');
   if (modal) { document.getElementById('sql-setup-text').value = sql; openM('modal-sql-setup'); }
-  else { toast('⚠️ Tabella DB mancante — SQL in console (F12)', 'err'); }
+  else { toast(_L('⚠️ Tabella DB mancante — SQL in console (F12)','⚠️ DB table missing — SQL in console (F12)'), 'err'); }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

@@ -152,7 +152,7 @@
   <!-- TAB: FATTURE -->
   <div id="tab-fatture">
     <div id="fatt-filters" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <input type="text" id="fatt-search" placeholder="🔍 Cerca paziente..." class="db-search" style="flex:1;min-width:160px" oninput="renderFatture()">
+      <input type="text" id="fatt-search" placeholder="🔍 Cerca paziente... / Search patient..." class="db-search" style="flex:1;min-width:160px" oninput="renderFatture()">
       <select id="fatt-filter-stato" class="db-search" style="min-width:130px" onchange="renderFatture()">
         <option value="">Tutti gli stati</option>
         <option value="da_pagare">In attesa</option>
@@ -201,11 +201,11 @@
     <div class="mhdr"><h2 id="pacc-modal-title">📦 Nuovo Pacchetto</h2><button class="mclose" onclick="closeM('modal-pacchetto')">✕</button></div>
     <div class="mbody">
       <div class="fgrid">
-        <div class="fg full"><label>Nome pacchetto *</label><input type="text" id="pacc-nome" maxlength="80" placeholder="es. Percorso 3 mesi"></div>
+        <div class="fg full"><label>Nome pacchetto *</label><input type="text" id="pacc-nome" maxlength="80" placeholder="es. Percorso 3 mesi / e.g. 3-month program"></div>
         <div class="fg"><label>N° visite incluse *</label><input type="number" id="pacc-visite" min="1" max="99" step="1" placeholder="6"></div>
         <div class="fg"><label>Prezzo (€) *</label><input type="number" id="pacc-prezzo" min="0" step="0.01" placeholder="0.00"></div>
         <div class="fg"><label>Validità (giorni)</label><input type="number" id="pacc-durata" min="0" step="1" placeholder="90"></div>
-        <div class="fg full"><label>Descrizione</label><textarea id="pacc-desc" rows="2" maxlength="300" placeholder="Cosa include il percorso..."></textarea></div>
+        <div class="fg full"><label>Descrizione</label><textarea id="pacc-desc" rows="2" maxlength="300" placeholder="Cosa include il percorso... / What the program includes..."></textarea></div>
       </div>
     </div>
     <div class="mfoot">
@@ -258,7 +258,7 @@
         </div>
         <div class="fg">
           <label>N° Fattura</label>
-          <input type="text" id="fatt-numero" placeholder="es. 2026/001" readonly style="background:#F8FAFC;color:var(--slate-m)">
+          <input type="text" id="fatt-numero" placeholder="es. 2026/001 / e.g. 2026/001" readonly style="background:#F8FAFC;color:var(--slate-m)">
         </div>
         <div class="fg full">
           <label>Tipo visita *</label>
@@ -290,7 +290,7 @@
         </div>
         <div class="fg full">
           <label>Note</label>
-          <textarea id="fatt-note" rows="2" placeholder="Note aggiuntive (opzionale)..."></textarea>
+          <textarea id="fatt-note" rows="2" placeholder="Note aggiuntive (opzionale)... / Additional notes (optional)..."></textarea>
         </div>
         <div class="fg full" style="border-top:1px solid var(--border);margin-top:6px;padding-top:12px">
           <label style="display:flex;align-items:center;gap:6px">📄 Dati per fattura elettronica <span style="font-weight:400;color:var(--slate-l);font-size:11.5px">(facoltativi, servono solo per generare l'XML FatturaPA)</span></label>
@@ -407,7 +407,7 @@ async function attivaStripeConnect() {
   btn.textContent = '⏳ Reindirizzamento a Stripe...';
   try {
     const { data: { session } } = await sb.auth.getSession();
-    if (!session) { toast('Effettua il login prima di continuare.', 'err'); return; }
+    if (!session) { toast(_L('Effettua il login prima di continuare.', 'Please log in before continuing.'), 'err'); return; }
     const res = await fetch(SUPABASE_URL + '/functions/v1/stripe-connect-onboarding', {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' },
@@ -487,7 +487,7 @@ create policy "Proprie fatture" on fatture for all using(auth.uid()=dietitian_id
     <p style="font-size:12px;color:#78350F;max-width:480px;margin:0 auto 10px">Esegui questo SQL nel <a href="https://app.supabase.com" target="_blank" style="color:#B45309;font-weight:700">Supabase SQL Editor</a> per abilitare il cloud sync:</p>
     <pre style="background:#1E293B;color:#E2E8F0;border-radius:10px;padding:12px;font-size:10px;text-align:left;white-space:pre-wrap;word-break:break-all;max-width:520px;margin:0 auto 10px;font-family:monospace" id="fatt-sql">${sql}</pre>
     <div style="display:flex;gap:8px;justify-content:center">
-      <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard?.writeText(document.getElementById('fatt-sql').textContent).then(()=>toast('✅ SQL copiato!','ok'))">📋 Copia SQL</button>
+      <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard?.writeText(document.getElementById('fatt-sql').textContent).then(()=>toast(_L('✅ SQL copiato!','✅ SQL copied!'),'ok'))">📋 Copia SQL</button>
       <button class="btn btn-primary btn-sm" onclick="this.closest('.empty-state').remove()">✅ Continua in locale</button>
     </div>
     <p style="font-size:11px;color:#92400E;margin-top:8px">Le fatture sono salvate localmente finché non configuri il DB.</p>
@@ -534,7 +534,7 @@ function csvEscape(v) {
 
 function exportFattureCSV() {
   const list = getFilteredFatture();
-  if (!list.length) { toast('Nessuna fattura da esportare', 'err'); return; }
+  if (!list.length) { toast(_L('Nessuna fattura da esportare', 'No invoices to export'), 'err'); return; }
   const header = ['Numero fattura','Paziente','Codice fiscale','Tipo visita','Data fattura','Importo (EUR)','Aliquota IVA (%)','Stato','Nota'].join(';');
   const rows = list.map(f => [
     csvEscape(f.numero_fattura || ''),
@@ -553,7 +553,7 @@ function exportFattureCSV() {
   const a = document.createElement('a');
   a.href = url; a.download = `fatture_${new Date().toISOString().slice(0,10)}.csv`;
   a.click(); URL.revokeObjectURL(url);
-  toast('📊 CSV esportato!', 'ok');
+  toast(_L('📊 CSV esportato!', '📊 CSV exported!'), 'ok');
 }
 
 function renderFatture() {
@@ -574,12 +574,12 @@ function renderFatture() {
         ${f.stato !== 'pagato' && f.scadenza && new Date(f.scadenza) < new Date() ? '<span style="color:#DC2626;font-weight:700;font-size:11px">⚠ Scaduta ' + new Date(f.scadenza).toLocaleDateString('it') + '</span>' : ''}
         <span class="fatt-date">${fmtDate(f.data_fattura)}</span>
         <div style="display:flex;gap:4px;margin-left:auto">
-          ${f.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="togglePagato('${esc(f.id)}')" title="Segna come pagato">✓</button>` : ''}
-          <button class="btn btn-ghost btn-xs" onclick="generaFatturaElettronica('${esc(f.id)}')" title="${f.xml_generato_at ? 'XML già generato — rigenera' : 'Genera XML fattura elettronica'}">${f.xml_generato_at ? '📄✓' : '📄'}</button>
-          ${f.sdi_inviato_at ? '<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="Inviata allo SDI via Fatture in Cloud">📤✓</span>' : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSDI('${esc(f.id)}')" title="Invia allo SDI via Fatture in Cloud (richiede il collegamento in Impostazioni → Dati fiscali)">📤</button>`}
-          ${f.sts_stato === 'INVI' || f.sts_stato === 'PREN' ? `<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="Inviata al Sistema TS${f.sts_protocollo ? ' — protocollo ' + esc(f.sts_protocollo) : ''}">🏥✓</span>` : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSTS('${esc(f.id)}')" title="${f.sts_stato === 'ERRO' ? 'Ultimo invio Sistema TS fallito: ' + esc(f.sts_messaggio || '') + ' — riprova' : 'Invia al Sistema Tessera Sanitaria (richiede la registrazione in Impostazioni → Dati fiscali)'}">${f.sts_stato === 'ERRO' ? '🏥⚠' : '🏥'}</button>`}
-          <button class="btn btn-ghost btn-xs" onclick="editFattura('${esc(f.id)}')" title="Modifica">✏️</button>
-          <button class="btn btn-ghost btn-xs" onclick="deleteFattura('${esc(f.id)}')" title="Elimina">🗑️</button>
+          ${f.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="togglePagato('${esc(f.id)}')" title="${_L('Segna come pagato', 'Mark as paid')}">✓</button>` : ''}
+          <button class="btn btn-ghost btn-xs" onclick="generaFatturaElettronica('${esc(f.id)}')" title="${f.xml_generato_at ? _L('XML già generato — rigenera', 'XML already generated — regenerate') : _L('Genera XML fattura elettronica', 'Generate electronic invoice XML')}">${f.xml_generato_at ? '📄✓' : '📄'}</button>
+          ${f.sdi_inviato_at ? `<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="${_L('Inviata allo SDI via Fatture in Cloud', 'Sent to SDI via Fatture in Cloud')}">📤✓</span>` : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSDI('${esc(f.id)}')" title="${_L('Invia allo SDI via Fatture in Cloud (richiede il collegamento in Impostazioni → Dati fiscali)', 'Send to SDI via Fatture in Cloud (requires the connection in Settings → Fiscal data)')}">📤</button>`}
+          ${f.sts_stato === 'INVI' || f.sts_stato === 'PREN' ? `<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="${_L('Inviata al Sistema TS', 'Sent to Sistema TS')}${f.sts_protocollo ? _L(' — protocollo ', ' — protocol ') + esc(f.sts_protocollo) : ''}">🏥✓</span>` : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSTS('${esc(f.id)}')" title="${f.sts_stato === 'ERRO' ? _L('Ultimo invio Sistema TS fallito: ', 'Last Sistema TS submission failed: ') + esc(f.sts_messaggio || '') + _L(' — riprova', ' — retry') : _L('Invia al Sistema Tessera Sanitaria (richiede la registrazione in Impostazioni → Dati fiscali)', 'Send to Sistema Tessera Sanitaria (requires registration in Settings → Fiscal data)')}">${f.sts_stato === 'ERRO' ? '🏥⚠' : '🏥'}</button>`}
+          <button class="btn btn-ghost btn-xs" onclick="editFattura('${esc(f.id)}')" title="${_L('Modifica', 'Edit')}">✏️</button>
+          <button class="btn btn-ghost btn-xs" onclick="deleteFattura('${esc(f.id)}')" title="${_L('Elimina', 'Delete')}">🗑️</button>
         </div>
       </div>
       ${f.note ? `<div style="font-size:11.5px;color:var(--slate-l);margin-top:6px;font-style:italic">${esc(f.note)}</div>` : ''}
@@ -615,7 +615,7 @@ async function generaFatturaElettronica(id) {
     if (!useLocalFatt) await sb.from('fatture').update({ xml_generato_at: nowIso }).eq('id', id);
     fatture = fatture.map(x => x.id === id ? { ...x, xml_generato_at: nowIso } : x);
     renderFatture();
-    toast('✅ XML generato: ' + filename + ' — ricordati di inviarlo tu allo SDI (PEC o intermediario)', 'ok');
+    toast(_L('✅ XML generato: ', '✅ XML generated: ') + filename + _L(' — ricordati di inviarlo tu allo SDI (PEC o intermediario)', ' — remember to send it yourself to SDI (via PEC or an intermediary)'), 'ok');
   } catch (e) {
     toast('❌ ' + e.message, 'err');
   } finally {
@@ -630,10 +630,10 @@ async function inviaFatturaSDI(id) {
   const f = fatture.find(x => x.id === id);
   if (!f) return;
   if (useLocalFatt || String(id).startsWith('ls_')) {
-    toast('⚠️ Le fatture salvate solo localmente non possono essere inviate: configura prima la tabella fatture nel DB', 'err');
+    toast(_L('⚠️ Le fatture salvate solo localmente non possono essere inviate: configura prima la tabella fatture nel DB', '⚠️ Invoices saved only locally cannot be sent: set up the invoices table in the DB first'), 'err');
     return;
   }
-  if (!confirm(`Inviare la fattura ${f.numero_fattura || ''} (${euro(f.importo)} — ${f.patient_name || ''}) allo SDI tramite Fatture in Cloud?\n\nL'invio è definitivo: verifica prima i dati del paziente (codice fiscale e indirizzo sono necessari per la fattura elettronica).`)) return;
+  if (!confirm(_L(`Inviare la fattura ${f.numero_fattura || ''} (${euro(f.importo)} — ${f.patient_name || ''}) allo SDI tramite Fatture in Cloud?\n\nL'invio è definitivo: verifica prima i dati del paziente (codice fiscale e indirizzo sono necessari per la fattura elettronica).`, `Send invoice ${f.numero_fattura || ''} (${euro(f.importo)} — ${f.patient_name || ''}) to SDI via Fatture in Cloud?\n\nThe submission is final: check the patient's data first (codice fiscale and address are required for the electronic invoice).`))) return;
   showLoading(true);
   try {
     const { data: { session } } = await sb.auth.getSession();
@@ -651,7 +651,7 @@ async function inviaFatturaSDI(id) {
     await sb.from('fatture').update({ sdi_inviato_at: nowIso, fic_document_id: String(data.fic_document_id || '') }).eq('id', id);
     fatture = fatture.map(x => x.id === id ? { ...x, sdi_inviato_at: nowIso } : x);
     renderFatture();
-    toast('📤 Fattura inviata allo SDI via Fatture in Cloud (doc. ' + data.fic_document_id + ')', 'ok');
+    toast(_L('📤 Fattura inviata allo SDI via Fatture in Cloud (doc. ', '📤 Invoice sent to SDI via Fatture in Cloud (doc. ') + data.fic_document_id + ')', 'ok');
   } catch (e) {
     toast('❌ ' + e.message, 'err');
   } finally {
@@ -667,14 +667,14 @@ async function inviaFatturaSTS(id) {
   const f = fatture.find(x => x.id === id);
   if (!f) return;
   if (useLocalFatt || String(id).startsWith('ls_')) {
-    toast('⚠️ Le fatture salvate solo localmente non possono essere inviate: configura prima la tabella fatture nel DB', 'err');
+    toast(_L('⚠️ Le fatture salvate solo localmente non possono essere inviate: configura prima la tabella fatture nel DB', '⚠️ Invoices saved only locally cannot be sent: set up the invoices table in the DB first'), 'err');
     return;
   }
   if (!f.codice_fiscale_paziente) {
-    toast('⚠️ Aggiungi il codice fiscale del paziente a questa fattura prima di inviarla al Sistema TS', 'err');
+    toast(_L('⚠️ Aggiungi il codice fiscale del paziente a questa fattura prima di inviarla al Sistema TS', "⚠️ Add the patient's codice fiscale to this invoice before sending it to Sistema TS"), 'err');
     return;
   }
-  if (!confirm(`Inviare la fattura ${f.numero_fattura || ''} (${euro(f.importo)} — ${f.patient_name || ''}) al Sistema Tessera Sanitaria?\n\nL'invio comunica una spesa sanitaria detraibile del paziente all'Agenzia delle Entrate: verifica che il paziente non abbia richiesto opposizione a questo invio.`)) return;
+  if (!confirm(_L(`Inviare la fattura ${f.numero_fattura || ''} (${euro(f.importo)} — ${f.patient_name || ''}) al Sistema Tessera Sanitaria?\n\nL'invio comunica una spesa sanitaria detraibile del paziente all'Agenzia delle Entrate: verifica che il paziente non abbia richiesto opposizione a questo invio.`, `Send invoice ${f.numero_fattura || ''} (${euro(f.importo)} — ${f.patient_name || ''}) to Sistema Tessera Sanitaria?\n\nThis submission reports a deductible healthcare expense of the patient to the Agenzia delle Entrate (Italian Revenue Agency): make sure the patient has not requested to opt out of this submission.`))) return;
   showLoading(true);
   try {
     const { data: { session } } = await sb.auth.getSession();
@@ -688,7 +688,7 @@ async function inviaFatturaSTS(id) {
     if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
     fatture = fatture.map(x => x.id === id ? { ...x, sts_stato: data.stato, sts_protocollo: data.protocollo } : x);
     renderFatture();
-    toast('🏥 Fattura inviata al Sistema TS' + (data.protocollo ? ' (protocollo ' + data.protocollo + ')' : ''), 'ok');
+    toast(_L('🏥 Fattura inviata al Sistema TS', '🏥 Invoice sent to Sistema TS') + (data.protocollo ? _L(' (protocollo ', ' (protocol ') + data.protocollo + ')' : ''), 'ok');
   } catch (e) {
     toast('❌ ' + e.message, 'err');
   } finally {
@@ -799,22 +799,22 @@ async function salvaPacchetto() {
   const prezzo = parseFloat(document.getElementById('pacc-prezzo').value);
   const durata = parseInt(document.getElementById('pacc-durata').value, 10) || null;
   const descrizione = document.getElementById('pacc-desc').value.trim() || null;
-  if (!nome || !n_visite || n_visite < 1 || !isFinite(prezzo) || prezzo < 0) { toast('Compila nome, visite e prezzo', 'err'); return; }
+  if (!nome || !n_visite || n_visite < 1 || !isFinite(prezzo) || prezzo < 0) { toast(_L('Compila nome, visite e prezzo', 'Fill in name, visits and price'), 'err'); return; }
   const payload = { dietitian_id: studioOwnerId || currentUser.id, nome, n_visite, prezzo, durata_giorni: durata, descrizione };
   const res = _editingPacchettoId
     ? await sb.from('pacchetti').update(payload).eq('id', _editingPacchettoId).eq('dietitian_id', studioOwnerId || currentUser.id)
     : await sb.from('pacchetti').insert(payload);
   if (res.error) {
-    toast(res.error.code === '42P01' ? '⚠️ Esegui la SEZIONE 31 di supabase_setup.sql' : '❌ ' + res.error.message, 'err');
+    toast(res.error.code === '42P01' ? _L('⚠️ Esegui la SEZIONE 31 di supabase_setup.sql', '⚠️ Run SECTION 31 of supabase_setup.sql') : '❌ ' + res.error.message, 'err');
     return;
   }
   closeM('modal-pacchetto');
-  toast('✅ Pacchetto salvato', 'ok');
+  toast(_L('✅ Pacchetto salvato', '✅ Package saved'), 'ok');
   await loadPacchetti();
 }
 
 async function deletePacchetto(id) {
-  if (!confirm('Eliminare questo pacchetto? I percorsi già venduti ai pazienti restano invariati.')) return;
+  if (!confirm(_L('Eliminare questo pacchetto? I percorsi già venduti ai pazienti restano invariati.', 'Delete this package? Programs already sold to patients remain unchanged.'))) return;
   const { error } = await sb.from('pacchetti').delete().eq('id', id).eq('dietitian_id', studioOwnerId || currentUser.id);
   if (error) { toast('❌ ' + error.message, 'err'); return; }
   await loadPacchetti();
@@ -836,7 +836,7 @@ async function confermaVendiPacchetto() {
   const p = _pacchetti.find(x => x.id === _vendiPacchettoId);
   const patientId = document.getElementById('vendi-patient').value;
   const dataInizio = document.getElementById('vendi-data').value;
-  if (!p || !patientId || !dataInizio) { toast('Seleziona paziente e data', 'err'); return; }
+  if (!p || !patientId || !dataInizio) { toast(_L('Seleziona paziente e data', 'Select patient and date'), 'err'); return; }
   const scadenza = p.durata_giorni
     ? new Date(new Date(dataInizio).getTime() + p.durata_giorni * 86400000).toISOString().slice(0, 10)
     : null;
@@ -855,7 +855,7 @@ async function confermaVendiPacchetto() {
   });
   if (error) { toast('❌ ' + error.message, 'err'); return; }
   closeM('modal-vendi-pacchetto');
-  toast('🎟️ Pacchetto assegnato', 'ok');
+  toast(_L('🎟️ Pacchetto assegnato', '🎟️ Package assigned'), 'ok');
   await loadPacchetti();
 }
 
@@ -882,7 +882,7 @@ function fatturaDaPacchetto(id) {
 }
 
 async function deletePacchettoVenduto(id) {
-  if (!confirm('Rimuovere questo pacchetto assegnato al paziente?')) return;
+  if (!confirm(_L('Rimuovere questo pacchetto assegnato al paziente?', 'Remove this package assigned to the patient?'))) return;
   const { error } = await sb.from('pacchetti_acquistati').delete().eq('id', id).eq('dietitian_id', studioOwnerId || currentUser.id);
   if (error) { toast('❌ ' + error.message, 'err'); return; }
   await loadPacchetti();
@@ -910,7 +910,7 @@ function renderTariffario() {
         ${tariff.map((row, i) => `
         <tr>
           <td style="padding:9px 12px 9px 0;border-bottom:1px solid #F1F5F9">
-            <input type="text" value="${esc(row.tipo)}" placeholder="es. Prima visita, Controllo..."
+            <input type="text" value="${esc(row.tipo)}" placeholder="es. Prima visita, Controllo... / e.g. First visit, Follow-up..."
               style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:9px;font-size:13px;font-family:inherit;background:white;outline:none;transition:border-color .15s"
               onfocus="this.style.borderColor='#2DD4BF'" onblur="this.style.borderColor='#E2E8F0'">
           </td>
@@ -958,7 +958,7 @@ function saveTariffario() {
   });
   localStorage.setItem(LS_KEY_TARIFF, JSON.stringify(tariff));
   renderTariffario();
-  toast('✅ Tariffario salvato!', 'ok');
+  toast(_L('✅ Tariffario salvato!', '✅ Price list saved!'), 'ok');
 }
 
 // ── NUOVA / MODIFICA FATTURA ──
@@ -1015,9 +1015,9 @@ async function salvaFattura() {
   const data = document.getElementById('fatt-data').value;
   const tipo = document.getElementById('fatt-tipo').value;
   const importo = parseFloat(document.getElementById('fatt-importo').value) || 0;
-  if (!data) { toast('Inserisci la data', 'err'); return; }
-  if (!tipo) { toast('Seleziona il tipo di visita', 'err'); return; }
-  if (importo <= 0) { toast('Inserisci un importo valido', 'err'); return; }
+  if (!data) { toast(_L('Inserisci la data', 'Enter the date'), 'err'); return; }
+  if (!tipo) { toast(_L('Seleziona il tipo di visita', 'Select the visit type'), 'err'); return; }
+  if (importo <= 0) { toast(_L('Inserisci un importo valido', 'Enter a valid amount'), 'err'); return; }
   const now = new Date().toISOString();
   const payload = {
     dietitian_id: studioOwnerId || currentUser?.id || 'local',
@@ -1049,7 +1049,7 @@ async function salvaFattura() {
     lsSaveFatture(arr);
     fatture = arr;
     closeM('modal-fattura');
-    toast(editingFatturaId ? '✅ Fattura aggiornata!' : '✅ Fattura salvata (locale)!', 'ok');
+    toast(editingFatturaId ? _L('✅ Fattura aggiornata!', '✅ Invoice updated!') : _L('✅ Fattura salvata (locale)!', '✅ Invoice saved (local)!'), 'ok');
     updateSummary(); populateAnnoFilter(); renderFatture();
     return;
   }
@@ -1078,7 +1078,7 @@ async function salvaFattura() {
     }
   }
   closeM('modal-fattura');
-  toast(editingFatturaId ? '✅ Fattura aggiornata!' : '✅ Fattura emessa!', 'ok');
+  toast(editingFatturaId ? _L('✅ Fattura aggiornata!', '✅ Invoice updated!') : _L('✅ Fattura emessa!', '✅ Invoice issued!'), 'ok');
   updateSummary(); populateAnnoFilter(); renderFatture();
 }
 
@@ -1116,11 +1116,11 @@ async function togglePagato(id) {
   }
   fatture = fatture.map(x => x.id === id ? { ...x, stato: newStato } : x);
   updateSummary(); renderFatture();
-  toast(newStato === 'pagato' ? '✅ Segnata come pagata!' : 'ℹ️ Segnata come in attesa', 'ok');
+  toast(newStato === 'pagato' ? _L('✅ Segnata come pagata!', '✅ Marked as paid!') : _L('ℹ️ Segnata come in attesa', 'ℹ️ Marked as pending'), 'ok');
 }
 
 async function deleteFattura(id) {
-  if (!confirm('Eliminare questa fattura?')) return;
+  if (!confirm(_L('Eliminare questa fattura?', 'Delete this invoice?'))) return;
   if (useLocalFatt) {
     const arr = lsLoadFatture().filter(x => x.id !== id);
     lsSaveFatture(arr);
@@ -1129,7 +1129,7 @@ async function deleteFattura(id) {
   }
   fatture = fatture.filter(x => x.id !== id);
   updateSummary(); renderFatture();
-  toast('🗑️ Fattura eliminata', 'info');
+  toast(_L('🗑️ Fattura eliminata', '🗑️ Invoice deleted'), 'info');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

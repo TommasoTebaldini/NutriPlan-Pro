@@ -141,21 +141,21 @@
   <!-- Charts row 1 -->
   <div class="chart-grid" id="analytics-charts-row1">
     <div class="chart-card">
-      <h3>📈 Pazienti acquisiti / mese</h3>
+      <h3>📈 <span data-only-lang="it">Pazienti acquisiti / mese</span><span data-only-lang="en" style="display:none">Patients acquired / month</span></h3>
       <div class="chart-wrap"><canvas id="chart-acquired"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>📅 Visite / mese</h3>
+      <h3>📅 <span data-only-lang="it">Visite / mese</span><span data-only-lang="en" style="display:none">Visits / month</span></h3>
       <div class="chart-wrap"><canvas id="chart-appts"></canvas></div>
     </div>
     <div class="chart-card full">
-      <h3>🔄 Retention rate mensile</h3>
+      <h3>🔄 <span data-only-lang="it">Retention rate mensile</span><span data-only-lang="en" style="display:none">Monthly retention rate</span></h3>
       <div class="chart-wrap" style="height:180px"><canvas id="chart-retention"></canvas></div>
     </div>
   </div>
 
   <!-- Aderenza pazienti -->
-  <h3 style="font-size:14px;font-weight:700;color:var(--slate);margin:6px 0 12px;display:flex;align-items:center;gap:7px">🎯 Aderenza al diario alimentare</h3>
+  <h3 style="font-size:14px;font-weight:700;color:var(--slate);margin:6px 0 12px;display:flex;align-items:center;gap:7px">🎯 <span data-only-lang="it">Aderenza al diario alimentare</span><span data-only-lang="en" style="display:none">Food diary adherence</span></h3>
   <div class="kpi-grid" id="kpi-grid-adherence">
     <div class="kpi-card"><div class="kpi-icon">🔥</div><div class="kpi-val" id="kpi-adh-7">—%</div><div class="kpi-lbl">Attivi ultimi 7gg</div><div class="kpi-delta delta-neutral" id="kpi-adh-7-delta">...</div></div>
     <div class="kpi-card"><div class="kpi-icon">📆</div><div class="kpi-val" id="kpi-adh-30">—%</div><div class="kpi-lbl">Attivi ultimi 30gg</div><div class="kpi-delta delta-neutral" id="kpi-adh-30-delta">...</div></div>
@@ -163,14 +163,14 @@
   </div>
   <div class="chart-grid">
     <div class="chart-card full">
-      <h3>📊 Pazienti attivi per settimana (diario alimentare)</h3>
+      <h3>📊 <span data-only-lang="it">Pazienti attivi per settimana (diario alimentare)</span><span data-only-lang="en" style="display:none">Active patients per week (food diary)</span></h3>
       <div class="chart-wrap" style="height:180px"><canvas id="chart-adherence"></canvas></div>
     </div>
   </div>
 
   <!-- Cohort analysis table -->
   <div class="card" style="margin-bottom:14px">
-    <div class="card-hdr"><h3>🧮 Analisi per mese di registrazione</h3></div>
+    <div class="card-hdr"><h3>🧮 <span data-only-lang="it">Analisi per mese di registrazione</span><span data-only-lang="en" style="display:none">Analysis by registration month</span></h3></div>
     <div style="overflow-x:auto;padding:14px 16px">
       <table class="cohort-table" id="cohort-table">
         <thead>
@@ -499,7 +499,7 @@ async function loadAnalytics() {
     if (fRes.error) console.warn('food_logs (aderenza) non disponibile:', fRes.error.message);
     renderAll();
   } catch(e) {
-    toast('Errore caricamento dati: ' + e.message, 'err');
+    toast(_L('Errore caricamento dati: ','Error loading data: ') + e.message, 'err');
   }
   showLoading(false);
 }
@@ -519,7 +519,7 @@ function computeMonthlyRows() {
 }
 
 function exportCSV() {
-  if (!allPatients.length && !allAppts.length) { toast('Nessun dato da esportare', 'err'); return; }
+  if (!allPatients.length && !allAppts.length) { toast(_L('Nessun dato da esportare','No data to export'), 'err'); return; }
   const header = 'Mese,Nuovi pazienti,Visite\n';
   const csv = header + computeMonthlyRows().map(r => `${r.mese},${r.nuovi},${r.visite}`).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

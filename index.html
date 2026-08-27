@@ -74,8 +74,8 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
     <h1>DietPlan Pro</h1>
     <p>CREA 2019 + BDA INRAN · v1.0</p>
     <div style="display:flex;justify-content:center;gap:4px;margin-top:10px" id="login-lang-slot">
-      <button onclick="setLang('it')" style="padding:4px 10px;border-radius:7px;border:1.5px solid #E2E8F0;background:white;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">🇮🇹 IT</button>
-      <button onclick="setLang('en')" style="padding:4px 10px;border-radius:7px;border:1.5px solid #E2E8F0;background:white;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">🇬🇧 EN</button>
+      <button onclick="setLangKeepView('it')" style="padding:4px 10px;border-radius:7px;border:1.5px solid #E2E8F0;background:white;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">🇮🇹 IT</button>
+      <button onclick="setLangKeepView('en')" style="padding:4px 10px;border-radius:7px;border:1.5px solid #E2E8F0;background:white;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">🇬🇧 EN</button>
     </div>
   </div>
 
@@ -418,6 +418,17 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
 // produzione 2026-08-27). _L() va quindi definita localmente.
 function _L(it, en) {
   try { const l = typeof getLang === 'function' ? getLang() : (localStorage.getItem('nlang') || 'it'); return l === 'en' ? en : it; } catch(e) { return it; }
+}
+
+// setLang() (da lang.js) ricarica la pagina: senza questo, cambiare lingua
+// mentre il form di login è aperto riporta l'utente alla schermata
+// "piattaforma in sviluppo", perdendo lo stato mostraLogin(). Si ricorda lo
+// stato per un istante tramite sessionStorage e lo si ripristina in init().
+function setLangKeepView(lang) {
+  if (document.getElementById('auth-box').style.display !== 'none') {
+    sessionStorage.setItem('idx_show_login', '1');
+  }
+  setLang(lang);
 }
 
 let _dpaUserId = null;
@@ -796,6 +807,10 @@ async function doResetPassword() {
 
 async function init() {
   document.getElementById('loading').classList.add('show');
+  if (sessionStorage.getItem('idx_show_login')) {
+    sessionStorage.removeItem('idx_show_login');
+    mostraLogin();
+  }
   // Detect password recovery flow (Supabase puts type=recovery in the hash)
   const hashParams = new URLSearchParams(window.location.hash.slice(1));
   if (hashParams.get('type') === 'recovery') {

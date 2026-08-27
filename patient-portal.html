@@ -291,6 +291,15 @@ const SUPABASE_URL = 'https://hvdwqowkhutfsdpiubxe.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_ayv54WJGyaiA5XPSF-uNGw_zt6gxVwB';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Questa pagina non carica js/utils.min.js (dichiara la propria SUPABASE_URL/
+// KEY/sb, e includerlo ridichiarerebbe quegli identificatori causando un
+// SyntaxError che blocca l'intero script — bug osservato in produzione il
+// 2026-08-27 su index.html per lo stesso motivo). _L() va quindi definita
+// localmente invece di dipendere da utils.js.
+function _L(it, en) {
+  try { const l = typeof getLang === 'function' ? getLang() : (localStorage.getItem('nlang') || 'it'); return l === 'en' ? en : it; } catch(e) { return it; }
+}
+
 let currentUser = null;
 let currentProfile = null;
 let linkedCartelle = [];

@@ -731,6 +731,12 @@ async function checkAndRedirect(user) {
     if (!profile.dpa_accepted_at) {
       _dpaUserId = user.id;
       document.getElementById('dpa-modal').classList.add('show');
+      // Se il testo entra già tutto nella viewport (schermi molto alti, zoom
+      // ridotto) l'evento 'scroll' non scatta mai e il pulsante resterebbe
+      // disabilitato per sempre, bloccando l'accesso: si controlla anche
+      // subito dopo l'apertura, con un frame di ritardo perché il browser
+      // calcoli scrollHeight/clientHeight dopo il display:flex appena applicato.
+      requestAnimationFrame(checkDpaScroll);
     } else {
       window.location.href='app.html';
     }

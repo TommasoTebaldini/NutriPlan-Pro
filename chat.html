@@ -1297,6 +1297,18 @@ function setupRealtime(patientId) {
         }
       }
     })
+    // Mancava del tutto: il trigger chat_messages_broadcast() spedisce anche
+    // su UPDATE (es. il paziente segna come letti i messaggi del dietista),
+    // ma senza questo handler le spunte di lettura non si aggiornavano mai
+    // in tempo reale qui — solo ricaricando la pagina. Copre anche la
+    // transizione status scheduled→sent di un proprio messaggio programmato.
+    .on('broadcast', { event: 'UPDATE' }, (payload) => {
+      const msg = payload.payload;
+      const idx = chatMessages.findIndex(m => m.id === msg.id);
+      if (idx === -1) chatMessages.push(msg);
+      else chatMessages[idx] = { ...chatMessages[idx], ...msg };
+      renderMessages();
+    })
     .subscribe();
 
   // Profile changes realtime (for the Informazioni tab)

@@ -75,6 +75,15 @@ async function handleSdi(req, res, ownerId) {
   if (!f || !f.data_fattura || !(parseFloat(f.importo) > 0) || !f.patient_name) {
     return res.status(400).json({ error: 'Dati fattura incompleti' });
   }
+  // Il codice fiscale e l'indirizzo del paziente sono segnati "facoltativi"
+  // nel modale di pagamenti.html, ma sono in realtà obbligatori per una
+  // fattura elettronica FPR12 valida (stesso requisito imposto da
+  // validaDatiFatturaPA in js/fatturapa.js per l'XML locale) — senza questo
+  // controllo l'invio arrivava fino a Fatture in Cloud/SDI e falliva lì con
+  // un errore meno chiaro, o veniva accettato con dati anagrafici incompleti.
+  if (!f.codice_fiscale_paziente || !f.indirizzo_paziente || !f.cap_paziente || !f.comune_paziente || !f.provincia_paziente) {
+    return res.status(400).json({ error: 'Codice fiscale e indirizzo completo del paziente sono obbligatori per la fattura elettronica' });
+  }
 
   const profRes = await fetch(
     `${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${ownerId}&select=fiscal_regime,fic_api_token,fic_company_id`,
@@ -100,13 +109,21 @@ async function handleSdi(req, res, ownerId) {
   const vatTypes = vt.body?.data || [];
   let vat;
   if (regime === 'RF01') {
-    vat = vatTypes.find(v => Number(v.value) === 22 && !v.is_disabled) || vatTypes.find(v => Number(v.value) === 22);
+    // Rispetta l'aliquota effettiva della fattura (f.aliquota_iva) invece di
+    // assumere sempre il 22% — prima di questo fix un'eventuale aliquota
+    // ridotta salvata sulla fattura veniva ignorata e sostituita col 22%
+    // sul documento inviato allo SDI.
+    const aliquotaTarget = f.aliquota_iva != null && f.aliquota_iva !== '' ? Number(f.aliquota_iva) : 22;
+    vat = vatTypes.find(v => Number(v.value) === aliquotaTarget && !v.is_disabled) || vatTypes.find(v => Number(v.value) === aliquotaTarget);
+    if (!vat) {
+      return res.status(400).json({ error: `Nessuna aliquota IVA ${aliquotaTarget}% trovata sul tuo account FIC` });
+    }
   } else {
     const zero = vatTypes.filter(v => Number(v.value) === 0);
     vat = zero.find(v => /N2\.2/i.test(`${v.ei_type || ''} ${v.ei_description || ''} ${v.description || ''} ${v.notes || ''}`)) || zero[0];
-  }
-  if (!vat) {
-    return res.status(400).json({ error: regime === 'RF01' ? 'Nessuna aliquota IVA 22% trovata sul tuo account FIC' : 'Nessuna aliquota 0% (natura N2.2) trovata sul tuo account FIC: creala in Impostazioni FIC → Aliquote IVA' });
+    if (!vat) {
+      return res.status(400).json({ error: 'Nessuna aliquota 0% (natura N2.2) trovata sul tuo account FIC: creala in Impostazioni FIC → Aliquote IVA' });
+    }
   }
 
   const importo = Math.round(parseFloat(f.importo) * 100) / 100;
@@ -172,7 +189,7 @@ async function handleSts(req, res, ownerId) {
   const sbHeaders = { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` };
 
   const [profRes, fatRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${ownerId}&select=fiscal_partita_iva,sts_api_username,sts_api_password,sts_erogatore_registrato`, { headers: sbHeaders }),
+    fetch(`${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${ownerId}&select=fiscal_partita_iva,fiscal_regime,sts_api_username,sts_api_password,sts_erogatore_registrato`, { headers: sbHeaders }),
     fetch(`${SUPABASE_URL}/rest/v1/fatture?id=eq.${fatturaId}&dietitian_id=eq.${ownerId}&select=*`, { headers: sbHeaders }),
   ]);
   const profiles = profRes.ok ? await profRes.json() : [];
@@ -187,6 +204,9 @@ async function handleSts(req, res, ownerId) {
   if (!prof?.sts_erogatore_registrato) {
     return res.status(400).json({ error: 'Registrati prima come erogatore Sistema TS (pulsante in Impostazioni → Dati fiscali).' });
   }
+  if (!prof?.fiscal_partita_iva) {
+    return res.status(400).json({ error: 'Partita IVA del dietista mancante — completa Impostazioni → Dati fiscali prima di inviare al Sistema TS.' });
+  }
   if (!f.codice_fiscale_paziente) {
     return res.status(400).json({ error: 'Codice fiscale del paziente mancante su questa fattura — necessario per l\'invio al Sistema TS.' });
   }
@@ -197,8 +217,16 @@ async function handleSts(req, res, ownerId) {
   const basicAuth = Buffer.from(`${prof.sts_api_username}:${prof.sts_api_password}`).toString('base64');
   const importo = Math.round(parseFloat(f.importo) * 100) / 100;
   const voceSpesa = { tipoSpesa: 'SP', importo };
+  // f.natura_iva/f.aliquota_iva non sono valorizzati da nessun campo del
+  // modale fattura in pagamenti.html — senza un fallback qui, ogni invio
+  // STS riportava aliquotaIVA:0 indipendentemente dal regime/aliquota reale.
+  // Come in js/fatturapa.js: regime forfettario → natura N2.2 (operazione
+  // esente), regime ordinario → aliquota 22% di default se non specificata.
+  const regimeSts = prof.fiscal_regime === 'RF01' ? 'RF01' : 'RF19';
   if (f.natura_iva) voceSpesa.naturaIVA = f.natura_iva;
-  else voceSpesa.aliquotaIVA = Number(f.aliquota_iva) || 0;
+  else if (f.aliquota_iva != null && f.aliquota_iva !== '') voceSpesa.aliquotaIVA = Number(f.aliquota_iva) || 0;
+  else if (regimeSts === 'RF19') voceSpesa.naturaIVA = 'N2.2';
+  else voceSpesa.aliquotaIVA = 22;
 
   const body = {
     operazione: 'INS',

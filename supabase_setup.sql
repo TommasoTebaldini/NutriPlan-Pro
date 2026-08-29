@@ -7778,3 +7778,134 @@ GRANT EXECUTE ON FUNCTION public.payments_active() TO anon, authenticated;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_95_free_recipe_limit_server_side', 'Aggiunto enforcement server-side del limite di 5 ricette Free (unico limite Free/Pro legato a una vera mutazione dati, non solo a cosa mostra la UI) — un utente Free poteva creare ricette illimitate chiamando /rest/v1/ricette direttamente. Trigger BEFORE INSERT su ricette, gated da payments_active() (nuova funzione, default false) per restare coerente col comportamento attuale del client mentre PAYMENTS_ACTIVE=false in useSubscription.js — non applica alcun limite finché entrambi non vengono flippati a true insieme. Deliberatamente NON replicato per il limite "storico 7 giorni" del diario: quello è un pacing/UX sui dati GIA'' di proprietà dell''utente, non una mutazione, e altre feature (sfide, report settimanali, achievement) leggono già storico oltre 7 giorni per tutti indipendentemente dal piano — un blocco RLS lì romperebbe quelle. Trovato dall''audit architetturale del 2026-08-25')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 96 — FIX bug di concorrenza in pagamenti.html/api/fatture.js
+-- (fatturazione elettronica), trovati da code review 2026-08-28
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Bug 1: fiscal_progressivo_invio (progressivo FatturaPA, condiviso a
+-- livello di studio) veniva letto, incrementato in JS e riscritto senza
+-- alcuna protezione atomica (pagamenti.html, generaFatturaElettronica()).
+-- Due collaboratori (o due tab) che generano l'XML quasi in contemporanea
+-- possono leggere lo stesso valore di partenza e scrivere due XML con lo
+-- stesso ProgressivoInvio — non valido per la trasmissione SDI. Fix: RPC
+-- increment_fiscal_progressivo() che fa un singolo UPDATE...RETURNING
+-- atomico direttamente sulla tabella sottostante la vista cifrata di
+-- SEZIONE 88 (dietitian_credentials_raw — fiscal_progressivo_invio non è
+-- una colonna cifrata, bypassare la vista qui è sicuro e più semplice).
+--
+-- Bug 2: numero_fattura (generateNumeroFattura() in pagamenti.html) è
+-- calcolato come max(esistenti)+1 solo lato client, dall'array in memoria —
+-- stessa finestra di collisione fra collaboratori concorrenti. A differenza
+-- del progressivo, questo campo resta volutamente MODIFICABILE a mano
+-- dall'utente (continuità con numerazioni esterne pregresse), quindi non è
+-- sostituibile con una sola RPC "alloca e basta": la difesa vera è un
+-- vincolo di unicità a livello DB (mai esistito) + l'app che intercetta il
+-- conflitto e fa rigenerare il numero, invece di lasciar passare due
+-- fatture con lo stesso numero in silenzio.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION public.increment_fiscal_progressivo()
+RETURNS INTEGER
+LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $$
+DECLARE
+  v_owner UUID := get_studio_owner(auth.uid());
+  v_new   INTEGER;
+BEGIN
+  UPDATE dietitian_credentials_raw
+  SET fiscal_progressivo_invio = COALESCE(fiscal_progressivo_invio, 0) + 1
+  WHERE id = v_owner
+  RETURNING fiscal_progressivo_invio INTO v_new;
+
+  IF v_new IS NULL THEN
+    RAISE EXCEPTION 'Dati fiscali del dietista non trovati (completa Impostazioni → Dati fiscali)';
+  END IF;
+  RETURN v_new;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.increment_fiscal_progressivo() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.increment_fiscal_progressivo() TO authenticated;
+
+-- Vincolo di unicità mancante su numero_fattura per studio — seconda difesa
+-- (oltre al fix client in salvaFattura() che intercetta il conflitto e fa
+-- rigenerare il numero) anche per righe inserite da percorsi diversi da
+-- pagamenti.html in futuro.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_fatture_numero_unique
+  ON fatture (dietitian_id, numero_fattura) WHERE numero_fattura IS NOT NULL;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_96_fatturazione_concorrenza', 'Fix bug di concorrenza trovati da code review 2026-08-28 nell''area fatturazione: (1) fiscal_progressivo_invio ora incrementato atomicamente via RPC increment_fiscal_progressivo() invece che letto/incrementato/riscritto lato client — evita ProgressivoInvio duplicati tra XML FatturaPA generati da collaboratori/tab concorrenti; (2) aggiunto vincolo UNIQUE (dietitian_id, numero_fattura) su fatture, con il client (pagamenti.html) che ora intercetta il conflitto e rigenera il numero invece di lasciar passare fatture duplicate in silenzio. Vedi anche i fix sull''aliquota IVA in api/fatture.js e sul calcolo imponibile in js/fatturapa.js, stessa sessione, non richiedono migrazione SQL.')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 97 — FIX bug di concorrenza nelle edge function Stripe, trovati da
+-- code review 2026-08-29
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Bug 1: create-checkout-session/create-patient-checkout-session leggevano
+-- stripe_customer_id e, se assente, ne creavano uno nuovo su Stripe scritto
+-- con un upsert INCONDIZIONATO — due richieste concorrenti dello stesso
+-- utente potevano creare due customer Stripe distinti, col secondo upsert
+-- che sovrascriveva in silenzio il primo (customer orfano, stato
+-- imprevedibile). Fix: RPC claim_stripe_customer_id(), UPSERT con COALESCE
+-- lato DB che fa vincere sempre il primo customer_id scritto, mai un blind
+-- overwrite. Usata dal nuovo helper condiviso getOrCreateStripeCustomer()
+-- in supabase/functions/_shared/stripeHelpers.ts.
+--
+-- Bug 2: create-invoice-checkout-session controllava fatture.stato='pagato'
+-- solo al momento della creazione della sessione — due checkout concorrenti
+-- per la stessa fattura (doppio click, due tab) potevano entrambi superare
+-- il controllo, entrambi essere pagati, e stripe-webhook segnare 'pagato'
+-- due volte: il paziente pagava due volte la stessa fattura. Fix: nuova
+-- colonna stripe_checkout_pending_at + RPC claim_fattura_checkout() come
+-- mutex applicativo (finestra di 30 minuti, poi si autolibera per non
+-- bloccare un paziente che ha semplicemente abbandonato un checkout senza
+-- pagare — non riceviamo nessun evento server-side in quel caso).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION public.claim_stripe_customer_id(p_user_id UUID, p_customer_id TEXT)
+RETURNS TEXT
+LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $$
+DECLARE
+  v_id TEXT;
+BEGIN
+  INSERT INTO user_payment_credentials (id, stripe_customer_id)
+  VALUES (p_user_id, p_customer_id)
+  ON CONFLICT (id) DO UPDATE
+    SET stripe_customer_id = COALESCE(user_payment_credentials.stripe_customer_id, EXCLUDED.stripe_customer_id)
+  RETURNING stripe_customer_id INTO v_id;
+  RETURN v_id;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.claim_stripe_customer_id(UUID, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.claim_stripe_customer_id(UUID, TEXT) TO service_role;
+
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS stripe_checkout_pending_at TIMESTAMPTZ;
+
+CREATE OR REPLACE FUNCTION public.claim_fattura_checkout(p_fattura_id UUID, p_patient_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $$
+DECLARE
+  v_claimed BOOLEAN := false;
+BEGIN
+  UPDATE fatture
+  SET stripe_checkout_pending_at = now()
+  WHERE id = p_fattura_id
+    AND patient_id = p_patient_id
+    AND stato <> 'pagato'
+    AND (stripe_checkout_pending_at IS NULL OR stripe_checkout_pending_at < now() - interval '30 minutes')
+  RETURNING true INTO v_claimed;
+  RETURN COALESCE(v_claimed, false);
+END;
+$$;
+REVOKE ALL ON FUNCTION public.claim_fattura_checkout(UUID, UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.claim_fattura_checkout(UUID, UUID) TO service_role;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_97_stripe_edge_functions_concorrenza', 'Fix bug di concorrenza nelle edge function Stripe (code review 2026-08-29): claim_stripe_customer_id() rende atomica la creazione/registrazione del customer Stripe (create-checkout-session, create-patient-checkout-session) invece di un upsert incondizionato che poteva sovrascrivere in silenzio un customer già registrato da una richiesta concorrente; claim_fattura_checkout() + nuova colonna fatture.stripe_checkout_pending_at fanno da mutex applicativo (finestra 30 minuti) contro il doppio pagamento della stessa fattura da due checkout concorrenti (create-invoice-checkout-session). Vedi anche i fix lato edge function (webhook idempotente su stato<>''pagato'', gestione async_payment_succeeded/failed, controllo ruolo su create-checkout-session, messaggi di errore generici verso il client, helper condivisi in _shared/stripeHelpers.ts) nella stessa sessione, non richiedono ulteriore SQL.')
+ON CONFLICT (id) DO NOTHING;

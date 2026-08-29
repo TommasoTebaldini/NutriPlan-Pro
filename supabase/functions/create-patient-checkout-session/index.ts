@@ -14,12 +14,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14";
-import { logServerError } from "../_shared/errorLog.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { corsHeaders, errorResponse, getOrCreateStripeCustomer } from "../_shared/stripeHelpers.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -42,10 +37,7 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SB_SECRET_KEY") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
-    const [{ data: profile }, { data: paymentCreds }] = await Promise.all([
-      supabaseAdmin.from("profiles").select("role").eq("id", user.id).maybeSingle(),
-      supabaseAdmin.from("user_payment_credentials").select("stripe_customer_id").eq("id", user.id).maybeSingle(),
-    ]);
+    const { data: profile } = await supabaseAdmin.from("profiles").select("role").eq("id", user.id).maybeSingle();
 
     if (profile?.role === "dietitian") {
       return new Response(JSON.stringify({ error: "Use the dietitian checkout" }), {
@@ -62,16 +54,10 @@ serve(async (req) => {
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2023-10-16" });
 
-    // Get or create Stripe customer
-    let customerId = paymentCreds?.stripe_customer_id;
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: { supabase_uid: user.id, role: "patient" },
-      });
-      customerId = customer.id;
-      await supabaseAdmin.from("user_payment_credentials").upsert({ id: user.id, stripe_customer_id: customerId });
-    }
+    // Get or create Stripe customer (paymentCreds letto sopra viene ignorato
+    // qui: getOrCreateStripeCustomer rilegge/reclama in modo atomico, vedi
+    // _shared/stripeHelpers.ts)
+    const customerId = await getOrCreateStripeCustomer(stripe, supabaseAdmin, user.id, user.email, { role: "patient" });
 
     const origin = req.headers.get("origin") || "https://nutri-patient-app.vercel.app";
 
@@ -95,10 +81,6 @@ serve(async (req) => {
     });
 
   } catch (err) {
-    console.error("create-patient-checkout-session error:", err);
-    await logServerError("create-patient-checkout-session", err).catch(() => {});
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return await errorResponse("create-patient-checkout-session", err);
   }
 });

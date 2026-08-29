@@ -15,12 +15,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14";
-import { logServerError } from "../_shared/errorLog.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { corsHeaders, errorResponse, getOrCreateStripeCustomer } from "../_shared/stripeHelpers.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -53,26 +48,26 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Price not configured" }), { status: 500, headers: corsHeaders });
     }
 
-    // 3. Get or create Stripe customer
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SB_SECRET_KEY") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
-    const { data: paymentCreds } = await supabaseAdmin
-      .from("user_payment_credentials")
-      .select("stripe_customer_id")
-      .eq("id", user.id)
-      .maybeSingle();
 
-    let customerId = paymentCreds?.stripe_customer_id;
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: { supabase_uid: user.id },
+    // Solo un account dietista può sottoscrivere questo abbonamento (35€/mese)
+    // — a differenza di create-patient-checkout-session, questo controllo
+    // mancava del tutto: un paziente poteva chiamare l'endpoint direttamente
+    // e ottenere subscription_plan='pro' sul proprio profilo via webhook.
+    const { data: profile, error: profErr } = await supabaseAdmin
+      .from("profiles").select("role").eq("id", user.id).maybeSingle();
+    if (profErr) throw profErr;
+    if (profile?.role !== "dietitian") {
+      return new Response(JSON.stringify({ error: "Solo un account dietista può sottoscrivere questo abbonamento." }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
-      customerId = customer.id;
-      await supabaseAdmin.from("user_payment_credentials").upsert({ id: user.id, stripe_customer_id: customerId });
     }
+
+    // 3. Get or create Stripe customer
+    const customerId = await getOrCreateStripeCustomer(stripe, supabaseAdmin, user.id, user.email);
 
     // 4. Determine success URL (use request origin or fallback)
     const origin = req.headers.get("origin") || "https://nutriplan-pro.vercel.app";
@@ -99,11 +94,6 @@ serve(async (req) => {
     });
 
   } catch (err) {
-    console.error("create-checkout-session error:", err);
-    await logServerError("create-checkout-session", err).catch(() => {});
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return await errorResponse("create-checkout-session", err);
   }
 });

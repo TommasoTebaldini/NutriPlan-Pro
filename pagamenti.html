@@ -381,7 +381,7 @@ async function loadStripeConnectStatus() {
   // dietitian_credentials (SEZIONE 62): spostato da profiles, leggibile da
   // co-membri di chat/studio/pazienti collegati, non il posto giusto per un
   // account ID Stripe.
-  const { data, error } = await sb.from('dietitian_credentials').select('stripe_connect_account_id,stripe_connect_charges_enabled').eq('id', currentUser.id).maybeSingle();
+  const { data, error } = await sb.from('dietitian_credentials').select('stripe_connect_account_id,stripe_connect_charges_enabled').eq('id', studioOwnerId || currentUser.id).maybeSingle();
   if (error || !data) {
     statusEl.textContent = 'Impossibile verificare lo stato dei pagamenti online.';
     return;
@@ -598,19 +598,19 @@ async function generaFatturaElettronica(id) {
       .eq('id', studioOwnerId || currentUser.id).maybeSingle();
     if (fiscalErr || !fiscal) throw new Error('Impossibile leggere i dati fiscali del profilo.');
 
-    const progressivo = (fiscal.fiscal_progressivo_invio || 0) + 1;
+    // Il progressivo viene allocato ATOMICAMENTE lato DB (RPC
+    // increment_fiscal_progressivo, SEZIONE 96) invece di leggere-incrementare
+    // -riscrivere qui: due collaboratori/tab che generano l'XML quasi in
+    // contemporanea leggerebbero altrimenti lo stesso valore di partenza e
+    // produrrebbero due XML con lo stesso ProgressivoInvio, non validi per
+    // la trasmissione SDI. La RPC risolve da sé il titolare dello studio,
+    // niente parametro id da passare.
+    const { data: progressivo, error: progErr } = await sb.rpc('increment_fiscal_progressivo');
+    if (progErr) throw new Error('Impossibile allocare il progressivo di invio: ' + progErr.message);
     const xml = generaXmlFatturaPA({ fiscal, fattura: f, progressivo });
     const filename = nomeFileFatturaPA(fiscal, progressivo);
     scaricaXmlFatturaPA(xml, filename);
 
-    // Persisti il progressivo E marca la fattura come generata SOLO dopo un
-    // download riuscito, così un errore di generazione non "brucia" un
-    // numero di progressivo mai usato davvero.
-    // Nota: le fatture (tabella fatture) sono condivise a livello di studio
-    // (dietitian_id = studioOwnerId), quindi anche i dati fiscali e il
-    // progressivo di numerazione devono essere quelli del titolare dello
-    // studio, non del singolo collaboratore che genera l'XML.
-    await sb.from('dietitian_credentials').update({ fiscal_progressivo_invio: progressivo }).eq('id', studioOwnerId || currentUser.id);
     const nowIso = new Date().toISOString();
     if (!useLocalFatt) await sb.from('fatture').update({ xml_generato_at: nowIso }).eq('id', id);
     fatture = fatture.map(x => x.id === id ? { ...x, xml_generato_at: nowIso } : x);
@@ -1011,7 +1011,8 @@ function onTipoChange() {
 
 async function salvaFattura() {
   const patientId = document.getElementById('fatt-patient').value;
-  const patientName = patients.find(p => p.id === patientId)?.name || document.getElementById('fatt-patient').options[document.getElementById('fatt-patient').selectedIndex]?.text || '';
+  if (!patientId) { toast(_L('Seleziona il paziente', 'Select the patient'), 'err'); return; }
+  const patientName = patients.find(p => p.id === patientId)?.name || '';
   const data = document.getElementById('fatt-data').value;
   const tipo = document.getElementById('fatt-tipo').value;
   const importo = parseFloat(document.getElementById('fatt-importo').value) || 0;
@@ -1055,11 +1056,26 @@ async function salvaFattura() {
   }
   showLoading(true);
   let result;
-  if (editingFatturaId) {
-    result = await sb.from('fatture').update(payload).eq('id', editingFatturaId);
-  } else {
-    payload.created_at = now;
-    result = await sb.from('fatture').insert(payload).select().single();
+  if (!editingFatturaId) payload.created_at = now;
+  // idx_fatture_numero_unique (SEZIONE 96) rende impossibile persistere due
+  // fatture con lo stesso numero per lo stesso studio — se il numero
+  // suggerito era stato calcolato da uno snapshot ormai superato (es. un
+  // collaboratore ha salvato una fattura nel frattempo), il primo tentativo
+  // urta il vincolo: rigeneriamo il numero da dati freschi e riproviamo,
+  // invece di lasciar fallire silenziosamente o duplicare la numerazione.
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    if (editingFatturaId) {
+      result = await sb.from('fatture').update(payload).eq('id', editingFatturaId);
+    } else {
+      result = await sb.from('fatture').insert(payload).select().single();
+    }
+    if (result.error?.code === '23505' && !editingFatturaId && attempt < 3) {
+      await loadFatture();
+      payload.numero_fattura = generateNumeroFattura();
+      document.getElementById('fatt-numero').value = payload.numero_fattura;
+      continue;
+    }
+    break;
   }
   showLoading(false);
   if (result.error) {
@@ -1069,6 +1085,8 @@ async function salvaFattura() {
       payload.id = 'ls_' + Date.now(); payload.created_at = now;
       arr.unshift(payload); lsSaveFatture(arr); fatture = arr;
       showTableMissingBanner();
+    } else if (result.error.code === '23505') {
+      toast(_L('❌ Numero fattura già in uso, riprova (potrebbe essere stato assegnato da un collaboratore nel frattempo)', '❌ Invoice number already in use, please retry (a collaborator may have used it in the meantime)'), 'err'); return;
     } else { toast('❌ ' + result.error.message, 'err'); return; }
   } else {
     if (!editingFatturaId && result.data) {

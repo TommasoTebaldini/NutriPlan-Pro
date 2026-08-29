@@ -98,6 +98,8 @@ supabase secrets set STRIPE_PATIENT_PRICE_MONTHLY=price_...
    - (trovi l'URL base su Supabase → Edge Functions → il tuo progetto)
 3. Seleziona questi eventi:
    - `checkout.session.completed`
+   - `checkout.session.async_payment_succeeded` (metodi di pagamento non istantanei tipo bonifico/SEPA — non offerti oggi, ma se in futuro si abilitano il webhook li gestisce già)
+   - `checkout.session.async_payment_failed`
    - `customer.subscription.updated`
    - `customer.subscription.deleted`
    - `invoice.payment_failed`

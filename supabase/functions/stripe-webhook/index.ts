@@ -11,6 +11,15 @@
 //
 // Stripe Webhook events to enable in Dashboard:
 //   checkout.session.completed
+//   checkout.session.async_payment_succeeded  (metodi di pagamento non
+//     istantanei, es. bonifici/SEPA — non ancora offerti oggi, card/paypal
+//     sono sincroni, ma se in futuro si aggiunge un metodo async questo
+//     evento è l'unico modo di sapere che il pagamento è poi andato a buon
+//     fine dopo che checkout.session.completed è arrivato con payment_status
+//     ancora "unpaid")
+//   checkout.session.async_payment_failed     (idem, ma pagamento fallito —
+//     libera il mutex claim_fattura_checkout così il paziente può riprovare
+//     subito invece di aspettare i 30 minuti di auto-espirazione)
 //   customer.subscription.updated
 //   customer.subscription.deleted
 //   invoice.payment_failed
@@ -59,7 +68,8 @@ serve(async (req) => {
   try {
     switch (event.type) {
       // ── Payment successful / subscription created / fattura pagata ──
-      case "checkout.session.completed": {
+      case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded": {
         const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.client_reference_id; // Supabase user UUID
         const subscriptionId = session.subscription as string;
@@ -73,17 +83,29 @@ serve(async (req) => {
           // pagamento asincroni (es. bonifici) — qui accettiamo solo card/
           // paypal (sincroni), ma controlliamo comunque payment_status prima
           // di segnare la fattura come pagata: se non ancora pagato, non
-          // facciamo nulla e aspettiamo async_payment_succeeded (o il
-          // controllo manuale del dietista).
+          // facciamo nulla e aspettiamo async_payment_succeeded, gestito
+          // sopra con lo stesso case (stessa forma di evento).
           if (session.payment_status === "paid") {
-            await supabase.from("fatture").update({
+            // .eq("stato", ...) diverso da 'pagato' rende l'update idempotente:
+            // se per qualunque motivo Stripe invia due volte l'evento (o due
+            // sessioni concorrenti per la stessa fattura fossero comunque
+            // arrivate a pagamento, vedi claim_fattura_checkout in
+            // create-invoice-checkout-session), la seconda UPDATE trova 0
+            // righe invece di sovrascrivere silenziosamente i dati della
+            // prima transazione già registrata.
+            const { data: updated } = await supabase.from("fatture").update({
               stato: "pagato",
               stripe_checkout_session_id: session.id,
               stripe_payment_intent_id: session.payment_intent as string,
               pagato_online_at: new Date().toISOString(),
-            }).eq("id", fatturaId);
+              stripe_checkout_pending_at: null,
+            }).eq("id", fatturaId).neq("stato", "pagato").select("id");
 
-            console.log(`Fattura ${fatturaId} pagata online (session ${session.id})`);
+            if (updated && updated.length) {
+              console.log(`Fattura ${fatturaId} pagata online (session ${session.id})`);
+            } else {
+              console.log(`Fattura ${fatturaId}: evento ${event.type} ignorato, già segnata pagata (idempotenza)`);
+            }
           } else {
             console.log(`Fattura ${fatturaId}: checkout completato ma payment_status=${session.payment_status}, non ancora segnata come pagata`);
           }
@@ -103,6 +125,20 @@ serve(async (req) => {
           });
 
           console.log(`User ${userId} → pro until ${expiresAt}`);
+        }
+        break;
+      }
+
+      // ── Pagamento fattura fallito dopo un metodo asincrono (bonifico/SEPA)
+      // ── libera subito il mutex claim_fattura_checkout invece di lasciare
+      // il paziente bloccato fino all'auto-espirazione dei 30 minuti.
+      case "checkout.session.async_payment_failed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const fatturaId = session.metadata?.fattura_id;
+        if (fatturaId) {
+          await supabase.from("fatture").update({ stripe_checkout_pending_at: null })
+            .eq("id", fatturaId).neq("stato", "pagato");
+          console.log(`Fattura ${fatturaId}: pagamento asincrono fallito, checkout sbloccato per un nuovo tentativo`);
         }
         break;
       }
@@ -139,6 +175,12 @@ serve(async (req) => {
             subscription_plan: plan,
             subscription_expires_at: plan === "pro" ? expiresAt : null,
           }).eq("id", userId);
+        } else {
+          // Prima non veniva loggato: il profilo restava silenziosamente
+          // disallineato da Stripe senza alcuna traccia negli errori server.
+          await logServerError("stripe-webhook", new Error(
+            `customer.subscription.updated: impossibile risolvere l'utente per subscription ${sub.id} (metadata.supabase_uid mancante e nessuna riga in user_payment_credentials)`
+          )).catch(() => {});
         }
         break;
       }
@@ -162,6 +204,10 @@ serve(async (req) => {
             subscription_plan: "free",
             subscription_expires_at: null,
           }).eq("id", userId);
+        } else {
+          await logServerError("stripe-webhook", new Error(
+            `customer.subscription.deleted: impossibile risolvere l'utente per subscription ${sub.id} (metadata.supabase_uid mancante e nessuna riga in user_payment_credentials)`
+          )).catch(() => {});
         }
         break;
       }

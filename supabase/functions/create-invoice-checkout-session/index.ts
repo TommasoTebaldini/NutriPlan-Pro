@@ -15,12 +15,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14";
-import { logServerError } from "../_shared/errorLog.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { corsHeaders, errorResponse } from "../_shared/stripeHelpers.ts";
 
 const PLATFORM_FEE_PCT = 0.05; // 5% — decisione utente 2026-08-10, vedi SEZIONE 43
 
@@ -83,6 +78,26 @@ serve(async (req) => {
       });
     }
 
+    // Il controllo stato==='pagato' sopra basta a bloccare un RE-invio dopo
+    // che il pagamento è già confermato, ma NON basta contro due checkout
+    // creati quasi in contemporanea (doppio click, due tab): entrambi
+    // passerebbero quel controllo prima che il primo sia mai pagato. claim_
+    // fattura_checkout() (SEZIONE 97) è un mutex applicativo atomico lato DB
+    // — solo la prima richiesta lo ottiene, la seconda viene respinta qui
+    // invece di produrre due sessioni di pagamento valide per la stessa
+    // fattura. Si autolibera dopo 30 minuti se il paziente abbandona il
+    // checkout senza pagare (nessun evento server-side in quel caso).
+    const { data: claimed, error: claimErr } = await supabaseAdmin.rpc("claim_fattura_checkout", {
+      p_fattura_id: fatturaId,
+      p_patient_id: user.id,
+    });
+    if (claimErr) throw claimErr;
+    if (!claimed) {
+      return new Response(JSON.stringify({ error: "Un pagamento per questa fattura è già in corso. Attendi qualche minuto e ricarica la pagina." }), {
+        status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { data: dietitianProfile, error: dietErr } = await supabaseAdmin
       .from("dietitian_credentials")
       .select("stripe_connect_account_id, stripe_connect_charges_enabled")
@@ -129,10 +144,6 @@ serve(async (req) => {
     });
 
   } catch (err) {
-    console.error("create-invoice-checkout-session error:", err);
-    await logServerError("create-invoice-checkout-session", err).catch(() => {});
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return await errorResponse("create-invoice-checkout-session", err);
   }
 });

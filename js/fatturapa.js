@@ -80,10 +80,18 @@ function generaXmlFatturaPA({ fiscal, fattura, progressivo }) {
   const isForfettario = fiscal.fiscal_regime === 'RF19';
   const aliquota = isForfettario ? 0 : (Number(fattura.aliquota_iva) || 22);
   const natura = isForfettario ? 'N2.2' : (fattura.natura_iva || null);
-  const imponibile = Number(fattura.importo);
-  const imposta = isForfettario ? 0 : fmtImporto(imponibile * (aliquota / 100));
-  const bolloNecessario = isForfettario && imponibile > BOLLO_SOGLIA;
-  const totale = fmtImporto(imponibile + Number(isForfettario ? 0 : imposta) + (bolloNecessario ? BOLLO_IMPORTO : 0));
+  // fattura.importo è sempre l'importo TOTALE (comprensivo di IVA se
+  // applicabile) — stessa convenzione usata dall'invio SDI (api/fatture.js,
+  // use_gross_prices/gross_price) e da tutte le viste che sommano `importo`
+  // come "Totale fatturato" in pagamenti.html. In precedenza qui veniva
+  // trattato come imponibile NETTO e l'IVA veniva aggiunta sopra, producendo
+  // un totale diverso (e più alto) rispetto al documento inviato via SDI per
+  // la stessa identica fattura.
+  const totaleLordo = Number(fattura.importo);
+  const imponibile = isForfettario ? totaleLordo : totaleLordo / (1 + aliquota / 100);
+  const imposta = isForfettario ? 0 : fmtImporto(totaleLordo - imponibile);
+  const bolloNecessario = isForfettario && totaleLordo > BOLLO_SOGLIA;
+  const totale = fmtImporto(totaleLordo + (bolloNecessario ? BOLLO_IMPORTO : 0));
 
   const { nome: nomePaz, cognome: cognomePaz } = splitNomeCognome(fattura.patient_name);
   const progNum = String(progressivo).padStart(5, '0');

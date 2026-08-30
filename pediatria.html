@@ -964,13 +964,19 @@ function getClosestAge(table, ageMonths) {
 }
 
 function calcPercentile() {
-  const anni  = parseFloat(document.getElementById('g-anni').value)  || 0;
-  const mesi  = parseFloat(document.getElementById('g-mesi').value)  || 0;
+  const anniRaw = document.getElementById('g-anni').value;
+  const mesiRaw = document.getElementById('g-mesi').value;
+  const anni  = parseFloat(anniRaw)  || 0;
+  const mesi  = parseFloat(mesiRaw)  || 0;
   const sesso = document.getElementById('g-sesso').value || 'M';
   const peso  = parseFloat(document.getElementById('g-peso').value)  || 0;
   const altezza = parseFloat(document.getElementById('g-altezza').value) || 0;
 
-  if ((!peso && !altezza) || (anni === 0 && mesi === 0)) {
+  // "0 anni e 0 mesi" è un'età reale (neonato), non va confusa con "campo
+  // età non compilato" — controllare il valore grezzo dei campi (stringa
+  // vuota) invece del valore numerico parsato (0 è falsy in entrambi i casi).
+  const etaNonInserita = anniRaw.trim() === '' && mesiRaw.trim() === '';
+  if ((!peso && !altezza) || etaNonInserita) {
     document.getElementById('perc-result').style.display = 'none';
     document.getElementById('growth-chart-box').style.display = 'none';
     return;
@@ -1011,9 +1017,17 @@ function calcPercentile() {
   }
   if (peso && altezza) {
     const bmi = peso / (altezza/100)**2;
-    const ageYears = ageMonths/12;
-    const bmiMed = (sesso==='M' ? 13.4 : 13.3) + ageYears * 0.37;
-    const bmiSd  = (sesso==='M' ? 1.50 : 1.40) + ageYears * 0.08;
+    // Il BMI-per-età reale OMS non è lineare in età (dip e risalita
+    // nell'"adiposity rebound" tra 4 e 10 anni circa) — un'approssimazione
+    // lineare qui produceva mediane/DS sballate proprio in quella fascia
+    // (es. mediana prevista 16.36 a 8 anni contro 15.4 della curva OMS
+    // reale già presente in WHO_BMI_CHART). Interpola invece direttamente
+    // sulle curve percentili OMS già usate per il grafico: mediana = p50
+    // interpolato, DS stimata da (p97-p3)/6 (coerente con i limiti ±3.0
+    // già usati da zToPercentile per 0.1°/99.9° percentile).
+    const [, p3Bmi, , p50Bmi, , p97Bmi] = interpBmiRow(sesso, ageMonths);
+    const bmiMed = p50Bmi;
+    const bmiSd  = (p97Bmi - p3Bmi) / 6;
     const zBmi   = (bmi - bmiMed) / bmiSd;
     const percBmi = Math.round(zToPercentile(zBmi) * 10) / 10;
     const color   = percBmi > 97 ? '#DC2626' : percBmi > 85 ? '#F59E0B' : percBmi < 3 ? '#DC2626' : '#10B981';
@@ -1209,6 +1223,22 @@ const WHO_BMI_CHART = {
   ]
 };
 
+// Interpola una riga [ageMonths,p3,p15,p50,p85,p97] di WHO_BMI_CHART per
+// un'età in mesi qualunque (non solo quelle tabulate) — usata sia dal
+// disegno del grafico che dal calcolo del percentile BMI in calcPercentile().
+function interpBmiRow(sesso, ageMonths) {
+  const rows = WHO_BMI_CHART[sesso];
+  if (ageMonths <= rows[0][0]) return rows[0];
+  if (ageMonths >= rows[rows.length - 1][0]) return rows[rows.length - 1];
+  for (let i = 1; i < rows.length; i++) {
+    if (ageMonths <= rows[i][0]) {
+      const t = (ageMonths - rows[i - 1][0]) / (rows[i][0] - rows[i - 1][0]);
+      return rows[i - 1].map((v, idx) => idx === 0 ? ageMonths : v + t * (rows[i][idx] - v));
+    }
+  }
+  return rows[rows.length - 1];
+}
+
 let currentGrowthChart = 'weight';
 let lastGrowthData = {};
 
@@ -1352,8 +1382,11 @@ function drawGrowthChartType(type, sesso, ageMonthsPatient, weightPatient, heigh
   ctx.fillStyle='#334155'; ctx.font='bold 11px DM Sans,sans-serif'; ctx.textAlign='center';
   ctx.fillText(xLabel, PAD.l+chartW/2, H-2);
 
-  // Patient dot
-  if (patientY && patientX > 0 && (type === 'wh' || patientX <= maxAge+6)) {
+  // Patient dot — patientX=0 è un neonato/età reale (peso-per-altezza a
+  // parte, dove patientX è un'altezza in cm), non un valore mancante:
+  // usare >=0 invece di >0, con un controllo esplicito su null/undefined
+  // per i casi in cui il dato non è ancora disponibile.
+  if (patientY && patientX != null && patientX >= 0 && (type === 'wh' || patientX <= maxAge+6)) {
     const px = toX(Math.min(patientX, maxAge));
     const py = toY(Math.min(Math.max(patientY, minY), maxY));
     // Shadow glow
@@ -1835,15 +1868,20 @@ function raccogliVal_ped2() { return {}; }
 function ripristinaVal_ped2(d) { return; }
 
 function calcFabb() {
-  const anni   = parseFloat(document.getElementById('f-anni')?.value)   || 0;
-  const mesi   = parseFloat(document.getElementById('f-mesi')?.value)   || 0;
+  const anniRaw = document.getElementById('f-anni')?.value ?? '';
+  const mesiRaw = document.getElementById('f-mesi')?.value ?? '';
+  const anni   = parseFloat(anniRaw)   || 0;
+  const mesi   = parseFloat(mesiRaw)   || 0;
   const peso   = parseFloat(document.getElementById('f-peso')?.value)   || 0;
   const altezza= parseFloat(document.getElementById('f-altezza')?.value)|| 0;
   const sesso  = document.getElementById('f-sesso')?.value || 'M';
   const laf    = parseFloat(document.getElementById('f-laf')?.value)    || 1.4;
   const cond   = parseFloat(document.getElementById('f-cond')?.value)   || 1.0;
   const res    = document.getElementById('fabb-result');
-  if (!peso || (anni === 0 && mesi === 0)) { if (res) res.style.display = 'none'; return; }
+  // Stesso fix di calcPercentile(): "0 anni e 0 mesi" è un neonato reale,
+  // non un campo età non compilato — controllare la stringa grezza.
+  const etaNonInserita = anniRaw.toString().trim() === '' && mesiRaw.toString().trim() === '';
+  if (!peso || etaNonInserita) { if (res) res.style.display = 'none'; return; }
   const ageTot = anni * 12 + mesi; // total months
 
   // Schofield (1985) equations — weight only (W in kg, result in kcal/day)

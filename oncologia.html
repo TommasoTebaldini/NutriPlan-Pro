@@ -1056,7 +1056,11 @@ function showOncTab(tab) {
 function calcNRS() {
   const ps = ['nrs-ps1','nrs-ps2','nrs-ps3','nrs-ps4'].some(id => document.getElementById(id)?.checked);
   const fullDiv = document.getElementById('nrs-full');
-  if (ps) fullDiv.style.display = 'block';
+  // Prima mancava l'else: deselezionando l'ultima checkbox di pre-screening
+  // (es. per correggere un errore) la sezione completa restava visibile con
+  // i pulsanti punteggio ancora selezionati, come se lo screening fosse
+  // ancora in corso.
+  fullDiv.style.display = ps ? 'block' : 'none';
   const stato = nrsScores.stato || 0;
   const mal = nrsScores.mal || 0;
   const eta = parseInt(document.getElementById('nrs-eta')?.value) || 0;
@@ -1159,8 +1163,11 @@ function calcFabbONC() {
   if (pCust) pCust.innerHTML = `<div style="background:#F0FDF4;border-radius:8px;padding:10px"><b style="color:#15803D">${protKg} g/kg/die = ${Math.round(peso * protKg)} g/die</b></div>`;
   if (idratRes) idratRes.innerHTML = `<b>${_L('Fabbisogno idrico','Fluid requirements')}:</b> ${Math.round(peso * 30)}–${Math.round(peso * 35)} mL/${_L('die','day')} (30–35 mL/kg). ${_L('Aumentare in caso di febbre, diarrea o vomito.','Increase in case of fever, diarrhoea or vomiting.')}`;
 
-  // Sync peso/alt fields
+  // Sync peso/alt fields — mancava l'altezza: aggiornaCachessia() legge
+  // solo da onc-peso/onc-alt (nessun fallback su f-alt), quindi restava
+  // sempre vuota se peso/altezza venivano inseriti solo qui in "Fabbisogno".
   if (document.getElementById('onc-peso') && !document.getElementById('onc-peso').value) document.getElementById('onc-peso').value = peso;
+  if (document.getElementById('onc-alt') && !document.getElementById('onc-alt').value && alt) document.getElementById('onc-alt').value = alt;
   aggiornaCachessia();
 }
 
@@ -1168,7 +1175,7 @@ function calcFabbONC() {
 function raccogliDatiONC() {
   const g = id => document.getElementById(id)?.value || '';
   return {
-    screening: { nrs_stato: nrsScores.stato, nrs_mal: nrsScores.mal, nrs_eta: g('nrs-eta'), pgsga_peso: g('pgsga-peso'), pgsga_intake: g('pgsga-intake'), pgsga_sintomi: g('pgsga-sintomi'), pgsga_funz: g('pgsga-funz') },
+    screening: { nrs_stato: nrsScores.stato, nrs_mal: nrsScores.mal, nrs_eta: g('nrs-eta'), nrs_ps: ['nrs-ps1','nrs-ps2','nrs-ps3','nrs-ps4'].map(id => !!document.getElementById(id)?.checked), pgsga_peso: g('pgsga-peso'), pgsga_intake: g('pgsga-intake'), pgsga_sintomi: g('pgsga-sintomi'), pgsga_funz: g('pgsga-funz') },
     clinica: { tipo: g('onc-tipo'), stadio: g('onc-stadio'), tratt: g('onc-tratt'), peso: g('onc-peso'), alt: g('onc-alt'), dpeso: g('onc-dpeso'), ecog: g('onc-ecog'), alb: g('onc-alb'), pcr: g('onc-pcr') },
     fabbisogno: { peso: g('f-peso'), alt: g('f-alt'), eta: g('f-eta'), sesso: g('f-sesso'), laf: g('f-laf'), stress: g('f-stress'), prot_scelto: g('f-prot-scelto'), note: g('f-note'), kcal_target: g('f-kcal-target'), prot_target: g('f-prot-target') },
     supporto: { piano: g('s-piano'), integr: g('s-integr'), ons: g('s-ons') },
@@ -1227,7 +1234,21 @@ async function loadNoteIfPresent() {
   try {
     const d = JSON.parse(data.dati || '{}');
     const sv = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
-    if (d.screening) { sv('nrs-eta', d.screening.nrs_eta); nrsScores.stato = d.screening.nrs_stato || 0; nrsScores.mal = d.screening.nrs_mal || 0; sv('pgsga-peso', d.screening.pgsga_peso); sv('pgsga-intake', d.screening.pgsga_intake); sv('pgsga-sintomi', d.screening.pgsga_sintomi); sv('pgsga-funz', d.screening.pgsga_funz); calcPGSGA(); }
+    if (d.screening) {
+      sv('nrs-eta', d.screening.nrs_eta);
+      nrsScores.stato = d.screening.nrs_stato || 0;
+      nrsScores.mal = d.screening.nrs_mal || 0;
+      // Prima mancavano: le checkbox di pre-screening non venivano mai
+      // salvate/ripristinate, e calcNRS() non veniva mai richiamato qui —
+      // uno screening salvato tornava a schermo come "mai fatto" (risultato
+      // vuoto, pulsanti punteggio non evidenziati).
+      (d.screening.nrs_ps || []).forEach((checked, i) => { const el = document.getElementById('nrs-ps' + (i + 1)); if (el) el.checked = !!checked; });
+      document.querySelectorAll('[data-nrs-stato]').forEach(b => b.classList.toggle('sel', parseInt(b.dataset.nrsStato) === nrsScores.stato));
+      document.querySelectorAll('[data-nrs-mal]').forEach(b => b.classList.toggle('sel', parseInt(b.dataset.nrsMal) === nrsScores.mal));
+      sv('pgsga-peso', d.screening.pgsga_peso); sv('pgsga-intake', d.screening.pgsga_intake); sv('pgsga-sintomi', d.screening.pgsga_sintomi); sv('pgsga-funz', d.screening.pgsga_funz);
+      calcPGSGA();
+      calcNRS();
+    }
     if (d.clinica) { ['tipo','stadio','tratt','peso','alt','dpeso','ecog','alb','pcr'].forEach(k => sv('onc-' + k, d.clinica[k])); aggiornaCachessia(); }
     if (d.fabbisogno) { const f = d.fabbisogno; ['peso','alt','eta','laf','stress','prot_scelto','note','kcal_target','prot_target'].forEach(k => sv('f-' + k.replace(/_/g,'-'), f[k])); if (f.sesso) { const sel = document.getElementById('f-sesso'); if (sel) sel.value = f.sesso; } calcFabbONC(); }
     if (d.supporto) { sv('s-piano', d.supporto.piano); sv('s-integr', d.supporto.integr); sv('s-ons', d.supporto.ons); }

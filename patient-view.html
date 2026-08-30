@@ -112,7 +112,10 @@ function el(tag, attrs={}, ...children) {
   }
   for (const c of children) {
     if (c==null||c===false) continue
-    e.appendChild(typeof c==='string' ? document.createTextNode(c) : c)
+    // Un figlio numerico (es. un punteggio o un valore kcal preso as-is dal
+    // payload JSON) andava dritto in appendChild, che lancia TypeError per
+    // qualunque valore non-Node — interrompendo il render a metà funzione.
+    e.appendChild(c instanceof Node ? c : document.createTextNode(String(c)))
   }
   return e
 }

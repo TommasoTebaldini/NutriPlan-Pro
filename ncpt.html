@@ -1234,7 +1234,9 @@ function calcolaPliche() {
   const res = document.getElementById('pliche-results');
   if (!res) return;
   const results = [];
-  if (eta && peso) {
+  // eta può essere 0 per un lattante sotto l'anno (calcolo per anni interi
+  // in getEtaNCPT) — è un'età valida, non "dato mancante" (quello è null).
+  if (eta != null && peso) {
     if (sesso === 'M' && pet > 0 && add > 0 && cos > 0) {
       const S3 = pet + add + cos;
       const BD = 1.10938 - 0.0008267*S3 + 0.0000016*S3*S3 - 0.0002574*eta;
@@ -1248,7 +1250,7 @@ function calcolaPliche() {
       if (bf > 0 && bf < 60) { const fm = peso*bf/100; results.push({label:'3-pliche JP (♀)',sites:'Tricipite + Sovrailiaca + Coscia',bf,fm,lm:peso-fm}); }
     }
   }
-  if (eta && peso && bi > 0 && tri > 0 && ss > 0 && si > 0) {
+  if (eta != null && peso && bi > 0 && tri > 0 && ss > 0 && si > 0) {
     const S4 = bi + tri + ss + si, logS4 = Math.log10(S4);
     let D = 0;
     if (sesso === 'M') {
@@ -1265,7 +1267,7 @@ function calcolaPliche() {
       if (bf > 0 && bf < 60) { const fm = peso*bf/100; results.push({label:'4-pliche (Durnin-Womersley)',sites:'Bicipite + Tricipite + Sottoscapolare + Sovrailiaca',bf,fm,lm:peso-fm}); }
     }
   }
-  if (eta && peso && pet > 0 && asc > 0 && tri > 0 && ss > 0 && add > 0 && si > 0 && cos > 0) {
+  if (eta != null && peso && pet > 0 && asc > 0 && tri > 0 && ss > 0 && add > 0 && si > 0 && cos > 0) {
     const S7 = pet + asc + tri + ss + add + si + cos;
     let BD;
     if (sesso === 'M') BD = 1.112 - 0.00043499*S7 + 0.00000055*S7*S7 - 0.00028826*eta;
@@ -1771,8 +1773,12 @@ function caricaDati(data) {
     };
     Object.entries(v).forEach(([k,val])=>{
       if(!val) return;
-      const id = fieldMap[k] || 'v-'+k.replace(/_/g,'-');
-      const el = document.getElementById(id) || document.getElementById('b-'+k);
+      // Alcuni id FFQ mantengono un underscore nel suffisso (es. v-ffq-carne_r,
+      // v-ffq-snack_salati) mentre la chiave salvata usa comunque underscore
+      // dappertutto — la sola forma "tutto trattini" non li trova mai.
+      // Prova anche la forma verbatim (underscore intatti) prima di arrendersi.
+      const idHyphen = fieldMap[k] || 'v-'+k.replace(/_/g,'-');
+      const el = document.getElementById(idHyphen) || document.getElementById('v-'+k) || document.getElementById('b-'+k);
       if(el) el.value=val;
     });
     // Fix specific IDs

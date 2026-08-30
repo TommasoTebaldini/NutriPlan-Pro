@@ -7909,3 +7909,80 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_97_stripe_edge_functions_concorrenza', 'Fix bug di concorrenza nelle edge function Stripe (code review 2026-08-29): claim_stripe_customer_id() rende atomica la creazione/registrazione del customer Stripe (create-checkout-session, create-patient-checkout-session) invece di un upsert incondizionato che poteva sovrascrivere in silenzio un customer già registrato da una richiesta concorrente; claim_fattura_checkout() + nuova colonna fatture.stripe_checkout_pending_at fanno da mutex applicativo (finestra 30 minuti) contro il doppio pagamento della stessa fattura da due checkout concorrenti (create-invoice-checkout-session). Vedi anche i fix lato edge function (webhook idempotente su stato<>''pagato'', gestione async_payment_succeeded/failed, controllo ruolo su create-checkout-session, messaggi di errore generici verso il client, helper condivisi in _shared/stripeHelpers.ts) nella stessa sessione, non richiedono ulteriore SQL.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 98 — FIX SICUREZZA CRITICO: patient_intake_forms leggibile/scrivibile
+-- da chiunque (RLS by-token sempre vera) + bia_records eseguito storicamente
+-- senza RLS, trovati da code review 2026-08-30
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Bug 1: supabase/anamnesi.sql creava due policy "Public read/update by
+-- token" con USING(true) — leggibili/scrivibili da CHIUNQUE avesse la anon
+-- key, non solo da chi conosce il token della riga specifica (RLS valuta la
+-- singola riga, non può da sola verificare che il chiamante conosca il
+-- token — quel confronto va fatto esplicitamente in una funzione). Con più
+-- policy permissive sullo stesso comando, Postgres le unisce in OR: questa
+-- da sola bypassava completamente "Dietitian manages own intake forms",
+-- esponendo l'anamnesi di QUALSIASI paziente di QUALSIASI dietista.
+-- Rimosse: nessun codice client usa oggi l'accesso anonimo via token (vedi
+-- commento in supabase/anamnesi.sql).
+--
+-- Bug 2: il messaggio mostrato al dietista quando bia_records non esiste
+-- ancora (bia.html, ramo "tabella non trovata") includeva testualmente
+-- `ALTER TABLE bia_records DISABLE ROW LEVEL SECURITY` nell'SQL di setup
+-- suggerito — un dietista che lo eseguisse creerebbe la tabella di dati
+-- clinici (composizione corporea) senza ALCUNA RLS, protetta solo dai
+-- filtri `.eq('user_id',...)` lato JS. Corretto anche il testo in bia.html
+-- (ENABLE + policy owner) per chi non ha ancora creato la tabella; questa
+-- sezione copre chi l'ha già creata seguendo il testo vecchio.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "Public read by token" ON patient_intake_forms;
+DROP POLICY IF EXISTS "Public update responses by token" ON patient_intake_forms;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='bia_records') THEN
+    EXECUTE 'ALTER TABLE public.bia_records ENABLE ROW LEVEL SECURITY';
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='bia_records' AND policyname='bia_records_own') THEN
+      EXECUTE 'CREATE POLICY "bia_records_own" ON public.bia_records FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id)';
+    END IF;
+  END IF;
+END $$;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_98_fix_rls_anamnesi_bia', 'Rimosse le policy "Public read/update by token" su patient_intake_forms (USING(true), bypassavano completamente la policy owner-only per QUALSIASI riga — nessun codice client le usa). Riabilitata RLS + policy owner su bia_records nel caso sia già stata creata seguendo l''SQL di setup precedente (che disabilitava RLS esplicitamente) — corretto anche il testo suggerito in bia.html per chi deve ancora crearla. Trovato da code review 2026-08-30.')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 99 — FIX: cancellazione eventi agenda non sincronizzata tra
+-- dispositivi, trovato da code review 2026-08-30
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- agenda.html teneva un "tombstone" delle cancellazioni SOLO in localStorage
+-- (dietplan_deleted_events), che protegge solo il browser che ha cancellato:
+-- un secondo dispositivo, ignaro della cancellazione, vedeva l'evento ancora
+-- nella propria cache locale come "non ancora sincronizzato" e lo
+-- ri-caricava su Supabase al prossimo giro, annullando silenziosamente la
+-- cancellazione per tutti. Fix: la cancellazione diventa un soft-delete
+-- (colonna deleted_at) invece di una DELETE reale — la riga resta sul
+-- server come tombstone visibile a QUALSIASI dispositivo dello stesso
+-- utente tramite la normale select, non solo a chi ha cancellato.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE agenda_events ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+-- Il feed iCal (get_user_agenda_events, usato con la sola anon key) non deve
+-- includere gli eventi soft-cancellati.
+CREATE OR REPLACE FUNCTION get_user_agenda_events(p_user_id UUID)
+RETURNS SETOF agenda_events LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
+  SELECT * FROM agenda_events WHERE user_id = p_user_id AND deleted_at IS NULL ORDER BY data ASC, ora ASC;
+$$;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_99_agenda_soft_delete', 'agenda_events.deleted_at aggiunta per rendere la cancellazione un soft-delete invece di una DELETE reale — il tombstone locale (dietplan_deleted_events in localStorage) proteggeva solo il browser che cancellava, non gli altri dispositivi dello stesso utente, che potevano far risorgere silenziosamente un evento cancellato altrove. get_user_agenda_events() (feed iCal) aggiornata per escludere le righe soft-cancellate. Lato client: deleteCurrentEvent() ora fa UPDATE deleted_at invece di DELETE, loadEventsFromSupabase() filtra le righe con deleted_at e ne aggiunge gli id all''insieme "non resuscitare" insieme al tombstone locale. Trovato da code review 2026-08-30.')
+ON CONFLICT (id) DO NOTHING;

@@ -26,14 +26,22 @@ CREATE POLICY "Dietitian manages own intake forms"
   FOR ALL
   USING (dietitian_id = auth.uid());
 
--- Il paziente può compilare via token (accesso anonimo tramite token)
-CREATE POLICY "Public read by token"
-  ON patient_intake_forms
-  FOR SELECT
-  USING (true);
-
-CREATE POLICY "Public update responses by token"
-  ON patient_intake_forms
-  FOR UPDATE
-  USING (true)
-  WITH CHECK (true);
+-- NOTA DI SICUREZZA: qui c'erano due policy "Public read/update by token"
+-- con USING(true) — cioè leggibili/scrivibili da CHIUNQUE, non solo da chi
+-- possiede il token, perché RLS valuta la singola riga e non può verificare
+-- da sola che il chiamante conosca il token della RIGA richiesta (questo va
+-- fatto lato applicazione). Con più policy permissive sullo stesso comando
+-- (SELECT/UPDATE), Postgres le unisce in OR: bastava questa da sola per
+-- rendere leggibile/scrivibile qualunque anamnesi di qualunque paziente a
+-- chiunque avesse anche solo la anon key pubblica, aggirando completamente
+-- "Dietitian manages own intake forms" sopra.
+--
+-- Rimosse: nessun codice client usa oggi l'accesso anonimo via token (il
+-- link generato da anamnesi.html punta a PATIENT_APP_URL/anamnesi?token=...,
+-- ma quella pagina non esiste ancora nell'app pazienti — vedi generaLink()/
+-- copyLink() in anamnesi.html). Se in futuro si implementa la compilazione
+-- via link, il modo sicuro è una funzione SECURITY DEFINER tipo
+-- get_intake_form_by_token(p_token text)/submit_intake_form_by_token(...)
+-- che confronta esplicitamente il token passato con quello della riga,
+-- con EXECUTE revocato da anon salvo quanto serve — MAI una policy RLS
+-- USING(true) sulla tabella.

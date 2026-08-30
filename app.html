@@ -3612,7 +3612,14 @@ async function init() {
           ricettaPorzioni: r.porzioni || null
         });
         r.ingredienti.forEach(ing => {
-          items.push({nome: ing.nome, qt: String(ing.qt), altPrint: [], misura: '', ricettaIng: true});
+          // ricettaIngQtBase (quantità per UNA porzione) mancava qui — impostata
+          // solo dal flusso di inserimento via autocomplete (riga ~1271).
+          // onRicettaPorzioniChange() la richiede per ricalcolare le quantità
+          // quando si cambia il numero di porzioni: senza, "base" valeva 0 e
+          // ogni ingrediente veniva azzerato al primo cambio porzioni.
+          // ing.qt qui è già scalato da ricette.html per r.porzioni porzioni.
+          const qtBasePerPorz = (parseFloat(ing.qt) || 0) / (r.porzioni || 1);
+          items.push({nome: ing.nome, qt: String(ing.qt), altPrint: [], misura: '', ricettaIng: true, ricettaIngQtBase: qtBasePerPorz});
         });
         markDirty(); renderPiano();
         toast('✅ ' + _L('Ricetta inserita in ','Recipe added to ') + getMeals()[mi].nome + '!', 'ok');
@@ -3902,7 +3909,12 @@ async function _dashToggleTodo(id) {
 
 async function caricaPianoById(id) {
   showLoading(true);
-  const { data, error } = await sb.from('piani').select('id,nome,data_piano,meals,cartella_id,saved_at,visible_to_patient').eq('id', id).single();
+  // Manca il filtro proprietario a differenza di ogni altra query su piani
+  // in questo file (vedi salvaPiano/pubblicaPiano sopra) — id arriva da
+  // sessionStorage (stato client), quindi senza questo filtro una RLS
+  // temporaneamente allentata su piani baserebbe l'isolamento dei dati
+  // solo sul filtro qui, non su un secondo livello applicativo.
+  const { data, error } = await sb.from('piani').select('id,nome,data_piano,meals,cartella_id,saved_at,visible_to_patient').eq('id', id).eq('user_id', studioOwnerId || currentUser.id).single();
   showLoading(false);
   if (error || !data) { toast(_L('❌ Errore caricamento','❌ Load error'), 'err'); nuovoPiano(); return; }
   document.getElementById('inp-nome').value = data.nome;

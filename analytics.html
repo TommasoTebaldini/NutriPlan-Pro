@@ -266,17 +266,16 @@ function renderAll() {
   allAppts.forEach(a => { const k = getMonthKey(a.data || a.created); apptMap[k] = (apptMap[k]||0) + 1; });
   const apptData = monthKeys.map(mk => apptMap[mk] || 0);
 
-  // Retention: active patients / total patients registered up to that month
-  const retentionData = monthKeys.map((mk, idx) => {
-    const totalUpTo = allPatients.filter(p => getMonthKey(p.created_at) <= mk).length;
-    if (!totalUpTo) return null;
-    const activeInMonth = allPatients.filter(p => {
-      const regKey = getMonthKey(p.created_at);
-      if (regKey > mk) return false;
-      // Consider active if they had an appointment in the last 90 days of that month
-      return true; // simplified: use total active as proxy
-    }).length;
-    return Math.round((totalUpTo > 0 ? Math.min(100, Math.round(allPatients.filter(p => p.last_seen_at && getMonthKey(p.last_seen_at) >= mk).length / totalUpTo * 100)) : 0));
+  // Retention: of the patients registered BY that month (the cohort), how many
+  // are still active (seen in/after that month). Numeratore e denominatore
+  // devono riferirsi alla STESSA coorte — prima il numeratore contava
+  // qualunque paziente attivo, incluso chi si era registrato DOPO il mese in
+  // esame, gonfiando artificialmente la retention dei mesi più vecchi.
+  const retentionData = monthKeys.map(mk => {
+    const cohort = allPatients.filter(p => getMonthKey(p.created_at) <= mk);
+    if (!cohort.length) return null;
+    const stillActive = cohort.filter(p => p.last_seen_at && getMonthKey(p.last_seen_at) >= mk).length;
+    return Math.min(100, Math.round(stillActive / cohort.length * 100));
   });
 
   renderChart('chart-acquired', chartAcquired, {

@@ -852,7 +852,11 @@ function calcIC() {
 
   if (!tdd && !peso) return;
   let ic, metodoDef;
-  if (metodo === 'peso' && peso) {
+  if (metodo === 'peso') {
+    // Prima, se il peso era vuoto, si cadeva comunque qui sotto e si
+    // calcolava parseInt('peso') (la stringa del metodo, non un numero) =
+    // NaN, mostrando "1U : NaNg CHO" invece di non mostrare nulla.
+    if (!peso) return;
     ic = Math.round(500 / (peso * 0.5));
     metodoDef = _L('Formula peso','Weight formula') + ': 500 / (peso × 0.5)';
   } else {
@@ -868,14 +872,18 @@ function calcIC() {
 
 // ── Calcolo Dose Insulina ──
 function calcDose() {
-  const cho = parseFloat(document.getElementById('pasto-cho').value);
+  const choRaw = document.getElementById('pasto-cho').value;
+  const cho = parseFloat(choRaw);
   const ic = parseFloat(document.getElementById('pasto-ic').value);
   const glic = parseFloat(document.getElementById('pasto-glic').value);
   const target = parseFloat(document.getElementById('pasto-target').value) || 100;
   const fsi = parseFloat(document.getElementById('pasto-fsi').value);
   const res = document.getElementById('dose-result');
 
-  if (!cho || !ic) return;
+  // CHO=0 è un pasto reale (senza carboidrati), non un campo vuoto — prima
+  // "!cho" trattava i due casi allo stesso modo, nascondendo anche una
+  // correzione insulinica necessaria per glicemia alta con pasto a 0 CHO.
+  if (choRaw.trim() === '' || isNaN(cho) || !ic) return;
   const doseCHO = cho / ic;
   const doseCorr = glic && fsi ? (glic - target) / fsi : 0;
   const doseTot = Math.max(0, doseCHO + doseCorr);

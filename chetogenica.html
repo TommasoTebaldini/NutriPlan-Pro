@@ -1447,6 +1447,25 @@ function showKetoTab(id) {
   if (tabs[map[id]]) tabs[map[id]].classList.add('active');
 }
 
+// Fabbisogno RDA per kg di peso corporeo, per fascia d'età — sostituisce il
+// precedente 70 kcal/kg fisso, che sovrastimava (o sottostimava) di molto
+// la prescrizione calorica per l'opzione "Epilessia (fabbisogno pediatrico
+// RDA)" fuori dalla fascia 7-10 anni per cui 70 kcal/kg è corretto,
+// nonostante l'età fosse già raccolta e usata altrove in questa funzione.
+// Valori dalle tabelle RDA pediatriche classiche (kcal/kg/die), stesso
+// riferimento comunemente usato nei protocolli di dieta chetogenica per
+// l'epilessia prima di individualizzare in base alla risposta clinica.
+function kcalKgRDA(eta, sesso) {
+  if (eta < 0.5) return 108;
+  if (eta < 1) return 98;
+  if (eta < 4) return 102;
+  if (eta < 7) return 90;
+  if (eta < 11) return 70;
+  if (eta < 15) return sesso === 'm' ? 55 : 47;
+  if (eta < 19) return sesso === 'm' ? 45 : 40;
+  return sesso === 'm' ? 40 : 38; // oltre i 18 anni: opzione pensata per pediatria, fallback prudente
+}
+
 function calcKeto() {
   const peso = parseFloat(document.getElementById('k-peso').value) || 0;
   const altezza = parseFloat(document.getElementById('k-altezza').value) || 0;
@@ -1465,7 +1484,7 @@ function calcKeto() {
   let tdee = Math.round(bmr * attivita);
   let kcal = tdee;
   if (obiettivo === 'dima') kcal = Math.max(1200, tdee - 500);
-  if (obiettivo === 'epilessia') kcal = Math.round(peso * 70); // ~70 kcal/kg per pediatria
+  if (obiettivo === 'epilessia') kcal = Math.round(peso * kcalKgRDA(eta, sesso));
 
   // Macros per tipo
   let fatPct, protPct, choPct;

@@ -698,19 +698,29 @@ async function saveEvents() {
 async function loadEventsFromSupabase() {
   if (!currentUser || !sb) return;
   try {
-    const { data, error } = await sb
+    const { data: rawData, error } = await sb
       .from('agenda_events')
       .select('*')
       .eq('user_id', currentUser.id)
       .order('data', { ascending: true })
       .order('ora', { ascending: true });
     if (error) throw error;
-    if (!data) return;
+    if (!rawData) return;
+    // Le cancellazioni sono ora soft-delete (deleted_at, SEZIONE 99) invece
+    // di una DELETE reale — prima il tombstone locale (dietplan_deleted_
+    // events) proteggeva solo IL BROWSER che aveva cancellato: un altro
+    // dispositivo, ignaro della cancellazione, vedeva l'evento come "locale
+    // non ancora sincronizzato" e lo ri-caricava su Supabase, annullando la
+    // cancellazione per tutti. Con la riga ancora presente (solo nascosta),
+    // ogni dispositivo la vede in questa stessa select e sa che è cancellata.
+    const data = rawData.filter(e => !e.deleted_at);
+    const serverDeletedIds = new Set(rawData.filter(e => e.deleted_at).map(e => e.id));
     if (!data.length) {
-      // Supabase has no records — push any locally-cached events up so they are persisted
-      // (skip any that were deleted elsewhere, or a stale local cache would resurrect them)
+      // Supabase has no ACTIVE records — push any locally-cached events up so they
+      // are persisted (skip any deleted locally or on the server, or a stale local
+      // cache would resurrect them)
       const deletedIds = getDeletedIds();
-      events = events.filter(e => !deletedIds.has(e.id));
+      events = events.filter(e => !deletedIds.has(e.id) && !serverDeletedIds.has(e.id));
       localStorage.setItem('dietplan_events', JSON.stringify(events));
       if (events.length) {
         try {
@@ -727,10 +737,11 @@ async function loadEventsFromSupabase() {
               .from('agenda_events')
               .select('*')
               .eq('user_id', currentUser.id)
+              .is('deleted_at', null)
               .order('data', { ascending: true })
               .order('ora', { ascending: true });
             if (!syncErr && synced && synced.length) {
-              events = synced.map(({ user_id: _u, ...rest }) => rest);
+              events = synced.map(({ user_id: _u, deleted_at: _d, ...rest }) => rest);
               localStorage.setItem('dietplan_events', JSON.stringify(events));
               renderCalendar();
               updateStats();
@@ -744,12 +755,13 @@ async function loadEventsFromSupabase() {
       return;
     }
     // Merge: Supabase is authoritative; keep any local-only events not yet synced
-    // (excluding ones deleted elsewhere — a stale local cache must not resurrect them)
-    const sbIds = new Set(data.map(e => e.id));
+    // (excluding ones deleted elsewhere, locally OR on the server — a stale local
+    // cache must not resurrect them)
+    const sbIds = new Set(rawData.map(e => e.id));
     const deletedIds = getDeletedIds();
-    const localOnly = events.filter(e => !sbIds.has(e.id) && !deletedIds.has(e.id));
-    // Strip user_id from in-memory objects to match the original event shape
-    events = [...data, ...localOnly].map(({ user_id: _u, ...rest }) => rest);
+    const localOnly = events.filter(e => !sbIds.has(e.id) && !deletedIds.has(e.id) && !serverDeletedIds.has(e.id));
+    // Strip user_id/deleted_at from in-memory objects to match the original event shape
+    events = [...data, ...localOnly].map(({ user_id: _u, deleted_at: _d, ...rest }) => rest);
     localStorage.setItem('dietplan_events', JSON.stringify(events));
     renderCalendar();
     updateStats();
@@ -1126,7 +1138,11 @@ async function deleteCurrentEvent() {
   markEventDeleted(idToDelete);
   if(currentUser && sb) {
     try {
-      const { error } = await sb.from('agenda_events').delete().eq('id', idToDelete).eq('user_id', currentUser.id);
+      // Soft-delete (deleted_at) invece di una DELETE reale, SEZIONE 99: la
+      // riga resta sul server come tombstone visibile a tutti i dispositivi
+      // di questo utente, non solo a quello che ha cancellato — vedi
+      // commento in loadEventsFromSupabase().
+      const { error } = await sb.from('agenda_events').update({ deleted_at: new Date().toISOString() }).eq('id', idToDelete).eq('user_id', currentUser.id);
       if (error) throw error;
     } catch(e) {
       console.warn('Supabase delete error:', e.message);

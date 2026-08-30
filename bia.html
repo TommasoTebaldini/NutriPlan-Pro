@@ -1038,7 +1038,9 @@ async function loadStorico() {
   ffmi numeric, raw_data jsonb, created_at timestamptz DEFAULT now(),
   visible_to_patient boolean NOT NULL DEFAULT FALSE
 );
-ALTER TABLE bia_records DISABLE ROW LEVEL SECURITY;</code></div>`;
+ALTER TABLE bia_records ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "bia_records_own" ON bia_records FOR ALL
+  USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);</code></div>`;
     return;
   }
 

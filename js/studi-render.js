@@ -48,12 +48,12 @@ function renderPage() {
 
   if (pages <= 1) { pag.innerHTML = ''; return; }
   let html = '<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:16px 0">';
-  html += `<button onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''} style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--card-bg);cursor:pointer;font-size:13px">&#8592;</button>`;
+  html += `<button onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''} style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:13px">&#8592;</button>`;
   for (let i = 1; i <= pages; i++) {
     const active = i === currentPage;
-    html += `<button onclick="goPage(${i})" style="padding:6px 12px;border-radius:6px;border:1px solid ${active?'var(--primary)':'var(--border)'};background:${active?'var(--primary)':'var(--card-bg)'};color:${active?'#fff':'inherit'};cursor:pointer;font-size:13px">${i}</button>`;
+    html += `<button onclick="goPage(${i})" style="padding:6px 12px;border-radius:6px;border:1px solid ${active?'var(--teal)':'var(--border)'};background:${active?'var(--teal)':'var(--card)'};color:${active?'#fff':'inherit'};cursor:pointer;font-size:13px">${i}</button>`;
   }
-  html += `<button onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''} style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--card-bg);cursor:pointer;font-size:13px">&#8594;</button>`;
+  html += `<button onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''} style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:13px">&#8594;</button>`;
   html += '</div>';
   pag.innerHTML = html;
 }
@@ -62,7 +62,7 @@ function filterStudies() {
   currentPage = 1;
   const q = (document.getElementById('study-search').value || '').toLowerCase().trim();
   const countEl = document.getElementById('study-count');
-  let filtered = window.STUDI || [];
+  let filtered = typeof STUDI !== 'undefined' ? STUDI : [];
 
   if (currentFilter !== 'tutti') {
     filtered = filtered.filter(s => s.categorie.includes(currentFilter));

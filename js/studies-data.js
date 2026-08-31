@@ -6913,7 +6913,7 @@
     tipoColor: "#6B7280",
     tipoBg: "#F9FAFB",
     fonti: ["PubMed"],
-    categorie: ["dieta_vegetale","cardiovascolare","vegetariani"],
+    categorie: ["dieta_vegetale","cardiovascolare","vegetariano"],
     emojiCat: "🫀",
     ef: 3,
     partecipanti: "48.188 adulti (EPIC-Oxford, UK)",

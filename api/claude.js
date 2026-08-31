@@ -129,6 +129,7 @@ async function handler(req, res) {
     // Models that support response_format json_object on Groq
     const JSON_MODE_MODELS = new Set(['llama-3.3-70b-versatile', 'llama-3.1-8b-instant']);
     let lastError = null;
+    let allRateLimited = true; // resta true solo se OGNI tentativo ha fallito per 429
 
     for (const model of MODELS) {
       try {
@@ -162,17 +163,30 @@ async function handler(req, res) {
           });
         }
 
-        lastError = data.error?.message || `HTTP ${response.status}`;
+        if (response.status !== 429) allRateLimited = false;
+
+        if (response.ok) {
+          // 200 ma senza testo utilizzabile (es. modello di reasoning che ha
+          // esaurito max_tokens in token di ragionamento invisibili prima di
+          // produrre output) — non è un errore HTTP, va segnalato per quello che è.
+          lastError = `Il modello ${model} ha risposto senza contenuto utilizzabile.`;
+        } else {
+          lastError = data.error?.message || `HTTP ${response.status}`;
+        }
         if (response.status === 401) {
           return res.status(401).json({ error: 'Chiave API non valida. Verifica GEMINI_API_KEY su https://console.groq.com/keys' });
         }
         // Qualunque altro errore (modello deprecato/rimosso, 429, 5xx...): prova il modello successivo.
 
       } catch(e) {
+        allRateLimited = false;
         lastError = e.message;
       }
     }
 
+    if (allRateLimited) {
+      return res.status(503).json({ error: 'Servizio AI temporaneamente sovraccarico (limite del piano gratuito Groq raggiunto). Riprova tra un minuto, oppure genera meno giorni per volta.' });
+    }
     return res.status(503).json({ error: lastError || 'Servizio non disponibile' });
 
   } catch (err) {

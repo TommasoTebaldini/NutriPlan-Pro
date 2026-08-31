@@ -121,9 +121,11 @@ async function handler(req, res) {
     }));
 
     // json_mode=true: use 70B model first (much more reliable for structured JSON output)
+    // gemma2-9b-it è stato dismesso da Groq; openai/gpt-oss-20b aggiunto come
+    // ultima rete di sicurezza nel caso anche i modelli llama non siano disponibili.
     const MODELS = json_mode
-      ? ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'gemma2-9b-it']
-      : ['llama-3.1-8b-instant', 'llama3-8b-8192', 'gemma2-9b-it'];
+      ? ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'openai/gpt-oss-20b']
+      : ['llama-3.1-8b-instant', 'openai/gpt-oss-20b'];
     // Models that support response_format json_object on Groq
     const JSON_MODE_MODELS = new Set(['llama-3.3-70b-versatile', 'llama-3.1-8b-instant']);
     let lastError = null;

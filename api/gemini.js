@@ -133,11 +133,11 @@ async function handler(req, res) {
     ];
 
     // Groq free models — llama3 è eccellente per domande cliniche
+    // (llama3-8b-8192, gemma2-9b-it e mixtral-8x7b-32768 sono stati dismessi da Groq)
     const MODELS = [
       'llama-3.1-8b-instant',    // Più veloce
-      'llama3-8b-8192',          // Alternativa
-      'gemma2-9b-it',            // Gemma 2 Google via Groq
-      'mixtral-8x7b-32768',      // Mixtral
+      'llama-3.3-70b-versatile', // Più capace
+      'openai/gpt-oss-20b',      // Rete di sicurezza finale
     ];
 
     let lastError = null;

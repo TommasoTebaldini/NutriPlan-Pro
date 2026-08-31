@@ -7986,3 +7986,40 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_99_agenda_soft_delete', 'agenda_events.deleted_at aggiunta per rendere la cancellazione un soft-delete invece di una DELETE reale — il tombstone locale (dietplan_deleted_events in localStorage) proteggeva solo il browser che cancellava, non gli altri dispositivi dello stesso utente, che potevano far risorgere silenziosamente un evento cancellato altrove. get_user_agenda_events() (feed iCal) aggiornata per escludere le righe soft-cancellate. Lato client: deleteCurrentEvent() ora fa UPDATE deleted_at invece di DELETE, loadEventsFromSupabase() filtra le righe con deleted_at e ne aggiunge gli id all''insieme "non resuscitare" insieme al tombstone locale. Trovato da code review 2026-08-30.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 100 — Rimuove il sistema di chat di gruppo (chat_groups), sostituito
+-- dalla chat 1:1 paziente↔dietista (chat_messages, SEZIONE 80) — trovato e
+-- disattivato lato client il 2026-08-31
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- chat_groups/chat_group_members/chat_group_messages erano un secondo
+-- sistema di chat, parallelo e mai collegato al pannello del dietista
+-- (chat.html legge solo chat_messages/chat_messages_raw). L'app pazienti
+-- (Diet-Plan-Pro-app-claude) apriva a volte questo thread come schermata
+-- predefinita: i messaggi scritti lì venivano salvati correttamente sul
+-- server ma il dietista non li avrebbe mai visti. Il codice client che lo
+-- usava (ChatPage.jsx: ChatListView/GroupThreadView) è già stato rimosso;
+-- questa sezione elimina le tabelle, la funzione di supporto e le policy
+-- storage rimaste orfane. Solo dati di test nel DB al momento della
+-- rimozione (1 gruppo, 2 membri, 2 messaggi).
+--
+-- Il bucket storage "group-chat-media" (messaggi vocali del gruppo) resta
+-- per ora: se vuoto puoi eliminarlo manualmente da Storage → group-chat-media
+-- nella dashboard Supabase.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "group_chat_media_insert" ON storage.objects;
+DROP POLICY IF EXISTS "group_chat_media_select" ON storage.objects;
+
+DROP TABLE IF EXISTS chat_group_messages CASCADE;
+DROP TABLE IF EXISTS chat_group_members CASCADE;
+DROP TABLE IF EXISTS chat_groups CASCADE;
+
+DROP FUNCTION IF EXISTS is_chat_group_member(uuid, uuid);
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_100_drop_chat_groups', 'Rimosse le tabelle chat_groups/chat_group_members/chat_group_messages, la funzione is_chat_group_member() e le policy storage group_chat_media_insert/select — sistema di chat di gruppo parallelo, mai collegato al pannello del dietista (bug trovato e verificato dal vivo il 2026-08-31: i messaggi dei pazienti in quel thread non arrivavano mai al dietista). Codice client già rimosso da ChatPage.jsx. Bucket storage group-chat-media lasciato intatto (da svuotare/eliminare manualmente se non serve più).')
+ON CONFLICT (id) DO NOTHING;

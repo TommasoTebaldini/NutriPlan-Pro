@@ -164,7 +164,7 @@ async function handler(req, res) {
         if (response.status === 401) {
           return res.status(401).json({ error: 'Chiave API non valida. Verifica GEMINI_API_KEY su https://console.groq.com/keys' });
         }
-        if (response.status !== 429) break;
+        // Qualunque altro errore (modello deprecato/rimosso, 429, 5xx...): prova il modello successivo.
 
       } catch(e) {
         lastError = e.message;

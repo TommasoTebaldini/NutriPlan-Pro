@@ -2953,7 +2953,16 @@ async function sendAIChat() {
     '<div class="ai-msg-row" id="'+loadId+'"><div class="ai-bubble bot" style="font-style:italic;color:var(--slate-l)">⏳ Sto elaborando...</div></div>');
   msgs.scrollTop = msgs.scrollHeight;
 
-  _aiChatHistory.push({role:'user', content:msg});
+  // Fissa contesto/tag/storico del paziente corrente PRIMA degli await: se il
+  // dietista cambia paziente mentre questa richiesta è in volo,
+  // loadAIChatPaziente() sovrascrive _aiChatSysPrompt/_aiChatTags e rimpiazza
+  // _aiChatHistory con un nuovo array per il nuovo paziente — senza questo
+  // snapshot la risposta verrebbe generata usando i dati clinici del
+  // paziente sbagliato (fuga di dati clinici verso il provider AI).
+  const _sysPrompt = _aiChatSysPrompt;
+  const _tags = _aiChatTags;
+  const _historyRef = _aiChatHistory;
+  _historyRef.push({role:'user', content:msg});
 
   let reply = '';
   try {
@@ -2969,7 +2978,7 @@ async function sendAIChat() {
       const ragRes = await fetch('/api/gemini', {
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':authHeader},
-        body:JSON.stringify({mode:'rag-search', tags:_aiChatTags, query:msg})
+        body:JSON.stringify({mode:'rag-search', tags:_tags, query:msg})
       });
       ragCtx = formatRagContext(await ragRes.json());
     } catch(e) { /* RAG opzionale */ }
@@ -2977,7 +2986,7 @@ async function sendAIChat() {
     const res = await fetch('/api/gemini', {
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':authHeader},
-      body:JSON.stringify({system:_aiChatSysPrompt+ragCtx, messages:_aiChatHistory.slice(-8), max_tokens:1024})
+      body:JSON.stringify({system:_sysPrompt+ragCtx, messages:_historyRef.slice(-8), max_tokens:1024})
     });
     const json = await res.json();
     reply = json?.content?.[0]?.text || '';
@@ -2987,7 +2996,7 @@ async function sendAIChat() {
   if (!loadEl) return;
 
   if (reply) {
-    _aiChatHistory.push({role:'assistant', content:reply});
+    _historyRef.push({role:'assistant', content:reply});
     loadEl.querySelector('.ai-bubble').textContent = reply;
     loadEl.querySelector('.ai-bubble').style.fontStyle = '';
     loadEl.querySelector('.ai-bubble').style.color = '';

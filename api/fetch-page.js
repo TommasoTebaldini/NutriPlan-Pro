@@ -24,13 +24,28 @@ const PRIVATE_IP_PATTERNS = [
   /^169\.254\./,                     // link-local / cloud metadata (AWS/GCP/Azure)
   /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./,  // CGNAT RFC6598
   /^::1$/,                           // IPv6 loopback
-  /^fc00:/i,                         // IPv6 ULA
+  // IPv6 ULA is the whole fc00::/7 block (first byte 0xFC or 0xFD), not just
+  // the literal "fc00:" prefix — fd00::/8 is what's actually assigned in
+  // practice (Docker, Tailscale, home/corporate LANs), and was previously
+  // let straight through this filter.
+  /^f[cd][0-9a-f]{0,2}:/i,           // IPv6 ULA (fc00::/7)
   /^fe80:/i,                         // IPv6 link-local
 ];
 
 // Normalizza IPv4-mapped IPv6 (::ffff:127.0.0.1 → 127.0.0.1) prima del match.
+// Node può normalizzare lo stesso indirizzo sia in forma "dotted"
+// (::ffff:127.0.0.1) sia in forma esadecimale pura (::ffff:7f00:1, stessa
+// entità di 127.0.0.1) a seconda di come arriva l'input — solo la prima
+// veniva gestita, lasciando passare un bypass del filtro via
+// http://[::ffff:7f00:1]/.
 function isPrivateIp(ip) {
-  const normalized = ip.replace(/^::ffff:/i, '');
+  let normalized = ip.replace(/^::ffff:/i, '');
+  const hexMatch = normalized.match(/^([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i);
+  if (hexMatch) {
+    const hi = parseInt(hexMatch[1], 16);
+    const lo = parseInt(hexMatch[2], 16);
+    normalized = [hi >> 8, hi & 0xff, lo >> 8, lo & 0xff].join('.');
+  }
   return PRIVATE_IP_PATTERNS.some(re => re.test(normalized));
 }
 

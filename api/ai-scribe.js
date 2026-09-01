@@ -15,8 +15,15 @@ import { checkRateLimit } from './_rateLimit.js';
 import { checkMonthlyQuota } from './_monthlyQuota.js';
 import { withErrorLogging, logServerError } from './_errorLog.js';
 
+// L'audio arriva in JSON come base64, che gonfia la dimensione di ~4/3
+// rispetto ai byte decodificati: 10MB decodificati (MAX_AUDIO_BYTES qui
+// sotto) richiedono ~13.3MB di testo base64 nel body. Con un sizeLimit di
+// 12mb, un audio legittimo vicino al limite documentato di ~10MB veniva
+// rifiutato dal bodyParser della piattaforma PRIMA di arrivare al controllo
+// più sotto — l'utente vedeva un errore generico invece del messaggio
+// comprensibile pensato apposta per questo caso.
 export const config = {
-  api: { bodyParser: { sizeLimit: '12mb' } }, // audio compresso (webm/opus) di una seduta breve
+  api: { bodyParser: { sizeLimit: '14mb' } }, // audio compresso (webm/opus) di una seduta breve
 };
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.supabase.co';

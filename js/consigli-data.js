@@ -3609,7 +3609,13 @@ function _buildProfiloFirmaStampa() {
 
 function buildStampaHTML(c, notePaziente = '') {
   const enT = CONSIGLI_EN[c.id] || {};
-  const _t = (it, enK) => _L(it, enT[enK] || it);
+  // esc() (js/utils.js) applied here, same pattern as the sibling
+  // buildConsiglio() above — this HTML is stored (note_specialistiche.dati.
+  // stampa_html) and later rendered via document.write() both in the
+  // dietist's own print window and in patient-portal.html, so any
+  // unescaped free-text field (dietist's patient note, custom advice text)
+  // would run as live script in whoever's browser opens it.
+  const _t = (it, enK) => esc(_L(it, enT[enK] || it));
   const nome = _t(c.nome, 'nome');
   const pasti = _t(c.pasti, 'pasti');
   const porzioni = _t(c.porzioni, 'porzioni');
@@ -3622,16 +3628,16 @@ function buildStampaHTML(c, notePaziente = '') {
   const avvisiArr = _L(c.avvisi, enT.avvisi || c.avvisi) || [];
 
   const foodPill = (f, cls, col, bg) =>
-    `<span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:11.5px;font-weight:500;margin:3px;background:${bg};color:${col}">${f}</span>`;
+    `<span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:11.5px;font-weight:500;margin:3px;background:${bg};color:${col}">${esc(f)}</span>`;
 
   const okPills = okArr.map(f => foodPill(f,'ok','#065F46','#D1FAE5')).join('');
   const noPills = noArr.map(f => foodPill(f,'no','#991B1B','#FEE2E2')).join('');
   const modPills = modArr.map(f => foodPill(f,'mod','#92400E','#FEF3C7')).join('');
   const praticiHtml = praticiArr.map(p =>
-    `<li style="padding:5px 0;border-bottom:1px solid #E2E8F0;font-size:12pt;color:#334155">→ ${p}</li>`).join('');
+    `<li style="padding:5px 0;border-bottom:1px solid #E2E8F0;font-size:12pt;color:#334155">→ ${esc(p)}</li>`).join('');
   const avvisiHtml = avvisiArr.map(a =>
-    `<div style="padding:5px 8px;border-bottom:1px solid #FEE2E2;font-size:11pt;color:#991B1B">⚠️ ${a}</div>`).join('');
-  const noteHtml = notePaziente ? `<div style="background:#FFF7ED;border-left:4px solid #F59E0B;border-radius:6px;padding:10px 14px;font-size:10pt;color:#78350F;margin-bottom:14px;line-height:1.6;white-space:pre-wrap"><b>✏️ ${_L('Note specifiche per il paziente','Patient-specific notes')}:</b><br>${notePaziente}</div>` : '';
+    `<div style="padding:5px 8px;border-bottom:1px solid #FEE2E2;font-size:11pt;color:#991B1B">⚠️ ${esc(a)}</div>`).join('');
+  const noteHtml = notePaziente ? `<div style="background:#FFF7ED;border-left:4px solid #F59E0B;border-radius:6px;padding:10px 14px;font-size:10pt;color:#78350F;margin-bottom:14px;line-height:1.6;white-space:pre-wrap"><b>✏️ ${_L('Note specifiche per il paziente','Patient-specific notes')}:</b><br>${esc(notePaziente)}</div>` : '';
 
   return `<!DOCTYPE html>
 <html lang="it">

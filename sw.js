@@ -27,7 +27,19 @@ const PRECACHE_URLS = ['/js/db.min.js', '/js/lang.min.js'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open('assets-' + VERSION).then(cache => cache.addAll(PRECACHE_URLS)),
+    caches.open('assets-' + VERSION).then(cache =>
+      // cache.addAll() rejects entirely if ANY single URL fails (non-2xx or
+      // network error), which fails the whole 'install' event — the browser
+      // then discards the new worker and keeps running the old one forever.
+      // Precache each file independently instead, so one missing/renamed
+      // file (e.g. after a future deploy) can't silently block every
+      // subsequent SW version from installing for all users.
+      Promise.all(
+        PRECACHE_URLS.map(url =>
+          cache.add(url).catch(err => console.warn('[sw] precache failed for', url, err)),
+        ),
+      ),
+    ),
   );
   self.skipWaiting();
 });
@@ -96,12 +108,28 @@ if (!workbox) {
 
   // Supabase: network-first con timeout breve — offline mostra l'ultima
   // risposta cachata invece di far restare la UI in caricamento infinito.
+  // La cache key di Workbox è l'URL da solo: senza lo scoping qui sotto, due
+  // dietisti diversi che usano lo stesso device (client condiviso) e la
+  // stessa URL (es. GET /rest/v1/pazienti) condividerebbero la stessa entry
+  // di cache — il secondo, se offline/rete lenta, si vedrebbe servire i dati
+  // (pazienti, chat, agenda) dell'account del primo. Includiamo l'header
+  // Authorization nella cache key così ogni sessione ha il suo bucket.
   registerRoute(
     ({ url }) => url.hostname.includes('supabase.co'),
     new NetworkFirst({
       cacheName: 'supabase-' + VERSION,
       networkTimeoutSeconds: 8,
-      plugins: [new ExpirationPlugin({ maxEntries: 60, maxAgeSeconds: 60 * 60 * 6 })],
+      plugins: [
+        new ExpirationPlugin({ maxEntries: 60, maxAgeSeconds: 60 * 60 * 6 }),
+        {
+          cacheKeyWillBeUsed: async ({ request }) => {
+            const auth = (request.headers && request.headers.get('Authorization')) || 'anon';
+            const url = new URL(request.url);
+            url.searchParams.set('__sw_auth', auth.slice(-32));
+            return url.href;
+          },
+        },
+      ],
     }),
   );
 

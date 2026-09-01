@@ -154,8 +154,22 @@
   function staticifyFormElements(cloneEl, origEl) {
     const origArr = Array.from(origEl.querySelectorAll('input, textarea, select'));
     const cloneArr = Array.from(cloneEl.querySelectorAll('input, textarea, select'));
-    cloneArr.forEach(function (cl, idx) {
-      const orig = origArr[idx];
+    // Match by id/name where available instead of trusting array position:
+    // both call sites remove elements (e.g. .no-print) from the clone
+    // BEFORE calling this function, so cloneArr and origArr can already be
+    // desynced here — a purely positional match would silently pair every
+    // field after a removed one with the wrong live value. Falls back to
+    // positional pairing only among the elements that have no id/name.
+    const byKey = new Map();
+    const unkeyedOrig = [];
+    origArr.forEach(function (el) {
+      const key = el.id || el.name;
+      if (key) byKey.set(key, el); else unkeyedOrig.push(el);
+    });
+    let unkeyedIdx = 0;
+    cloneArr.forEach(function (cl) {
+      const key = cl.id || cl.name;
+      const orig = (key && byKey.get(key)) || unkeyedOrig[unkeyedIdx++];
       if (!orig || !cl.parentNode) return;
       const val = orig.value || '';
       if (orig.type === 'checkbox' || orig.type === 'radio') {

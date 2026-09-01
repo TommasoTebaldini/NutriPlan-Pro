@@ -1639,13 +1639,23 @@ function calcBITE() {
   const sev = parseInt(document.getElementById('bite-freq').value);
   const res = document.getElementById('bite-result');
   res.style.display = 'block';
-  const symLabel = sym < 10 ? _L('🟢 Nessun problema significativo','🟢 No significant problem') : sym < 20 ? _L('🟡 Alcune caratteristiche bulimiche','🟡 Some bulimic features') : _L('🔴 Disturbo bulimico probabile','🔴 Probable bulimic disorder');
+  // BITE_ITEMS qui implementa 15 dei 30 item originali della Scala Sintomi
+  // (punteggio massimo reale quindi 15, non 30): le soglie cliniche
+  // pubblicate (<10 nessun problema, 10-19 alcune caratteristiche, ≥20
+  // probabile disturbo) sono tarate sui 30 item originali e con un massimo
+  // di 15 la soglia "probabile disturbo" (≥20) non sarebbe MAI raggiungibile.
+  // Soglie riscalate proporzionalmente (÷2) per restare internamente
+  // coerenti con gli item realmente presenti — non sono le soglie cliniche
+  // validate della scala completa, va sempre indicato in interfaccia.
+  const symMax = BITE_ITEMS.length;
+  const symLabel = sym < 5 ? _L('🟢 Nessun problema significativo','🟢 No significant problem') : sym < 10 ? _L('🟡 Alcune caratteristiche bulimiche','🟡 Some bulimic features') : _L('🔴 Disturbo bulimico probabile','🔴 Probable bulimic disorder');
   const sevLabel = sev === 0 ? _L('Non clinicamente significativa','Not clinically significant') : sev < 10 ? _L('🟡 Lieve','🟡 Mild') : sev < 20 ? _L('🟠 Moderata','🟠 Moderate') : _L('🔴 Grave','🔴 Severe');
-  const pos = sym >= 20 || sev >= 5;
-  res.style.background = pos ? '#FEE2E2' : (sym >= 10 ? '#FEF3C7' : '#ECFDF5');
+  const pos = sym >= 10 || sev >= 5;
+  res.style.background = pos ? '#FEE2E2' : (sym >= 5 ? '#FEF3C7' : '#ECFDF5');
   res.innerHTML = `<b>📊 BITE — ${_L('Risultati','Results')}</b><br>
     <div style="margin-top:6px;font-size:12px">
-      <div>${_L('Scala Sintomi','Symptom Scale')}: <b>${sym}/30</b> — ${symLabel}</div>
+      <div style="margin-bottom:6px;padding:6px 8px;background:#FEF3C7;border-radius:6px">${_L(`⚠️ Versione abbreviata: ${symMax} dei 30 item originali della Scala Sintomi BITE. Soglie riscalate proporzionalmente, NON le soglie cliniche validate della scala completa — usare come indicazione di massima, non come diagnosi.`, `⚠️ Abbreviated version: ${symMax} of the original 30 BITE Symptom Scale items. Thresholds rescaled proportionally, NOT the validated clinical thresholds of the full scale — use as a rough indicator, not a diagnosis.`)}</div>
+      <div>${_L('Scala Sintomi','Symptom Scale')}: <b>${sym}/${symMax}</b> — ${symLabel}</div>
       <div style="margin-top:4px">${_L('Scala Gravità','Severity Scale')}: <b>${sev}/39</b> — ${sevLabel}</div>
       <div style="margin-top:6px">${pos ? _L('Punteggio clinicamente significativo. Approfondimento psicologico/psichiatrico consigliato.','Clinically significant score. Psychological/psychiatric follow-up recommended.') : _L('Non emergono segnali di disturbo bulimico clinicamente significativo con questo screening.','No clinically significant bulimic disorder signals from this screening.')}</div>
     </div>`;

@@ -2,6 +2,8 @@
 // Proxy per fetch di pagine web (risolve CORS per importazione ricette da URL)
 
 import dns from 'node:dns';
+import http from 'node:http';
+import https from 'node:https';
 import { checkRateLimit } from './_rateLimit.js';
 import { withErrorLogging, logServerError } from './_errorLog.js';
 const dnsLookup = dns.promises.lookup;
@@ -53,17 +55,68 @@ function isPrivateHost(hostname) {
   return isPrivateIp(hostname) || hostname === 'localhost';
 }
 
-// Protezione SSRF contro DNS rebinding: un hostname pubblico può comunque
-// risolvere (in fase di fetch) a un IP privato. Risolviamo qui e validiamo
-// TUTTI gli indirizzi restituiti, invece di fidarci solo della stringa hostname.
-async function resolvesToPrivateIp(hostname) {
-  if (isPrivateHost(hostname)) return true;
+// Protezione SSRF contro DNS rebinding.
+//
+// Prima di questa funzione, il controllo faceva un lookup DNS separato per
+// validare l'hostname, poi chiamava fetch(url) — che internamente fa un
+// SECONDO lookup DNS proprio. Con un dominio attaccante (TTL bassissimo o
+// DNS server malevolo), i due lookup possono restituire risposte diverse:
+// il primo un IP pubblico (passa la validazione), il secondo — pochi
+// millisecondi dopo, durante il vero fetch — un IP privato/interno
+// (169.254.169.254, 127.0.0.1, ...), bypassando completamente il filtro.
+// Qui risolviamo UNA VOLTA, validiamo TUTTI gli indirizzi restituiti, e la
+// richiesta reale si connette esplicitamente al primo IP validato invece di
+// ri-risolvere l'hostname (vedi pinnedRequest sotto) — l'hostname originale
+// resta comunque usato per l'header Host e per l'SNI/verifica del
+// certificato TLS, così la richiesta rimane corretta per l'hosting
+// virtuale e la validazione del certificato.
+async function resolveValidatedIp(hostname) {
+  if (isPrivateHost(hostname)) return null;
+  let records;
   try {
-    const records = await dnsLookup(hostname, { all: true, verbatim: true });
-    return records.some(r => isPrivateIp(r.address));
+    records = await dnsLookup(hostname, { all: true, verbatim: true });
   } catch {
-    return true; // dominio non risolvibile → non consentito
+    return null; // dominio non risolvibile → non consentito
   }
+  if (!records.length || records.some(r => isPrivateIp(r.address))) return null;
+  return records[0].address;
+}
+
+// Richiesta HTTP(S) "pinnata" al preciso IP già validato da
+// resolveValidatedIp, evitando che Node risolva di nuovo l'hostname in fase
+// di connessione. Per HTTPS, servername forza comunque l'SNI e la verifica
+// del certificato sull'hostname reale (non sull'IP) — la connessione è
+// pinnata, la sicurezza TLS resta quella corretta.
+function pinnedRequest(urlObj, ip, signal) {
+  return new Promise((resolve, reject) => {
+    const isHttps = urlObj.protocol === 'https:';
+    const mod = isHttps ? https : http;
+    const req = mod.request({
+      hostname: ip,
+      port: urlObj.port || (isHttps ? 443 : 80),
+      path: urlObj.pathname + urlObj.search,
+      method: 'GET',
+      headers: {
+        'Host': urlObj.hostname,
+        'User-Agent': 'Mozilla/5.0 (compatible; DietPlanPro/1.0)',
+        'Accept': 'text/html,application/xhtml+xml',
+        'Accept-Language': 'it-IT,it;q=0.9'
+      },
+      servername: isHttps ? urlObj.hostname : undefined,
+      signal,
+    }, res => {
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
+      res.on('end', () => resolve({
+        status: res.statusCode,
+        headers: res.headers,
+        text: () => Buffer.concat(chunks).toString('utf-8'),
+      }));
+      res.on('error', reject);
+    });
+    req.on('error', reject);
+    req.end();
+  });
 }
 
 function setCorsHeaders(req, res) {
@@ -162,22 +215,15 @@ async function handler(req, res) {
         if (!['http:', 'https:'].includes(currentUrl.protocol)) {
           return res.status(400).json({ error: 'Protocollo non supportato' });
         }
-        if (await resolvesToPrivateIp(currentUrl.hostname)) {
+        const validatedIp = await resolveValidatedIp(currentUrl.hostname);
+        if (!validatedIp) {
           return res.status(400).json({ error: 'URL non consentito' });
         }
 
-        response = await fetch(currentUrl, {
-          signal: controller.signal,
-          redirect: 'manual',
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; DietPlanPro/1.0)',
-            'Accept': 'text/html,application/xhtml+xml',
-            'Accept-Language': 'it-IT,it;q=0.9'
-          }
-        });
+        response = await pinnedRequest(currentUrl, validatedIp, controller.signal);
 
         if ([301, 302, 303, 307, 308].includes(response.status)) {
-          const location = response.headers.get('location');
+          const location = response.headers.location;
           if (!location || ++hops > MAX_REDIRECTS) {
             return res.status(400).json({ error: 'Troppi redirect o redirect senza destinazione' });
           }
@@ -194,11 +240,11 @@ async function handler(req, res) {
       clearTimeout(timeout);
     }
 
-    if (!response.ok) {
+    if (response.status < 200 || response.status >= 300) {
       return res.status(response.status).json({ error: `HTTP ${response.status}` });
     }
 
-    const contentType = response.headers.get('content-type') || '';
+    const contentType = response.headers['content-type'] || '';
     if (!contentType.includes('text/html')) {
       return res.status(400).json({ error: 'La pagina non è HTML' });
     }

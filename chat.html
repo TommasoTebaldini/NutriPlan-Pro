@@ -3006,6 +3006,7 @@ async function sendAIChat() {
 // ══════════════════════════════════════════════
 let _scribeRecorder = null, _scribeChunks = [], _scribeStream = null, _scribeTimerInt = null, _scribeSeconds = 0;
 let _scribeLastSoap = null, _scribeLastTranscript = '';
+let _scribeTargetPatientId = null; // paziente "fissato" all'apertura della modale, non quello selezionato al momento del salvataggio
 
 function aiScribeInit() {
   if (document.getElementById('ai-scribe-modal')) return;
@@ -3074,6 +3075,7 @@ function _scribeShowStep(step) {
 
 function openAiScribe() {
   if (!selectedPatientId) { toast(_L('Seleziona un paziente','Select a patient'), 'err'); return; }
+  _scribeTargetPatientId = selectedPatientId; // fissa il paziente della seduta: la modale resta aperta anche cambiando conversazione
   aiScribeInit();
   document.getElementById('scribe-consent-check').checked = false;
   document.getElementById('scribe-start-btn').disabled = true;
@@ -3169,7 +3171,7 @@ async function scribeProcessRecording() {
 }
 
 async function scribeSaveNote() {
-  const p = chatPatients.find(x => x.id === selectedPatientId);
+  const p = chatPatients.find(x => x.id === (_scribeTargetPatientId || selectedPatientId));
   if (!p?.cartellaId || !currentUser) { toast(_L('Cartella paziente non trovata','Patient file not found'), 'err'); return; }
   const soap = {
     soggettivo: document.getElementById('scribe-soggettivo').value.trim(),

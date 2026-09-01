@@ -98,10 +98,13 @@ async function resolveStudioOwner() {
   try {
     const { data, error } = await sb.rpc('get_studio_owner', { uid: currentUser.id });
     studioOwnerId = (!error && data) ? data : currentUser.id;
+    // Cache only on a confirmed RPC result — caching the currentUser.id fallback
+    // (used on error/timeout) would lock a collaborator out of their studio's
+    // patients for the full 5-min TTL even after the network recovers.
+    if (!error && data) _writeStudioOwnerCache(currentUser.id, studioOwnerId);
   } catch(e) {
     studioOwnerId = currentUser.id;
   }
-  _writeStudioOwnerCache(currentUser.id, studioOwnerId);
   return studioOwnerId;
 }
 
@@ -177,9 +180,15 @@ async function loadProfile() {
     // also what admin.html's own save logic writes when every checkbox is
     // checked, to mean "unrestricted") — NOT "nothing granted". Only an
     // explicit array actually restricts access to specialized sections.
-    const adminGranted = Array.isArray(data?.sections_enabled)
-      ? data.sections_enabled.filter(s => _SPECIALIZED.includes(s))
-      : _SPECIALIZED;
+    // data null (no profile row, e.g. signup-trigger race, or a failed fetch —
+    // see loadProfileError) must NOT be treated as "admin explicitly granted
+    // everything": that fallback is only valid when we actually have a
+    // profile record confirming the account is real/approved.
+    const adminGranted = !data
+      ? []
+      : Array.isArray(data.sections_enabled)
+        ? data.sections_enabled.filter(s => _SPECIALIZED.includes(s))
+        : _SPECIALIZED;
 
     const allowed = [..._ALL_SECTIONS, ...adminGranted];
 
@@ -549,7 +558,7 @@ function fmtV(v, dec = 1) {
   return n === 0 ? '<span style="color:#CBD5E1">—</span>' : (n % 1 === 0 ? n.toFixed(0) : n.toFixed(dec));
 }
 function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-function escJS(s) { return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+function escJS(s) { return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function todayISO() {
   // Data locale, non UTC: new Date().toISOString() usa UTC e restituisce la
   // data di ieri per un dietista in Italia nella finestra tra mezzanotte
@@ -1287,8 +1296,13 @@ body{font-family:'DM Sans','Segoe UI',Arial,sans-serif;color:#1E293B;font-size:1
   if (PASTI_TIPI.includes(tipo)) {
     const totKcal = parseFloat(piano.kcal) || 0;
     const totCho  = parseFloat(piano.cho_tot) || 0;
-    const totProt = parseFloat(piano.prot_tot) || (totKcal ? Math.round(totKcal * 0.15 / 4) : 0);
-    const totFat  = parseFloat(piano.grassi_tot) || (totKcal ? Math.round(totKcal * 0.25 / 9) : 0);
+    // parseFloat(...) || fallback would silently replace an explicitly-entered
+    // 0 (a real clinical value, e.g. fasting/near-zero-protein protocols) with
+    // the estimated macro — check for a valid number instead of truthiness.
+    const _protParsed = parseFloat(piano.prot_tot);
+    const _fatParsed = parseFloat(piano.grassi_tot);
+    const totProt = Number.isFinite(_protParsed) ? _protParsed : (totKcal ? Math.round(totKcal * 0.15 / 4) : 0);
+    const totFat  = Number.isFinite(_fatParsed) ? _fatParsed : (totKcal ? Math.round(totKcal * 0.25 / 9) : 0);
     const pasti = (piano.pasti || dati.pasti || []).filter(p => p.alimenti?.trim());
     const avgKcal = totKcal && pasti.length ? Math.round(totKcal / pasti.length) : 0;
 

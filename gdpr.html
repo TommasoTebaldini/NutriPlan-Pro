@@ -471,6 +471,13 @@ async function loadGDPRData() {
     }
 
     const userId = session.user.id;
+    // cartelle.user_id / *.dietitian_id sono sempre il titolare dello studio,
+    // non il collaboratore che ha effettuato il login — stesso pattern usato
+    // in pagamenti.html/broadcast.html/agenda.html. Senza questo, un
+    // collaboratore vedeva questa pagina (registro consensi, diritto
+    // all'oblio, export dati) sempre vuota perché la query filtrava sul suo
+    // id invece che su quello del titolare.
+    const ownerId = studioOwnerId || userId;
     const email = session.user.email || userId.slice(0, 8);
     setDiag(_L('🔄 Caricamento cartelle (', '🔄 Loading patient files (') + email + ')...', 'info');
 
@@ -478,17 +485,17 @@ async function loadGDPRData() {
     const [cartelleRes, docsRes, linksRes] = await Promise.all([
       sb.from('cartelle')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', ownerId)
         .or('note.is.null,note.neq.__altro__')
         .order('created_at', { ascending: false }),
       sb.from('patient_documents')
         .select('patient_id, signed_at')
-        .eq('dietitian_id', userId)
+        .eq('dietitian_id', ownerId)
         .eq('type', 'gdpr')
         .not('signed_at', 'is', null),
       sb.from('patient_dietitian')
         .select('patient_id, cartella_id')
-        .eq('dietitian_id', userId),
+        .eq('dietitian_id', ownerId),
     ]);
 
     if (cartelleRes.error) throw cartelleRes.error;

@@ -1118,14 +1118,15 @@ function setupChatRealtime() {
     realtimeChannel = null;
   }
 
-  realtimeChannel = sb.channel('patient-chat-' + currentUser.id)
-    .on('postgres_changes', {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'chat_messages',
-      filter: 'patient_id=eq.' + currentUser.id
-    }, (payload) => {
-      const msg = payload.new;
+  // SEZIONE 80: chat_messages.content è cifrato lato DB — postgres_changes su
+  // 'chat_messages' leggerebbe la tabella base (bytea cifrato) e in più quella
+  // tabella è stata rimossa dalla publication supabase_realtime, quindi questa
+  // sottoscrizione non riceveva mai eventi. Allineato a chat.html/ChatPage.jsx:
+  // canale privato 'chat:<patientId>' alimentato dal trigger
+  // chat_messages_broadcast() (vedi supabase_setup.sql, SEZIONE 80/101).
+  realtimeChannel = sb.channel('chat:' + currentUser.id, { config: { private: true } })
+    .on('broadcast', { event: 'INSERT' }, (payload) => {
+      const msg = payload.payload;
       if (!chatMessages.find(m => m.id === msg.id)) {
         chatMessages.push(msg);
         renderChatMessages();
@@ -1133,6 +1134,13 @@ function setupChatRealtime() {
           markDietitianMessagesAsRead();
         }
       }
+    })
+    .on('broadcast', { event: 'UPDATE' }, (payload) => {
+      const msg = payload.payload;
+      const idx = chatMessages.findIndex(m => m.id === msg.id);
+      if (idx === -1) chatMessages.push(msg);
+      else chatMessages[idx] = { ...chatMessages[idx], ...msg };
+      renderChatMessages();
     })
     .subscribe();
 }

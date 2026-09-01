@@ -860,14 +860,31 @@ async function confermaVendiPacchetto() {
   await loadPacchetti();
 }
 
+let _registrandoVisitaPacchetto = new Set(); // guardia anti doppio-click/doppio-tab per id pacchetto
+
 async function registraVisitaPacchetto(id) {
   const v = _pacchettiVenduti.find(x => x.id === id);
   if (!v || v.visite_usate >= v.visite_totali) return;
-  const { error } = await sb.from('pacchetti_acquistati')
-    .update({ visite_usate: v.visite_usate + 1 })
-    .eq('id', id).eq('dietitian_id', studioOwnerId || currentUser.id);
-  if (error) { toast('❌ ' + error.message, 'err'); return; }
-  await loadPacchetti();
+  if (_registrandoVisitaPacchetto.has(id)) return; // click già in corso per questo pacchetto
+  _registrandoVisitaPacchetto.add(id);
+  try {
+    // Optimistic concurrency: il WHERE include il valore letto di visite_usate,
+    // così due click ravvicinati (o due tab) sullo stesso pacchetto non
+    // possono incrementare entrambi partendo dallo stesso valore stale — solo
+    // il primo trova una riga da aggiornare, il secondo ne trova zero.
+    const { data: updated, error } = await sb.from('pacchetti_acquistati')
+      .update({ visite_usate: v.visite_usate + 1 })
+      .eq('id', id).eq('dietitian_id', studioOwnerId || currentUser.id)
+      .eq('visite_usate', v.visite_usate)
+      .select('id');
+    if (error) { toast('❌ ' + error.message, 'err'); return; }
+    if (!updated || !updated.length) {
+      toast(_L('⚠️ Pacchetto già aggiornato altrove, ricarico...', '⚠️ Package already updated elsewhere, reloading...'), 'info');
+    }
+    await loadPacchetti();
+  } finally {
+    _registrandoVisitaPacchetto.delete(id);
+  }
 }
 
 function fatturaDaPacchetto(id) {

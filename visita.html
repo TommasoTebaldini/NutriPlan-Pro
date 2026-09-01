@@ -392,7 +392,10 @@ async function salvaVisita() {
 
   let error;
   if (_currentVisitaId) {
-    ({ error } = await sb.from('note_specialistiche').update({ nota: titolo, dati, updated_at: new Date().toISOString() }).eq('id', _currentVisitaId));
+    // Include cartella_id: se il dietista cambia la cartella selezionata su
+    // una visita già salvata (es. correzione di un errore), l'update deve
+    // spostare la nota sul nuovo paziente, non lasciarla sul vecchio.
+    ({ error } = await sb.from('note_specialistiche').update({ cartella_id: cartellaId, nota: titolo, dati, updated_at: new Date().toISOString() }).eq('id', _currentVisitaId));
   } else {
     const { data: inserted, error: insertErr } = await sb.from('note_specialistiche').insert(record).select('id').single();
     error = insertErr;

@@ -833,6 +833,42 @@ function stampaModulo(tipo) {
   }
 }
 
+// Righe prodotto dinamiche (afms-prodotto-row/aprot-prodotto-row): gli input
+// non hanno un id (la stessa riga può essere duplicata da "+ Aggiungi
+// prodotto"), quindi non li intercetta la raccolta generica per id sotto —
+// vanno letti a parte per posizione, stessa classe/ordine già usati da
+// stampaModulo() per la stampa.
+const MODULO_PRODOTTI = {
+  afms: { classe: 'afms-prodotto-row', campi: ['prodotto', 'quantita_mese', 'durata'] },
+  aproteici: { classe: 'aprot-prodotto-row', campi: ['prodotto', 'quantita_mese', 'note'] },
+};
+
+// Raccoglie TUTTI i campi realmente compilati nel modulo aperto, per id —
+// prima "Salva in cartella" salvava solo {tipo_modulo, data}, ignorando ogni
+// campo del form (paziente, diagnosi, prodotti prescritti...): un salvataggio
+// completamente vuoto di fatto. Generica per id invece di un elenco scritto a
+// mano: cattura automaticamente anche campi già presenti ma non usati dalla
+// sola stampa (es. esen-prof-nome/afms-prof-albo).
+function raccogliDatiModulo(tipo) {
+  const dati = {};
+  const container = document.querySelector('#mod-' + tipo + ' .mod-form');
+  if (container) {
+    container.querySelectorAll('input[id], textarea[id], select[id]').forEach(el => {
+      dati[el.id] = el.value;
+    });
+  }
+  const prod = MODULO_PRODOTTI[tipo];
+  if (prod) {
+    dati.prodotti = [...document.querySelectorAll('#mod-' + tipo + ' .' + prod.classe)].map(row => {
+      const inps = row.querySelectorAll('input');
+      const obj = {};
+      prod.campi.forEach((c, i) => { obj[c] = inps[i]?.value || ''; });
+      return obj;
+    }).filter(p => Object.values(p).some(v => v));
+  }
+  return dati;
+}
+
 async function salvaModulo(tipo, titoloDefault) {
   const cartellaId = document.getElementById('inp-cartella')?.value;
   if (!cartellaId) { toast(_L('Seleziona una cartella paziente','Select a patient folder'), 'info'); return; }
@@ -841,7 +877,7 @@ async function salvaModulo(tipo, titoloDefault) {
   const { error } = await sb.from('note_specialistiche').insert({
     user_id: studioOwnerId || currentUser.id, cartella_id: cartellaId,
     tipo: 'modulo_' + tipo, nota: titolo,
-    dati: JSON.stringify({ tipo_modulo: tipo, data: new Date().toISOString() }),
+    dati: JSON.stringify({ tipo_modulo: tipo, data: new Date().toISOString(), campi: raccogliDatiModulo(tipo) }),
     visible_to_patient: false,
   });
   if (error) { toast(_L('Errore: ','Error: ') + error.message, 'err'); return; }

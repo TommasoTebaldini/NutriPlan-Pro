@@ -1087,6 +1087,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ── SAVE / LOAD RISTORAZIONE ──
 let ristCartelle = [];
 let editingRistNoteId = null;
+let editingRistNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingRistNoteId
 
 async function loadRistCartelle() {
   if (!currentUser) return;
@@ -1157,7 +1158,8 @@ async function salvaRistorazione() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'ristorazione', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  if (editingRistNoteId) {
+  const isUpdateRist = !!editingRistNoteId && editingRistNoteCartellaId === cartella_id;
+  if (isUpdateRist) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingRistNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
@@ -1167,8 +1169,8 @@ async function salvaRistorazione() {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) { mostraSetupSQL(); } else { toast('❌ '+result.error.message,'err'); }
     return;
   }
-  toast(editingRistNoteId ? _L('✅ Piano Ristorazione aggiornato!','✅ Catering plan updated!') : _L('✅ Piano Ristorazione salvato!','✅ Catering plan saved!'),'ok');
-  if (!editingRistNoteId && result.data?.[0]?.id) editingRistNoteId = result.data[0].id;
+  toast(isUpdateRist ? _L('✅ Piano Ristorazione aggiornato!','✅ Catering plan updated!') : _L('✅ Piano Ristorazione salvato!','✅ Catering plan saved!'),'ok');
+  if (!isUpdateRist && result.data?.[0]?.id) { editingRistNoteId = result.data[0].id; editingRistNoteCartellaId = cartella_id; }
   if (window.capturePrintAndSave && editingRistNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRistNoteId, cartellaId: cartella_id, panelSelector: '.rist-panel', silent: true }).catch(err => console.warn('ristorazione.html capture failed:', err));
   }
@@ -1180,6 +1182,7 @@ async function caricaRistDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast(_L('❌ Impossibile caricare il piano','❌ Unable to load the plan'),'err'); return; }
   editingRistNoteId = noteId;
+  editingRistNoteCartellaId = data.cartella_id || null;
   await _cwSetById('rist-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('rist-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiRist(JSON.parse(data.dati || '{}')); } catch(e) {}

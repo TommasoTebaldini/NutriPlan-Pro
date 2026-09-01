@@ -900,6 +900,7 @@ function calcGrassiTot() {
 
 let panCartelle = [];
 let editingPanNoteId = null;
+let editingPanNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingPanNoteId
 
 async function loadPanCartelle() {
   if (!currentUser) return;
@@ -969,7 +970,8 @@ async function salvaPancreas() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'pancreas', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  if (editingPanNoteId) {
+  const isUpdatePan = !!editingPanNoteId && editingPanNoteCartellaId === cartella_id;
+  if (isUpdatePan) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingPanNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
@@ -979,8 +981,8 @@ async function salvaPancreas() {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) { mostraSetupSQL(); } else { toast('❌ '+result.error.message,'err'); }
     return;
   }
-  toast(editingPanNoteId ? _L('✅ Scheda IPE aggiornata!','✅ EPI record updated!') : _L('✅ Dati IPE salvati nella cartella!','✅ EPI data saved to the file!'),'ok');
-  if (!editingPanNoteId && result.data?.[0]?.id) editingPanNoteId = result.data[0].id;
+  toast(isUpdatePan ? _L('✅ Scheda IPE aggiornata!','✅ EPI record updated!') : _L('✅ Dati IPE salvati nella cartella!','✅ EPI data saved to the file!'),'ok');
+  if (!isUpdatePan && result.data?.[0]?.id) { editingPanNoteId = result.data[0].id; editingPanNoteCartellaId = cartella_id; }
   if (window.capturePrintAndSave && editingPanNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPanNoteId, cartellaId: cartella_id, panelSelector: '.p-panel', silent: true }).catch(err => console.warn('pancreas.html capture failed:', err));
   }
@@ -1017,6 +1019,7 @@ async function caricaPanDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load the record'),'err'); return; }
   editingPanNoteId = noteId;
+  editingPanNoteCartellaId = data.cartella_id || null;
   await _cwSetById('pan-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('pan-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiPan(JSON.parse(data.dati || '{}')); } catch(e) {}

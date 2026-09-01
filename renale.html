@@ -1407,6 +1407,7 @@ function calcIRC() {
 // ── SAVE / LOAD IN CARTELLA ──
 let renCartelle = [];
 let editingRenNoteId = null;
+let editingRenNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingRenNoteId
 
 async function loadRenCartelle() {
   if (!currentUser) return;
@@ -1471,8 +1472,8 @@ async function salvaRenale() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'renale', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  const wasNew = !editingRenNoteId;
-  if (editingRenNoteId) {
+  const wasNew = !(!!editingRenNoteId && editingRenNoteCartellaId === cartella_id);
+  if (!wasNew) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingRenNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
@@ -1484,7 +1485,7 @@ async function salvaRenale() {
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
-  if (!editingRenNoteId && result.data?.[0]?.id) editingRenNoteId = result.data[0].id;
+  if (wasNew && result.data?.[0]?.id) { editingRenNoteId = result.data[0].id; editingRenNoteCartellaId = cartella_id; }
   toast(!wasNew ? _L('✅ Scheda IRC aggiornata!','✅ CKD record updated!') : _L('✅ Dati IRC salvati nella cartella!','✅ CKD data saved to folder!'), 'ok');
   if (window.capturePrintAndSave && editingRenNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRenNoteId, cartellaId: cartella_id, panelSelector: '.ren-panel', silent: true }).catch(err => console.warn('renale.html capture failed:', err));
@@ -1522,6 +1523,7 @@ async function caricaRenDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast('❌ ' + _L('Impossibile caricare la scheda','Could not load the record'), 'err'); return; }
   editingRenNoteId = noteId;
+  editingRenNoteCartellaId = data.cartella_id || null;
   await _cwSetById('ren-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('ren-nota');
   if (notaEl) notaEl.value = data.nota || '';

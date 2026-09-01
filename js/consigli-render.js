@@ -185,7 +185,7 @@ async function _buildAndCaptureCons(c, testo, savedId, cartella_id) {
   const secTitle = label => `<div style="font-size:11pt;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #E2E8F0">${label}</div>`;
   const html = `<div style="font-family:'DM Sans',Arial,sans-serif;color:#1E293B;font-size:14px;line-height:1.5;padding:24px">
     <div style="background:${hex};color:white;padding:16px 20px;border-radius:10px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
-      <span style="font-size:32px">${c.emoji||'🥗'}</span>
+      <span style="font-size:32px">${_e(c.emoji||'🥗')}</span>
       <div><div style="font-size:18px;font-weight:700">${_e(_nome)}</div><div style="font-size:11px;opacity:.8;margin-top:4px">${_L('Consigli Nutrizionali','Nutritional Advice')} · DietPlan Pro</div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">

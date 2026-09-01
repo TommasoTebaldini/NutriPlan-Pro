@@ -766,6 +766,7 @@ let storici = [];
 let monitExtra = [];
 let currentCartellaId = null;
 let currentNcptId = null;
+let currentNcptCartellaId = null; // cartella a cui appartiene il record caricato in currentNcptId
 let allCartelle = [];
 let storView = true; // true=card, false=table
 
@@ -1728,13 +1729,17 @@ async function salvaNCPt() {
   const payload = raccogliDati();
   showLoading(true);
   let result;
-  if(currentNcptId){
+  // Se il record caricato (currentNcptId) apparteneva a una cartella diversa
+  // da quella attualmente selezionata (paziente cambiato senza reset), non va
+  // aggiornato: va creato un nuovo NCPt per la cartella corrente.
+  const isUpdate = !!currentNcptId && currentNcptCartellaId === currentCartellaId;
+  if(isUpdate){
     result = await sb.from('ncpt').update(payload).eq('id',currentNcptId).eq('user_id',studioOwnerId || currentUser.id);
   } else {
     payload.created_at = new Date().toISOString();
     payload.visible_to_patient = false;
     result = await sb.from('ncpt').insert(payload).select().single();
-    if(result.data) currentNcptId = result.data.id;
+    if(result.data) { currentNcptId = result.data.id; currentNcptCartellaId = currentCartellaId; }
   }
   showLoading(false);
   if(result.error){
@@ -1761,6 +1766,7 @@ async function salvaNCPt() {
 
 function caricaDati(data) {
   currentNcptId = data.id;
+  currentNcptCartellaId = data.cartella_id || null;
   const s=(id,val)=>{const el=document.getElementById(id);if(el&&val!==undefined)el.value=val;};
   try {
     const v=JSON.parse(data.valutazione||'{}');
@@ -1826,6 +1832,7 @@ function caricaDati(data) {
 
 function nuovoNCPt(clearCart=true) {
   currentNcptId=null;
+  currentNcptCartellaId=null;
   pesList=[]; obiettiviList=[]; storici=[]; monitExtra=[];
   if(ncptProtMode==='gkg'){ncptProtMode='gdie';toggleNcptProtMode();}
   ncptTdee=0;ncptPesoF=0;ncptPesoAttuale=0;

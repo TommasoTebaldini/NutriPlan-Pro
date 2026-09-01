@@ -1551,6 +1551,7 @@ function saveNewTpl() {
 let _mediaRecorder = null;
 let _audioChunks = [];
 let _voiceRecording = false;
+let _voiceRecordingPatientId = null; // paziente destinatario "fissato" all'avvio della registrazione
 
 async function toggleVoiceRecord() {
   const btn = document.getElementById('mic-btn');
@@ -1562,6 +1563,10 @@ async function toggleVoiceRecord() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     _audioChunks = [];
+    // Fissa il paziente destinatario ora: se il dietista cambia conversazione
+    // mentre la registrazione è ancora in corso, il vocale deve comunque
+    // andare al paziente per cui è stata avviata, non a quello aperto al momento dello stop.
+    _voiceRecordingPatientId = selectedPatientId;
     _mediaRecorder = new MediaRecorder(stream);
     _mediaRecorder.ondataavailable = e => { if (e.data.size > 0) _audioChunks.push(e.data); };
     _mediaRecorder.onstop = async () => {
@@ -1570,7 +1575,7 @@ async function toggleVoiceRecord() {
       stream.getTracks().forEach(t => t.stop());
       const blob = new Blob(_audioChunks, { type: 'audio/webm' });
       if (blob.size < 100) return;
-      await sendVoiceMessage(blob);
+      await sendVoiceMessage(blob, _voiceRecordingPatientId);
     };
     _mediaRecorder.start();
     _voiceRecording = true;
@@ -1583,11 +1588,12 @@ async function toggleVoiceRecord() {
   }
 }
 
-async function sendVoiceMessage(blob) {
-  if (!selectedPatientId || !sb) return;
+async function sendVoiceMessage(blob, targetPatientId) {
+  targetPatientId = targetPatientId || selectedPatientId;
+  if (!targetPatientId || !sb) return;
   showLoading(true);
   try {
-    const path = `voice-messages/${selectedPatientId}/${Date.now()}.webm`;
+    const path = `voice-messages/${targetPatientId}/${Date.now()}.webm`;
     const { error: upErr } = await sb.storage.from('voice-messages').upload(path, blob, { contentType: 'audio/webm' });
     if (upErr) throw upErr;
     // Bucket privato (SEZIONE 33): URL firmato ~10 anni invece di getPublicUrl,
@@ -1600,7 +1606,7 @@ async function sendVoiceMessage(blob) {
     // file_url (ChatPage.jsx dell'app paziente) — senza la seconda il paziente
     // vedeva il vocale come URL di testo grezzo, non come player audio.
     const { error } = await _insertChatMessage({
-      patient_id: selectedPatientId,
+      patient_id: targetPatientId,
       sender_id: currentUser.id,
       sender_role: 'dietitian',
       content: voiceUrl,

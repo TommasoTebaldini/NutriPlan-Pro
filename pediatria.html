@@ -1609,6 +1609,7 @@ const PED_PE_CONFIG = {
 // ── SAVE / LOAD PEDIATRIA ──
 let pedCartelle = [];
 let editingPedNoteId = null;
+let editingPedNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingPedNoteId
 
 async function loadPedCartelle() {
   if (!currentUser) return;
@@ -1679,7 +1680,8 @@ async function salvaPediatria() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'pediatria', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  if (editingPedNoteId) {
+  const isUpdatePed = !!editingPedNoteId && editingPedNoteCartellaId === cartella_id;
+  if (isUpdatePed) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingPedNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
@@ -1689,8 +1691,8 @@ async function salvaPediatria() {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) { mostraSetupSQL(); } else { toast('❌ '+result.error.message,'err'); }
     return;
   }
-  toast(editingPedNoteId ? _L('✅ Scheda Pediatrica aggiornata!','✅ Paediatric record updated!') : _L('✅ Scheda Pediatrica salvata nella cartella!','✅ Paediatric record saved to the file!'),'ok');
-  if (!editingPedNoteId && result.data?.[0]?.id) editingPedNoteId = result.data[0].id;
+  toast(isUpdatePed ? _L('✅ Scheda Pediatrica aggiornata!','✅ Paediatric record updated!') : _L('✅ Scheda Pediatrica salvata nella cartella!','✅ Paediatric record saved to the file!'),'ok');
+  if (!isUpdatePed && result.data?.[0]?.id) { editingPedNoteId = result.data[0].id; editingPedNoteCartellaId = cartella_id; }
   if (window.capturePrintAndSave && editingPedNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPedNoteId, cartellaId: cartella_id, panelSelector: '.ped-panel', silent: true }).catch(err => console.warn('pediatria.html capture failed:', err));
   }
@@ -1727,6 +1729,7 @@ async function caricaPedDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load the record'),'err'); return; }
   editingPedNoteId = noteId;
+  editingPedNoteCartellaId = data.cartella_id || null;
   await _cwSetById('ped-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('ped-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiPed(JSON.parse(data.dati || '{}')); } catch(e) {}

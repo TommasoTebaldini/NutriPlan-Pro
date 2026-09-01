@@ -15,6 +15,7 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 const MAX_TOKENS_LIMIT = 4096;
 const MAX_CONTENT_BYTES = 32768; // 32 KB per request body
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // Rate limiter: distribuito su Upstash se configurato, altrimenti in memoria
 // (vedi api/_rateLimit.js). 10 richieste/min per utente.
@@ -283,8 +284,8 @@ async function handleMealPlan(req, res, token, user) {
   }
 
   const patientId = String(req.body?.patientId || '');
-  if (!patientId) {
-    return res.status(400).json({ error: 'Parametro patientId mancante.' });
+  if (!patientId || !UUID_RE.test(patientId)) {
+    return res.status(400).json({ error: 'Parametro patientId mancante o non valido.' });
   }
 
   const ownerId = await resolveStudioOwner(token, user.id);

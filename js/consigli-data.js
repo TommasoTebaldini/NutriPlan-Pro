@@ -3508,7 +3508,7 @@ function buildConsiglio(c, isCustom = false) {
   const hex = c.colore || '#0F766E';
   div.innerHTML = `
     <div class="cc-hdr" style="border-left:4px solid ${hex}" onclick="toggleCC(this)">
-      <span class="cc-emoji" style="color:${hex}">${c.emoji}</span>
+      <span class="cc-emoji" style="color:${hex}">${esc(c.emoji)}</span>
       <h3 style="color:${hex}">${esc(nome)}</h3>
       ${isCustom ? `<span class="cc-badge" style="background:${hex}18;border-color:${hex}30;color:${hex}">✏️ ${lblPersonalizzato}</span>` : ''}
       <span class="cc-badge" style="background:${hex}12;border-color:${hex}25;color:${hex}">🍽️ ${pasti}</span>
@@ -3668,7 +3668,7 @@ function buildStampaHTML(c, notePaziente = '') {
 </head>
 <body>
   <div class="header">
-    <span class="emoji">${c.emoji}</span>
+    <span class="emoji">${esc(c.emoji)}</span>
     <div>
       <h1>${nome}</h1>
       <div class="subtitle">${_L('Consigli Nutrizionali','Nutritional Advice')} · DietPlan Pro</div>

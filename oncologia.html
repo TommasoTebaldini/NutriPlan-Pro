@@ -1041,6 +1041,7 @@
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 
 let editingOncNoteId = null;
+let editingOncNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingOncNoteId
 const nrsScores = { stato: 0, mal: 0 };
 
 function showOncTab(tab) {
@@ -1194,11 +1195,12 @@ async function salvaOncologia() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'oncologia', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  if (editingOncNoteId) {
+  const isUpdateOnc = !!editingOncNoteId && editingOncNoteCartellaId === cartella_id;
+  if (isUpdateOnc) {
     result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editingOncNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false }).select('id');
-    if (result.data?.[0]?.id) editingOncNoteId = result.data[0].id;
+    if (result.data?.[0]?.id) { editingOncNoteId = result.data[0].id; editingOncNoteCartellaId = cartella_id; }
   }
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
@@ -1217,6 +1219,7 @@ function svuotaOncologia() {
   ['nrs-result','pgsga-result','f-result','prot-result','prot-custom-result','cachessia-result'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
   document.getElementById('nrs-full').style.display = 'none';
   editingOncNoteId = null;
+  editingOncNoteCartellaId = null;
   toast(_L('🔄 Sezione reimpostata','🔄 Section reset'), 'ok');
 }
 
@@ -1229,6 +1232,7 @@ async function loadNoteIfPresent() {
   showLoading(false);
   if (!data) return;
   editingOncNoteId = data.id;
+  editingOncNoteCartellaId = data.cartella_id || null;
   if (data.cartella_id) await _cwSetById('onc-cartella-cw', data.cartella_id);
   if (data.nota) { const el = document.getElementById('onc-nota'); if (el) el.value = data.nota; }
   try {

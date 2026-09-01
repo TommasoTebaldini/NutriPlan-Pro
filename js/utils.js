@@ -2218,11 +2218,18 @@ function initPianoEsempio(containerId, config) {
     if (_inboxBadgeChannel) return;
     if (!sb || !userId) return;
     try {
-      _inboxBadgeChannel = sb.channel('inbox_badge_' + userId)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: 'sender_role=eq.patient' }, function() {
+      // chat_messages è una vista cifrata lato DB (SEZIONE 80): postgres_changes
+      // non riceve mai nulla su di essa (legge lo stream di replica della
+      // tabella fisica chat_messages_raw, non della vista decifrata) — questo
+      // canale non si è mai aggiornato in tempo reale. Canale broadcast
+      // privato inbox:<dietitianId> popolato da un trigger "Broadcast from
+      // Database" su chat_messages_raw (SEZIONE 101), stesso pattern già
+      // usato per chat:<patientId> in chat.html.
+      _inboxBadgeChannel = sb.channel('inbox:' + userId, { config: { private: true } })
+        .on('broadcast', { event: 'INSERT' }, function() {
           _loadInboxCount(userId);
         })
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chat_messages' }, function() {
+        .on('broadcast', { event: 'UPDATE' }, function() {
           _loadInboxCount(userId);
         })
         .subscribe();

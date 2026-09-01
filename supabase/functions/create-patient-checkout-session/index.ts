@@ -37,7 +37,12 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SB_SECRET_KEY") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
-    const { data: profile } = await supabaseAdmin.from("profiles").select("role").eq("id", user.id).maybeSingle();
+    const { data: profile, error: profileErr } = await supabaseAdmin.from("profiles").select("role").eq("id", user.id).maybeSingle();
+    if (profileErr) {
+      return new Response(JSON.stringify({ error: "Could not verify account role" }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     if (profile?.role === "dietitian") {
       return new Response(JSON.stringify({ error: "Use the dietitian checkout" }), {

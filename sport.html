@@ -1116,6 +1116,7 @@ const SPORT_PE_CONFIG = {
 // ── SAVE / LOAD SPORT ──
 let sportCartelle = [];
 let editingSportNoteId = null;
+let editingSportNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingSportNoteId
 
 async function loadSportCartelle() {
   if (!currentUser) return;
@@ -1191,7 +1192,8 @@ async function salvaSport() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'sport', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  if (editingSportNoteId) {
+  const isUpdateSport = !!editingSportNoteId && editingSportNoteCartellaId === cartella_id;
+  if (isUpdateSport) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingSportNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
@@ -1201,8 +1203,8 @@ async function salvaSport() {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) { mostraSetupSQL(); } else { toast('❌ '+result.error.message,'err'); }
     return;
   }
-  toast(editingSportNoteId ? _L('✅ Scheda Sport aggiornata!','✅ Sports record updated!') : _L('✅ Scheda Sportiva salvata nella cartella!','✅ Sports record saved to folder!'),'ok');
-  if (!editingSportNoteId && result.data?.[0]?.id) editingSportNoteId = result.data[0].id;
+  toast(isUpdateSport ? _L('✅ Scheda Sport aggiornata!','✅ Sports record updated!') : _L('✅ Scheda Sportiva salvata nella cartella!','✅ Sports record saved to folder!'),'ok');
+  if (!isUpdateSport && result.data?.[0]?.id) { editingSportNoteId = result.data[0].id; editingSportNoteCartellaId = cartella_id; }
   if (window.capturePrintAndSave && editingSportNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingSportNoteId, cartellaId: cartella_id, panelSelector: '.sport-panel', silent: true }).catch(err => console.warn('sport.html capture failed:', err));
   }
@@ -1222,6 +1224,7 @@ async function caricaSportDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load the record'),'err'); return; }
   editingSportNoteId = noteId;
+  editingSportNoteCartellaId = data.cartella_id || null;
   await _cwSetById('sport-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('sport-nota'); if (notaEl) notaEl.value = data.nota || '';
   try { ripristinaDatiSport(JSON.parse(data.dati || '{}')); } catch(e) {}

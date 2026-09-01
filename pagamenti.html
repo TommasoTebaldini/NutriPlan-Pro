@@ -336,6 +336,7 @@
 let fatture = [];
 let patients = [];
 let editingFatturaId = null;
+let _savingFattura = false; // guardia anti doppio-click/doppio-submit su salvaFattura()
 let fattureTableMissing = false;
 const LS_KEY_FATT = 'np_fatture_local';
 const LS_KEY_TARIFF = 'np_tariffario';
@@ -1019,6 +1020,16 @@ async function salvaFattura() {
   if (!data) { toast(_L('Inserisci la data', 'Enter the date'), 'err'); return; }
   if (!tipo) { toast(_L('Seleziona il tipo di visita', 'Select the visit type'), 'err'); return; }
   if (importo <= 0) { toast(_L('Inserisci un importo valido', 'Enter a valid amount'), 'err'); return; }
+  if (_savingFattura) return; // evita fatture duplicate su doppio-click/doppio-tap
+  _savingFattura = true;
+  try {
+    await _salvaFatturaInner(patientId, patientName, data, tipo, importo);
+  } finally {
+    _savingFattura = false;
+  }
+}
+
+async function _salvaFatturaInner(patientId, patientName, data, tipo, importo) {
   const now = new Date().toISOString();
   const payload = {
     dietitian_id: studioOwnerId || currentUser?.id || 'local',
@@ -1130,7 +1141,8 @@ async function togglePagato(id) {
     const idx = arr.findIndex(x => x.id === id);
     if (idx >= 0) { arr[idx].stato = newStato; lsSaveFatture(arr); }
   } else {
-    await sb.from('fatture').update({ stato: newStato }).eq('id', id);
+    const { error } = await sb.from('fatture').update({ stato: newStato }).eq('id', id);
+    if (error) { toast('❌ ' + error.message, 'err'); return; }
   }
   fatture = fatture.map(x => x.id === id ? { ...x, stato: newStato } : x);
   updateSummary(); renderFatture();

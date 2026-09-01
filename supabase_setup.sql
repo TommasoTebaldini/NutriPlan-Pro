@@ -8023,3 +8023,116 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_100_drop_chat_groups', 'Rimosse le tabelle chat_groups/chat_group_members/chat_group_messages, la funzione is_chat_group_member() e le policy storage group_chat_media_insert/select — sistema di chat di gruppo parallelo, mai collegato al pannello del dietista (bug trovato e verificato dal vivo il 2026-08-31: i messaggi dei pazienti in quel thread non arrivavano mai al dietista). Codice client già rimosso da ChatPage.jsx. Bucket storage group-chat-media lasciato intatto (da svuotare/eliminare manualmente se non serve più).')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 101 — Broadcast from Database per due sottoscrizioni realtime
+-- rimaste morte dopo le viste cifrate SEZIONE 79 (ncpt/note_specialistiche)
+-- e SEZIONE 80 (chat_messages) — trovato durante il 3° giro di scansione
+-- ciclica bug del 2026-09-01. NON ANCORA ESEGUITA: l'accesso MCP a questo
+-- progetto Supabase in questa sessione è read-only (execute_sql rifiuta
+-- CREATE FUNCTION/POLICY con "cannot execute ... in a read-only
+-- transaction"), quindi va eseguita manualmente dal pannello Supabase
+-- (SQL Editor) prima che le due modifiche client sotto abbiano effetto.
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Stesso problema di fondo già risolto per chat_messages/chat.html (SEZIONE
+-- 80) e per NotificationContext.jsx/BottomNav.jsx nell'app paziente:
+-- postgres_changes ascolta lo stream di replica della TABELLA fisica, non
+-- della vista — su una vista non arriva mai nulla. Qui riguarda altri due
+-- punti rimasti sul vecchio pattern:
+--   1. patient-portal.html (setupDocsRealtime): il refresh dei documenti del
+--      paziente non si aggiornava mai in automatico quando il dietista
+--      pubblicava/modificava un NCPt o una scheda specialistica (note_
+--      specialistiche) — solo bia_records/schede_valutazione/liste_spesa
+--      (tabelle vere) funzionavano. Il paziente doveva ricaricare la pagina.
+--   2. js/utils.js (badge "posta in arrivo" iniettato in tutte le pagine del
+--      dietista tramite _subscribeRealtime): non si aggiornava mai in tempo
+--      reale quando un paziente scriveva o quando un messaggio veniva letto.
+--
+-- ── (1) topic docs:<cartella_id> — segnale leggero: il client
+-- (scheduleDocsRefresh) rifà solo una fetch, non serve un payload decifrato.
+CREATE OR REPLACE FUNCTION public.docs_broadcast()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  PERFORM realtime.send(
+    jsonb_build_object('table', TG_TABLE_NAME, 'op', TG_OP),
+    TG_OP,
+    'docs:' || COALESCE(NEW.cartella_id, OLD.cartella_id)::text,
+    true
+  );
+  RETURN NULL;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_ncpt_docs_broadcast ON public.ncpt_raw;
+CREATE TRIGGER trg_ncpt_docs_broadcast
+  AFTER INSERT OR UPDATE OR DELETE ON public.ncpt_raw
+  FOR EACH ROW EXECUTE FUNCTION public.docs_broadcast();
+
+DROP TRIGGER IF EXISTS trg_note_specialistiche_docs_broadcast ON public.note_specialistiche_raw;
+CREATE TRIGGER trg_note_specialistiche_docs_broadcast
+  AFTER INSERT OR UPDATE OR DELETE ON public.note_specialistiche_raw
+  FOR EACH ROW EXECUTE FUNCTION public.docs_broadcast();
+
+DROP POLICY IF EXISTS "docs_broadcast_select" ON realtime.messages;
+CREATE POLICY "docs_broadcast_select" ON realtime.messages
+  FOR SELECT
+  TO authenticated
+  USING (
+    realtime.topic() ~ '^docs:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+    AND EXISTS (
+      SELECT 1 FROM patient_dietitian pd
+      WHERE pd.cartella_id = substring(realtime.topic() from 6)::uuid
+        AND pd.patient_id = (SELECT auth.uid())
+    )
+  );
+
+-- ── (2) topic inbox:<dietitian_id> — segnale per il badge "non letti" del
+-- dietista/collaboratori. dietitian_id su chat_messages_raw è sempre l'id
+-- dello studio (titolare), mai del collaboratore che invia — stesso pattern
+-- già documentato in chat.html/ChatPage.jsx per la stanza videochiamata.
+-- Trigger separato da chat_messages_broadcast() (SEZIONE 80) per non
+-- rischiare di toccare quello già in produzione e verificato dal vivo.
+CREATE OR REPLACE FUNCTION public.chat_inbox_broadcast()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  IF COALESCE(NEW.dietitian_id, OLD.dietitian_id) IS NULL THEN
+    RETURN NULL;
+  END IF;
+  PERFORM realtime.send(
+    jsonb_build_object('patient_id', COALESCE(NEW.patient_id, OLD.patient_id)),
+    TG_OP,
+    'inbox:' || COALESCE(NEW.dietitian_id, OLD.dietitian_id)::text,
+    true
+  );
+  RETURN NULL;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_chat_inbox_broadcast ON public.chat_messages_raw;
+CREATE TRIGGER trg_chat_inbox_broadcast
+  AFTER INSERT OR UPDATE ON public.chat_messages_raw
+  FOR EACH ROW EXECUTE FUNCTION public.chat_inbox_broadcast();
+
+DROP POLICY IF EXISTS "inbox_broadcast_select" ON realtime.messages;
+CREATE POLICY "inbox_broadcast_select" ON realtime.messages
+  FOR SELECT
+  TO authenticated
+  USING (
+    realtime.topic() ~ '^inbox:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+    AND get_studio_owner((SELECT auth.uid())) = substring(realtime.topic() from 7)::uuid
+  );
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_101_docs_inbox_broadcast', 'Broadcast from Database per due canali rimasti su postgres_changes contro viste cifrate (mai un evento): docs:<cartella_id> (trigger su ncpt_raw/note_specialistiche_raw, refresh documenti paziente in patient-portal.html) e inbox:<dietitian_id> (trigger su chat_messages_raw, badge non letti in js/utils.js). Policy RLS su realtime.messages via patient_dietitian.cartella_id e get_studio_owner(). Codice client aggiornato nello stesso commit (patient-portal.html, js/utils.js/js/utils.min.js) da postgres_changes a canale broadcast privato. NON eseguita da questa sessione (accesso MCP Supabase read-only) — va lanciata manualmente dal SQL Editor prima che il codice client abbia effetto; fino ad allora il comportamento resta quello di prima (nessun refresh/badge in tempo reale, invariato).')
+ON CONFLICT (id) DO NOTHING;

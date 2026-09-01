@@ -1350,6 +1350,7 @@ function apriPianoInApp() {
 
 // ── Salvataggio / caricamento cartella ──
 let editingPsNoteId = null;
+let editingPsNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingPsNoteId
 
 function raccogliDatiPS() {
   const gv = id => document.getElementById(id)?.value || '';
@@ -1416,7 +1417,8 @@ async function salvaPazienteSano() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'paziente_sano', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  if (editingPsNoteId) {
+  const isUpdatePs = !!editingPsNoteId && editingPsNoteCartellaId === cartella_id;
+  if (isUpdatePs) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingPsNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
@@ -1429,8 +1431,8 @@ async function salvaPazienteSano() {
     return;
   }
   _asPazSano.clear();
-  toast(editingPsNoteId ? _L('✅ Scheda aggiornata!','✅ Record updated!') : _L('✅ Dati salvati nella cartella!','✅ Data saved to the record!'), 'ok');
-  if (!editingPsNoteId && result.data?.[0]?.id) editingPsNoteId = result.data[0].id;
+  toast(isUpdatePs ? _L('✅ Scheda aggiornata!','✅ Record updated!') : _L('✅ Dati salvati nella cartella!','✅ Data saved to the record!'), 'ok');
+  if (!isUpdatePs && result.data?.[0]?.id) { editingPsNoteId = result.data[0].id; editingPsNoteCartellaId = cartella_id; }
   if (window.capturePrintAndSave && editingPsNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPsNoteId, cartellaId: cartella_id, panelSelector: '.ps-panel', silent: true }).catch(err => console.warn('paziente-sano.html capture failed:', err));
   }
@@ -1442,6 +1444,7 @@ async function caricaPsDaNota(noteId) {
   showLoading(false);
   if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load the record'), 'err'); return; }
   editingPsNoteId = noteId;
+  editingPsNoteCartellaId = data.cartella_id || null;
   await _cwSetById('ps-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('ps-nota');
   if (notaEl) notaEl.value = data.nota || '';
@@ -1458,6 +1461,7 @@ function resetPS() {
   document.getElementById('piano-ai-output').style.display='none';
   window._ultimoPianoAI = null;
   editingPsNoteId = null;
+  editingPsNoteCartellaId = null;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

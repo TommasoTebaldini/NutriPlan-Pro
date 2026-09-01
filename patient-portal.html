@@ -307,6 +307,7 @@ let chatDietitianId = null;
 let chatMessages = [];
 let realtimeChannel = null;
 let docsRealtimeChannel = null;
+let docsBroadcastChannels = [];
 let diaryRealtimeChannel = null;
 let _docsRefreshTimer = null;
 
@@ -755,6 +756,10 @@ function setupDocsRealtime() {
     docsRealtimeChannel.unsubscribe();
     docsRealtimeChannel = null;
   }
+  if (docsBroadcastChannels.length) {
+    docsBroadcastChannels.forEach(ch => { try { ch.unsubscribe(); } catch(e) {} });
+    docsBroadcastChannels = [];
+  }
   if (!linkedCartelle.length) return;
 
   const cartellaIds = [...new Set(linkedCartelle.map(l => l.cartella_id))];
@@ -786,8 +791,9 @@ function setupDocsRealtime() {
       }, () => scheduleDocsRefresh(true));
     }
 
-    // remaining document tables (use `visible_to_patient` column)
-    for (const table of ['ncpt', 'bia_records', 'schede_valutazione', 'note_specialistiche', 'liste_spesa']) {
+    // remaining document tables that are real tables (use `visible_to_patient`
+    // column) — ncpt/note_specialistiche are handled separately below, see comment.
+    for (const table of ['bia_records', 'schede_valutazione', 'liste_spesa']) {
       for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
         channel = channel.on('postgres_changes', {
           event,
@@ -797,6 +803,19 @@ function setupDocsRealtime() {
         }, () => scheduleDocsRefresh(false));
       }
     }
+
+    // ncpt/note_specialistiche (SEZIONE 79) sono VISTE cifrate su ncpt_raw/
+    // note_specialistiche_raw, non tabelle: postgres_changes non riceve mai
+    // eventi su una vista (legge lo stream di replica della tabella fisica,
+    // non della vista). Stesso problema già risolto per chat_messages
+    // (SEZIONE 80) — qui: canale broadcast privato docs:<cartella_id>
+    // popolato da un trigger "Broadcast from Database" (SEZIONE 101).
+    const docsBcChannel = sb.channel(`docs:${cid}`, { config: { private: true } })
+      .on('broadcast', { event: 'INSERT' }, () => scheduleDocsRefresh(false))
+      .on('broadcast', { event: 'UPDATE' }, () => scheduleDocsRefresh(false))
+      .on('broadcast', { event: 'DELETE' }, () => scheduleDocsRefresh(false))
+      .subscribe();
+    docsBroadcastChannels.push(docsBcChannel);
   }
 
   docsRealtimeChannel = channel.subscribe();

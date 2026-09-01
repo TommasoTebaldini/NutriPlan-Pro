@@ -784,6 +784,7 @@
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 let editingObNoteId = null;
+let editingObNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingObNoteId
 
 function showObTab(name) {
   document.querySelectorAll('.ob-panel').forEach(p => p.classList.remove('active'));
@@ -1362,11 +1363,15 @@ async function salvaObesita() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'obesita', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  if (editingObNoteId) {
+  // Se la scheda caricata (editingObNoteId) apparteneva a una cartella diversa
+  // da quella selezionata ora (paziente cambiato senza reset), non va
+  // aggiornata: va creata una nuova scheda per la cartella corrente.
+  const isUpdateOb = !!editingObNoteId && editingObNoteCartellaId === cartella_id;
+  if (isUpdateOb) {
     result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editingObNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false }).select('id');
-    if (result.data?.[0]?.id) editingObNoteId = result.data[0].id;
+    if (result.data?.[0]?.id) { editingObNoteId = result.data[0].id; editingObNoteCartellaId = cartella_id; }
   }
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
@@ -1386,6 +1391,7 @@ function svuotaObesita() {
   ['ob-bmi-result','f-result','f-obiettivo-result'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
   try { localStorage.removeItem('nutriplan_autosave_ob'); } catch(e) {}
   editingObNoteId = null;
+  editingObNoteCartellaId = null;
   toast(_L('🔄 Sezione reimpostata','🔄 Section reset'), 'ok');
 }
 
@@ -1399,6 +1405,7 @@ async function loadNoteIfPresent() {
   showLoading(false);
   if (!data) return;
   editingObNoteId = data.id;
+  editingObNoteCartellaId = data.cartella_id || null;
   if (data.cartella_id) await _cwSetById('ob-cartella-cw', data.cartella_id);
   if (data.nota) { const el = document.getElementById('ob-nota'); if (el) el.value = data.nota; }
   try {

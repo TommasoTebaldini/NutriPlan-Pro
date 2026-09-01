@@ -1719,10 +1719,22 @@ function calcChEAT() {
   if (missing) { alert(_L('Rispondere a tutte le domande prima di calcolare.','Please answer all questions before calculating.')); return; }
   const res = document.getElementById('cheat-result');
   res.style.display = 'block';
-  const pos = tot >= 20;
+  // CHEAT_ITEMS qui implementa 12 dei 26 item originali del ChEAT-26
+  // (0-3 punti ciascuno, quindi massimo reale 36, non 78): la soglia
+  // pubblicata (≥20 su 78) resta identica a se stessa qui, il che la rende
+  // molto PIÙ severa in proporzione (serve il 56% del punteggio massimo
+  // invece del 26% originale) — falsi negativi molto più probabili in uno
+  // screening pediatrico. Soglia riscalata proporzionalmente sul massimo
+  // realmente raggiungibile — non è la soglia clinica validata della scala
+  // completa, va sempre indicato in interfaccia.
+  const CHEAT_ORIGINAL_ITEMS = 26, CHEAT_ORIGINAL_MAX = 78, CHEAT_ORIGINAL_CUTOFF = 20;
+  const cheatMax = CHEAT_ITEMS.length * 3;
+  const cheatCutoff = Math.round(CHEAT_ORIGINAL_CUTOFF * cheatMax / CHEAT_ORIGINAL_MAX);
+  const pos = tot >= cheatCutoff;
   res.style.background = pos ? '#FEE2E2' : '#ECFDF5';
-  res.innerHTML = `<b>${pos ? '🔴' : '🟢'} ChEAT-26: ${tot}/36 — ${pos ? _L('Screening POSITIVO (≥20)','POSITIVE Screening (≥20)') : _L('Screening negativo (<20)','Negative screening (<20)')}</b><br>
-    <div style="margin-top:4px;font-size:12px">${pos ? _L('Punteggio ≥20: possibile disturbo alimentare. Coinvolgere i genitori e richiedere valutazione specialistica pediatrica/psicologica.','Score ≥20: possible eating disorder. Involve parents and request specialist paediatric/psychological assessment.') : _L('Punteggio <20: non emergono segnali di rischio significativo.','Score <20: no significant risk signals detected.')}</div>`;
+  res.innerHTML = `<div style="margin-bottom:6px;padding:6px 8px;background:#FEF3C7;border-radius:6px;font-size:12px">${_L(`⚠️ Versione abbreviata: ${CHEAT_ITEMS.length} dei ${CHEAT_ORIGINAL_ITEMS} item originali del ChEAT-26. Soglia riscalata proporzionalmente (≥${cheatCutoff} su ${cheatMax}), NON la soglia clinica validata della scala completa — usare come indicazione di massima, non come diagnosi.`, `⚠️ Abbreviated version: ${CHEAT_ITEMS.length} of the original ${CHEAT_ORIGINAL_ITEMS} ChEAT-26 items. Threshold rescaled proportionally (≥${cheatCutoff} of ${cheatMax}), NOT the validated clinical threshold of the full scale — use as a rough indicator, not a diagnosis.`)}</div>
+    <b>${pos ? '🔴' : '🟢'} ChEAT-26: ${tot}/${cheatMax} — ${pos ? _L(`Screening POSITIVO (≥${cheatCutoff})`,`POSITIVE Screening (≥${cheatCutoff})`) : _L(`Screening negativo (<${cheatCutoff})`,`Negative screening (<${cheatCutoff})`)}</b><br>
+    <div style="margin-top:4px;font-size:12px">${pos ? _L('Punteggio sopra soglia: possibile disturbo alimentare. Coinvolgere i genitori e richiedere valutazione specialistica pediatrica/psicologica.','Score above threshold: possible eating disorder. Involve parents and request specialist paediatric/psychological assessment.') : _L('Punteggio sotto soglia: non emergono segnali di rischio significativo.','Score below threshold: no significant risk signals detected.')}</div>`;
 }
 const KEDS_ITEMS = [
   _L('Hai mai cercato di perdere peso mangiando di meno?','Have you ever tried to lose weight by eating less?'),

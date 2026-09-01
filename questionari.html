@@ -2066,6 +2066,18 @@ function calcEDEQ(show) {
   const sections = ['restr','eatc','shapec','weightc'];
   const labels = _L(['Restrizione','Preoccupazione per il cibo','Preoccupazione per la forma','Preoccupazione per il peso'],['Restraint','Eating Concern','Shape Concern','Weight Concern']);
   const cutoffs = [2.77, 1.39, 2.79, 1.24];
+  // Item originali dell'EDE-Q 6.0 (Fairburn & Beglin) per sottoscala: 5/5/8/5.
+  // Qui restr e shapec ne hanno il numero completo, ma eatc ne ha solo 4/5 e
+  // weightc solo 3/5. Ogni sottoscala è una MEDIA (sum/n), quindi il range
+  // resta sempre 0-6 — a differenza di BITE/ChEAT non c'è un massimo "falso"
+  // da correggere — ma i cut-off pubblicati sono tarati sulla media calcolata
+  // su TUTTI gli item originali: una media su meno item può discostarsi da
+  // quella "vera" in modo non prevedibile a priori (non è un semplice fattore
+  // di scala come per una somma). Non essendo verificabile con certezza senza
+  // i dati normativi originali, non riscaliamo il cut-off — segnaliamo solo,
+  // per le sottoscale incomplete, che il confronto col cut-off va preso con
+  // cautela extra.
+  const ORIGINAL_ITEM_COUNTS = [5, 5, 8, 5];
   let allFilled = true;
   const subScores = sections.map((sec, si) => {
     const n = EDEQ_ITEMS[sec].length;
@@ -2084,7 +2096,10 @@ function calcEDEQ(show) {
   const global = subScores.reduce((s,v) => s+v, 0) / 4;
   const isPositive = global > 2.3;
 
-  const subsHtml = subScores.map((sc, i) => `
+  const subsHtml = subScores.map((sc, i) => {
+    const n = EDEQ_ITEMS[sections[i]].length;
+    const incomplete = n < ORIGINAL_ITEM_COUNTS[i];
+    return `
     <div class="q-subscale">
       <div class="q-subscale-title">${labels[i]} (cut-off ≥${cutoffs[i]})</div>
       <div style="display:flex;align-items:center;gap:10px">
@@ -2092,7 +2107,9 @@ function calcEDEQ(show) {
         <div class="q-bar" style="flex:1"><div class="q-bar-fill" style="width:${sc/6*100}%;background:${sc>=cutoffs[i]?'#EF4444':'#10B981'}"></div></div>
         <span style="font-size:11px;font-weight:700;color:${sc>=cutoffs[i]?'#DC2626':'#15803D'}">${sc>=cutoffs[i]?_L('▲ Sopra cut-off','▲ Above cut-off'):_L('▼ Sotto cut-off','▼ Below cut-off')}</span>
       </div>
-    </div>`).join('');
+      ${incomplete ? `<div style="margin-top:4px;font-size:10.5px;color:#B45309">${_L(`⚠️ Media calcolata su ${n} dei ${ORIGINAL_ITEM_COUNTS[i]} item originali di questa sottoscala — il cut-off pubblicato è tarato sulla scala completa, confronto da interpretare con cautela extra.`, `⚠️ Average computed on ${n} of the original ${ORIGINAL_ITEM_COUNTS[i]} items of this subscale — the published cut-off is normed on the full scale, interpret the comparison with extra caution.`)}</div>` : ''}
+    </div>`;
+  }).join('');
 
   showResult('edeq-result', `
     <div style="margin-bottom:14px">

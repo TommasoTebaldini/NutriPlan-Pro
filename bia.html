@@ -351,6 +351,7 @@ function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStora
 let biaData = {};
 let cartelleList = [];
 let currentBiaId = null;
+let currentBiaCartellaId = null; // cartella a cui appartiene il record caricato in currentBiaId
 
 function showBIA(id) {
   autoSavePage_bia();
@@ -945,14 +946,19 @@ async function salvaBIA() {
 
   showLoading(true);
   let error;
-  const isUpdate = !!currentBiaId;
-  if (currentBiaId) {
+  // Se il record caricato (currentBiaId) apparteneva a una cartella diversa
+  // da quella ora selezionata (es. l'utente ha cambiato paziente senza
+  // premere Reset), NON va aggiornato: altrimenti l'UPDATE sposterebbe la
+  // misurazione storica del paziente originale nella cartella del nuovo
+  // paziente selezionato. In quel caso si crea un nuovo record.
+  const isUpdate = !!currentBiaId && currentBiaCartellaId === cartella_id;
+  if (isUpdate) {
     ({ error } = await sb.from('bia_records').update(record).eq('id', currentBiaId).eq('user_id', studioOwnerId || currentUser.id));
   } else {
     record.visible_to_patient = false;
     const result = await sb.from('bia_records').insert(record).select().single();
     error = result.error;
-    if (result.data) currentBiaId = result.data.id;
+    if (result.data) { currentBiaId = result.data.id; currentBiaCartellaId = cartella_id; }
   }
   showLoading(false);
 
@@ -1220,6 +1226,7 @@ function resetBIA() {
   document.getElementById('bia-results-wrap').innerHTML = `<div class="alert-info">${_L('Inserisci i dati per vedere l\'analisi.','Enter data to view the analysis.')}</div>`;
   biaData = {};
   currentBiaId = null;
+  currentBiaCartellaId = null;
   const btnSalva = document.getElementById('btn-salva-bia');
   if (btnSalva) btnSalva.textContent = _L('💾 Salva in Cartella','💾 Save to File');
   const noteEl = document.getElementById('bia-note');
@@ -1275,6 +1282,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       showLoading(false);
       if (data) {
         currentBiaId = data.id;
+        currentBiaCartellaId = data.cartella_id || null;
         // Populate cartella
         if (data.cartella_id) { await _cwSetById('bia-cartella-cw', data.cartella_id); onCartellaChange(); }
         // Populate date and note

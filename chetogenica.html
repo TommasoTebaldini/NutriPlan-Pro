@@ -1565,6 +1565,7 @@ function calcGKI() {
 // ── SAVE / LOAD IN CARTELLA ──
 let ketoCartelle = [];
 let editingKetoNoteId = null;
+let editingKetoNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingKetoNoteId
 
 async function loadKetoCartelle() {
   if (!currentUser) return;
@@ -1610,8 +1611,13 @@ async function salvaKeto() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'chetogenica', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  const wasNew = !editingKetoNoteId;
-  if (editingKetoNoteId) {
+  // Se la scheda caricata apparteneva a una cartella diversa da quella ora
+  // selezionata (paziente cambiato senza ricaricare la pagina), non va
+  // aggiornata: altrimenti l'UPDATE sposterebbe la scheda clinica del
+  // paziente originale nella cartella del nuovo paziente. In quel caso si
+  // crea una nuova scheda.
+  const wasNew = !editingKetoNoteId || editingKetoNoteCartellaId !== cartella_id;
+  if (!wasNew) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingKetoNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
@@ -1623,7 +1629,7 @@ async function salvaKeto() {
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
-  if (!editingKetoNoteId && result.data?.[0]?.id) editingKetoNoteId = result.data[0].id;
+  if (wasNew && result.data?.[0]?.id) { editingKetoNoteId = result.data[0].id; editingKetoNoteCartellaId = cartella_id; }
   toast(!wasNew ? _L('✅ Scheda Chetogenica aggiornata!','✅ Ketogenic record updated!') : _L('✅ Dati salvati nella cartella!','✅ Data saved to folder!'), 'ok');
   if (window.capturePrintAndSave && editingKetoNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingKetoNoteId, cartellaId: cartella_id, panelSelector: '.keto-panel', silent: true }).catch(err => console.warn('chetogenica.html capture failed:', err));
@@ -1661,6 +1667,7 @@ async function caricaKetoDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load record'), 'err'); return; }
   editingKetoNoteId = noteId;
+  editingKetoNoteCartellaId = data.cartella_id || null;
   await _cwSetById('keto-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('keto-nota');
   if (notaEl) notaEl.value = data.nota || '';

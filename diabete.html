@@ -1065,6 +1065,7 @@ function renderDepliant() {
 // ── Init ──
 let dgCartelle = [];
 let editingDgNoteId = null;
+let editingDgNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingDgNoteId
 
 async function loadDgCartelle() {
   if (!currentUser) return;
@@ -1133,7 +1134,13 @@ async function salvaDiabete() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'diabete', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  if (editingDgNoteId) {
+  // Se la scheda caricata (editingDgNoteId) apparteneva a una cartella
+  // diversa da quella ora selezionata (paziente cambiato senza ricaricare la
+  // pagina), non va aggiornata: altrimenti l'UPDATE sposterebbe la scheda
+  // clinica del paziente originale nella cartella del nuovo paziente
+  // selezionato. In quel caso si crea una nuova scheda.
+  const isUpdateDg = !!editingDgNoteId && editingDgNoteCartellaId === cartella_id;
+  if (isUpdateDg) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDgNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
@@ -1145,8 +1152,8 @@ async function salvaDiabete() {
     } else { toast('❌ '+result.error.message,'err'); }
     return;
   }
-  toast(editingDgNoteId ? _L('✅ Scheda Diabete aggiornata!','✅ Diabetes record updated!') : _L('✅ Dati diabete salvati nella cartella!','✅ Diabetes data saved to file!'),'ok');
-  if (!editingDgNoteId && result.data?.[0]?.id) editingDgNoteId = result.data[0].id;
+  toast(isUpdateDg ? _L('✅ Scheda Diabete aggiornata!','✅ Diabetes record updated!') : _L('✅ Dati diabete salvati nella cartella!','✅ Diabetes data saved to file!'),'ok');
+  if (!isUpdateDg && result.data?.[0]?.id) { editingDgNoteId = result.data[0].id; editingDgNoteCartellaId = cartella_id; }
   if (window.capturePrintAndSave && editingDgNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingDgNoteId, cartellaId: cartella_id, panelSelector: '.dg-panel', silent: true }).catch(err => console.warn('diabete.html capture failed:', err));
   }
@@ -1187,6 +1194,7 @@ async function caricaDgDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load the record'),'err'); return; }
   editingDgNoteId = noteId;
+  editingDgNoteCartellaId = data.cartella_id || null;
   await _cwSetById('dg-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('dg-nota');
   if (notaEl) notaEl.value = data.nota || '';

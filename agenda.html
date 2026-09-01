@@ -1010,7 +1010,12 @@ async function saveEvent() {
     const newStart = newH * 60 + newM;
     const newDurMin = parseInt(durata, 10) || 60;
     const newEnd = newStart + newDurMin;
-    const collision = events.find(e => {
+    // Controlla anche gli appuntamenti prenotati dai pazienti dall'app
+    // (patientAppts): senza questo, un nuovo appuntamento manuale nello
+    // stesso slot di una prenotazione paziente non veniva segnalato come
+    // collisione, pur essendo mostrati insieme nello stesso giorno del
+    // calendario.
+    const collision = [...events, ...patientAppts].find(e => {
       if (e.data !== data || !e.ora) return false;
       const [eH, eM] = e.ora.split(':').map(Number);
       const eStart = eH * 60 + eM;
@@ -1050,8 +1055,16 @@ async function saveEvent() {
       }
     } else if (ricorrenza === 'monthly') {
       for (let i = 1; i <= 3; i++) {
-        const d = new Date(baseDate);
-        d.setMonth(d.getMonth() + i);
+        // d.setMonth(d.getMonth()+i) da solo trabocca sui mesi più corti:
+        // 31 gennaio + 1 mese diventa "31 febbraio", che JS normalizza in
+        // modo silenzioso al 2-3 marzo invece di restare a febbraio.
+        // Si aggancia quindi all'ultimo giorno del mese di destinazione
+        // quando il giorno originale non esiste in quel mese.
+        const targetMonth = baseDate.getMonth() + i;
+        const firstOfTarget = new Date(baseDate.getFullYear(), targetMonth, 1);
+        const daysInTargetMonth = new Date(firstOfTarget.getFullYear(), firstOfTarget.getMonth() + 1, 0).getDate();
+        const d = new Date(firstOfTarget);
+        d.setDate(Math.min(baseDate.getDate(), daysInTargetMonth));
         occurrences.push(localDateStr(d));
       }
     }
@@ -1363,7 +1376,11 @@ function checkNotifications() {
   const now = new Date();
   const in15 = new Date(now.getTime() + 15*60*1000);
   const todayStr = localDateStr(now);
-  events.filter(e => e.data === todayStr && e.ora).forEach(ev => {
+  // Include anche gli appuntamenti prenotati dai pazienti dall'app
+  // (patientAppts): senza questo, un promemoria "tra 15 minuti" non
+  // scattava mai per quegli appuntamenti, pur comparendo sul calendario
+  // esattamente come quelli creati manualmente.
+  [...events, ...patientAppts].filter(e => e.data === todayStr && e.ora).forEach(ev => {
     const [h,m] = ev.ora.split(':').map(Number);
     const evTime = new Date(now); evTime.setHours(h,m,0,0);
     const diff = evTime - now;

@@ -1222,6 +1222,7 @@ function buildAlimenti() {
    PAZIENTE / SALVATAGGIO
 ═══════════════════════════════════════════════ */
 let editingDisNoteId = null;
+let editingDisNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingDisNoteId
 
 async function loadDisCartelle() {
   if (!currentUser) return;
@@ -1244,8 +1245,13 @@ async function salvaDisfagia() {
   const payload = {user_id: studioOwnerId || currentUser.id, tipo: 'disfagia', cartella_id, nota, dati};
   showLoading(true);
   let result;
-  const wasNew = !editingDisNoteId;
-  if (editingDisNoteId) {
+  // Se la scheda caricata apparteneva a una cartella diversa da quella ora
+  // selezionata (paziente cambiato senza ricaricare la pagina), non va
+  // aggiornata: altrimenti l'UPDATE sposterebbe la scheda clinica del
+  // paziente originale nella cartella del nuovo paziente. In quel caso si
+  // crea una nuova scheda.
+  const wasNew = !editingDisNoteId || editingDisNoteCartellaId !== cartella_id;
+  if (!wasNew) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDisNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
@@ -1257,7 +1263,7 @@ async function salvaDisfagia() {
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
-  if (!editingDisNoteId && result.data?.[0]?.id) editingDisNoteId = result.data[0].id;
+  if (wasNew && result.data?.[0]?.id) { editingDisNoteId = result.data[0].id; editingDisNoteCartellaId = cartella_id; }
   toast(!wasNew ? _L('✅ Scheda aggiornata!','✅ Record updated!') : _L('✅ Scheda Disfagia salvata!','✅ Dysphagia record saved!'), 'ok');
   if (window.capturePrintAndSave && editingDisNoteId && cartella_id) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingDisNoteId, cartellaId: cartella_id, panelSelector: '.dis-panel', silent: true }).catch(err => console.warn('disfagia.html capture failed:', err));
@@ -1391,6 +1397,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           const {data} = await sb.from('note_specialistiche').select('*').eq('id', noteId).single();
           if (data) {
             editingDisNoteId = noteId;
+            editingDisNoteCartellaId = data.cartella_id || null;
             await _cwSetById('dis-cartella-cw', data.cartella_id);
             const notaEl = document.getElementById('dis-nota');
             if (notaEl) notaEl.value = data.nota || '';

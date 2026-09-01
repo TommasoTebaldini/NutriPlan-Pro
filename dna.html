@@ -1332,6 +1332,7 @@ function calcolaDcaMacro() {
 // ── SAVE / LOAD DCA ──
 let dcaCartelle = [];
 let editingDcaNoteId = null;
+let editingDcaNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingDcaNoteId
 
 async function loadDcaCartelle() {
   if (!currentUser) return;
@@ -1485,7 +1486,13 @@ async function salvaDca() {
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'dca', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
-  if (editingDcaNoteId) {
+  // Se la scheda caricata apparteneva a una cartella diversa da quella ora
+  // selezionata (paziente cambiato senza ricaricare la pagina), non va
+  // aggiornata: altrimenti l'UPDATE sposterebbe la scheda clinica del
+  // paziente originale nella cartella del nuovo paziente. In quel caso si
+  // crea una nuova scheda.
+  const isUpdateDca = !!editingDcaNoteId && editingDcaNoteCartellaId === cartella_id;
+  if (isUpdateDca) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDcaNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
@@ -1495,8 +1502,8 @@ async function salvaDca() {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) { mostraSetupSQL(); } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
-  toast(editingDcaNoteId ? _L('✅ Scheda DCA aggiornata!','✅ ED record updated!') : _L('✅ Scheda DCA salvata nella cartella!','✅ ED record saved to folder!'), 'ok');
-  if (!editingDcaNoteId && result.data?.[0]?.id) editingDcaNoteId = result.data[0].id;
+  toast(isUpdateDca ? _L('✅ Scheda DCA aggiornata!','✅ ED record updated!') : _L('✅ Scheda DCA salvata nella cartella!','✅ ED record saved to folder!'), 'ok');
+  if (!isUpdateDca && result.data?.[0]?.id) { editingDcaNoteId = result.data[0].id; editingDcaNoteCartellaId = cartella_id; }
   if (window.capturePrintAndSave && editingDcaNoteId) {
     capturePrintAndSave({ table: 'note_specialistiche', recordId: editingDcaNoteId, cartellaId: cartella_id, panelSelector: '.dna-panel', silent: true }).catch(err => console.warn('dna.html capture failed:', err));
   }
@@ -1508,6 +1515,7 @@ async function caricaDcaDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load the record'), 'err'); return; }
   editingDcaNoteId = noteId;
+  editingDcaNoteCartellaId = data.cartella_id || null;
   // Set cartella
   await _cwSetById('dca-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('dca-nota');

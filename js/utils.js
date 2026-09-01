@@ -360,6 +360,14 @@ async function doLogout() {
       sessionStorage.removeItem('dpp_cartelle_' + uid);
       if (studioOwnerId) sessionStorage.removeItem('dpp_cartelle_' + studioOwnerId);
     }
+    // Dati non scoped per utente in localStorage (identità professionale del
+    // dietista e bozze di form non ancora salvate, che possono contenere dati
+    // paziente): su un computer di studio condiviso tra più dietisti, senza
+    // questa pulizia il dietista successivo che effettua il login li
+    // ritroverebbe ancora popolati con i dati del dietista precedente.
+    localStorage.removeItem('nutriplan_profilo_operatore');
+    ['nutriplan_draft_agenda','nutriplan_draft_database','nutriplan_draft_gravidanza',
+     'nutriplan_draft_pazsano','nutriplan_draft_ricetta'].forEach(k => localStorage.removeItem(k));
   } catch(e) {}
   await sb.auth.signOut();
   window.location.href = 'index.html';
@@ -542,7 +550,16 @@ function fmtV(v, dec = 1) {
 }
 function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function escJS(s) { return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
-function todayISO() { return new Date().toISOString().split('T')[0]; }
+function todayISO() {
+  // Data locale, non UTC: new Date().toISOString() usa UTC e restituisce la
+  // data di ieri per un dietista in Italia nella finestra tra mezzanotte
+  // locale e mezzanotte UTC (00:00–01:00/02:00 locale).
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
 function calcolaEta(ddn) {
   if (!ddn) return '';
   const oggi = new Date(); const nato = new Date(ddn);

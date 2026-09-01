@@ -32,6 +32,14 @@ const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const GRAPH_BASE = 'https://graph.facebook.com/v21.0';
 const SEND_WINDOW_MS = 24 * 60 * 60 * 1000;
 
+// Validate UUID format prima di interpolare dietitian_id/cartella_id in un
+// filtro PostgREST — senza questo, un valore malformato (es. contenente "&")
+// viene inviato verbatim alla REST API di Supabase con la service-role key,
+// permettendo di iniettare parametri di query extra nella chiamata. Il caso
+// dietitian_id è particolarmente sensibile perché raggiungibile pre-auth
+// (verifica GET del webhook).
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export const config = {
   api: { bodyParser: false }, // serve il corpo grezzo per la verifica HMAC
 };
@@ -93,7 +101,7 @@ async function handleSend(req, res) {
     try { body = JSON.parse(raw.toString('utf8') || '{}'); } catch { /* body malformato → validato sotto come mancante */ }
     const { cartella_id, testo } = body;
     const testoTrim = String(testo || '').trim();
-    if (!cartella_id || !testoTrim) return res.status(400).json({ error: 'cartella_id o testo mancante' });
+    if (!cartella_id || !UUID_RE.test(cartella_id) || !testoTrim) return res.status(400).json({ error: 'cartella_id o testo mancante' });
 
     // Un collaboratore di studio invia usando le credenziali WhatsApp e le
     // cartelle del titolare, non le proprie (whatsapp.html risolve allo
@@ -180,7 +188,7 @@ async function handler(req, res) {
   if (req.query.action === 'send') return handleSend(req, res);
 
   const dietitianId = req.query.dietitian_id;
-  if (!dietitianId) return res.status(400).json({ error: 'dietitian_id mancante' });
+  if (!dietitianId || !UUID_RE.test(dietitianId)) return res.status(400).json({ error: 'dietitian_id mancante o non valido' });
   if (!SERVICE_ROLE_KEY) return res.status(500).json({ error: 'Configurazione server incompleta' });
 
   if (req.method === 'GET') {

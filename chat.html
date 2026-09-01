@@ -1180,20 +1180,25 @@ async function loadMessages(patientId) {
   // dell'app paziente message_type/file_url/file_name); se le colonne
   // dietista non esistono ancora sul DB, fallback allo schema live base —
   // senza fallback un 42703 lascerebbe la chat PERENNEMENTE VUOTA.
+  // order(desc)+limit(100) prende i 100 messaggi PIÙ RECENTI; con
+  // ascending:true+limit(100) si otterrebbero invece i 100 più VECCHI,
+  // bloccando la vista su una conversazione lunga più di 100 messaggi ai
+  // primi scambi. renderMessages() si aspetta l'array in ordine cronologico
+  // crescente, quindi va invertito dopo il fetch.
   let res = await sb.from('chat_messages')
     .select('id,sender_id,created_at,content,type,status,scheduled_at,read_at,patient_id,message_type,file_url,file_name')
     .eq('patient_id', patientId)
-    .order('created_at', { ascending: true })
+    .order('created_at', { ascending: false })
     .limit(100);
   if (res.error && (res.error.code === '42703' || res.error.code === 'PGRST204')) {
     res = await sb.from('chat_messages')
       .select('id,sender_id,created_at,content,read_at,patient_id,message_type,file_url,file_name')
       .eq('patient_id', patientId)
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: false })
       .limit(100);
   }
 
-  chatMessages = res.data || [];
+  chatMessages = (res.data || []).slice().reverse();
   renderMessages();
 }
 
@@ -1657,7 +1662,12 @@ function cancelSchedule() {
 
 // Check scheduled messages every 60 seconds
 async function checkScheduledMessages() {
-  if (!currentUser || !sb || !selectedPatientId) return;
+  // La query sotto non filtra per patient_id (solo per sender_id/status/
+  // scheduled_at), quindi copre già TUTTI i pazienti del dietista — non va
+  // condizionata ad avere una conversazione aperta (selectedPatientId),
+  // altrimenti un messaggio programmato non viene mai consegnato finché il
+  // dietista non apre proprio quella chat prima dell'orario previsto.
+  if (!currentUser || !sb) return;
   try {
     const now = new Date().toISOString();
     const { data: scheduled } = await sb.from('chat_messages')

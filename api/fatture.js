@@ -14,6 +14,12 @@ const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const FIC_BASE = 'https://api-v2.fattureincloud.it';
 const STS_API_BASE = process.env.STS_API_BASE || 'https://sistema-ts-api.it/api/v1/prod';
 
+// Validate UUID format prima di interpolarlo in un filtro PostgREST — senza
+// questo, un fattura_id malformato (es. contenente "&") viene inviato
+// verbatim alla REST API di Supabase con la service-role key, permettendo di
+// iniettare parametri di query extra nella chiamata.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 async function verifySupabaseToken(token) {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !token) return null;
   const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
@@ -184,7 +190,7 @@ async function handleSdi(req, res, ownerId) {
 // ═══════════════════════════════════════════════════════════════════════════
 async function handleSts(req, res, ownerId) {
   const fatturaId = req.body?.fattura_id;
-  if (!fatturaId) return res.status(400).json({ error: 'fattura_id mancante' });
+  if (!fatturaId || !UUID_RE.test(fatturaId)) return res.status(400).json({ error: 'fattura_id mancante o non valido' });
 
   const sbHeaders = { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` };
 

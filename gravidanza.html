@@ -1067,6 +1067,7 @@ async function ensureChartJs() {
 <script>
 function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStorage.getItem('nlang')||'it');return l==='en'?en:it;}catch(e){return it;}}
 let editingGravNoteId = null;
+let editingGravNoteCartellaId = null; // cartella a cui appartiene il record caricato in editingGravNoteId
 let _weightChart = null;
 let _asGrav = null;
 
@@ -1148,8 +1149,8 @@ function calcola() {
     trimEl.style.display = 'none';
   }
 
-  if (eta >= 35) document.getElementById('gdm-eta').checked = true;
-  if (bmi >= 30) document.getElementById('gdm-bmi').checked = true;
+  document.getElementById('gdm-eta').checked = eta >= 35;
+  document.getElementById('gdm-bmi').checked = bmi >= 30;
   aggiornaGDM();
   aggiornaGrafico(bmi, settimane, pesoAtt, pesoPre, tipo, r);
 }
@@ -1235,16 +1236,22 @@ async function salvaNota() {
   };
   showLoading(true);
   let result;
-  if (editingGravNoteId) {
+  // Se la scheda caricata apparteneva a una cartella diversa da quella ora
+  // selezionata (paziente cambiato senza ricaricare la pagina), non va
+  // aggiornata: altrimenti l'UPDATE sposterebbe la scheda clinica del
+  // paziente originale nella cartella del nuovo paziente. In quel caso si
+  // crea una nuova scheda.
+  const isUpdateGrav = !!editingGravNoteId && editingGravNoteCartellaId === cartella_id;
+  if (isUpdateGrav) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingGravNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
   if (result.error) { toast(_L('Errore','Error') + ': ' + result.error.message, 'err'); return; }
-  if (!editingGravNoteId && result.data?.[0]?.id) editingGravNoteId = result.data[0].id;
+  if (!isUpdateGrav && result.data?.[0]?.id) { editingGravNoteId = result.data[0].id; editingGravNoteCartellaId = cartella_id; }
   _asGrav.clear();
-  toast(editingGravNoteId ? _L('✅ Scheda Gravidanza aggiornata!','✅ Pregnancy record updated!') : _L('💾 Nota specialistica salvata!','💾 Specialist note saved!'), 'ok');
+  toast(isUpdateGrav ? _L('✅ Scheda Gravidanza aggiornata!','✅ Pregnancy record updated!') : _L('💾 Nota specialistica salvata!','💾 Specialist note saved!'), 'ok');
 }
 
 async function caricaGravDaNote(noteId) {
@@ -1253,6 +1260,7 @@ async function caricaGravDaNote(noteId) {
   showLoading(false);
   if (error || !data) { toast(_L('❌ Impossibile caricare la scheda','❌ Unable to load the record'),'err'); return; }
   editingGravNoteId = noteId;
+  editingGravNoteCartellaId = data.cartella_id || null;
   await _cwSetById('grav-cartella-cw', data.cartella_id);
   const notaEl = document.getElementById('grav-nota');
   if (notaEl) notaEl.value = data.nota || '';

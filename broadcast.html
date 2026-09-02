@@ -995,7 +995,22 @@ async function deleteActiveGroup() {
   if (g && g.created_by !== currentUser.id) { toast(_L('Solo chi ha creato il gruppo può eliminarlo', 'Only the group creator can delete it'), 'err'); return; }
   if (!confirm(_L('Eliminare questo gruppo per tutti i membri?','Delete this group for all members?'))) return;
   showLoading(true);
-  await sb.from('chat_groups').delete().eq('id', activeWaGroupId);
+  const groupIdToDelete = activeWaGroupId;
+  // Ripulisce group-chat-media/<groupId>/... PRIMA di cancellare la riga: la
+  // policy RLS del bucket richiede is_chat_group_member(group_id, auth.uid()),
+  // che dipende da chat_group_members — cancellata a cascata (ON DELETE CASCADE)
+  // insieme a chat_groups. Dopo la delete sotto nessuno (nemmeno il creatore)
+  // potrebbe più list/remove questi file: senza questo cleanup PRIMA, foto e
+  // vocali del gruppo restano orfani nel bucket per sempre. Best-effort: un
+  // fallimento qui non deve mai bloccare l'eliminazione del gruppo.
+  try {
+    const { data: mediaFiles } = await sb.storage.from('group-chat-media').list(groupIdToDelete);
+    if (mediaFiles && mediaFiles.length) {
+      const mediaPaths = mediaFiles.map(f => `${groupIdToDelete}/${f.name}`);
+      await sb.storage.from('group-chat-media').remove(mediaPaths);
+    }
+  } catch (_) { /* best-effort */ }
+  await sb.from('chat_groups').delete().eq('id', groupIdToDelete);
   if (waRealtimeChannel) { waRealtimeChannel.unsubscribe(); waRealtimeChannel = null; }
   activeWaGroupId = null;
   document.getElementById('wa-thread').style.display = 'none';

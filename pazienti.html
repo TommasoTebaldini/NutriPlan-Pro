@@ -1916,6 +1916,22 @@ function cleanupPrintSnapshots(rows, cols) {
   } catch (_) { /* best-effort */ }
 }
 
+// Foto cliniche caricate da valutazione.html sotto patient-photos/<cartellaId>/<schedaId>/...
+// (vedi caricaFotoSalvate() in valutazione.html). La cancellazione della riga
+// schede_valutazione non tocca lo storage — senza questo helper le foto restano
+// orfane per sempre nel bucket. Best-effort: chiamare dopo un delete() riuscito,
+// un fallimento qui non deve mai bloccare un'eliminazione già avvenuta.
+async function cleanupPatientPhotos(cartellaId, schedaId) {
+  try {
+    if (!cartellaId || !schedaId) return;
+    const { data: files } = await sb.storage.from('patient-photos').list(`${cartellaId}/${schedaId}`);
+    if (files && files.length) {
+      const paths = files.map(f => `${cartellaId}/${schedaId}/${f.name}`);
+      await sb.storage.from('patient-photos').remove(paths).catch(() => {});
+    }
+  } catch (_) { /* best-effort */ }
+}
+
 async function delBIA(id, cartellaId) {
   customConfirm(_L('Eliminare questa misurazione BIA?','Delete this BIA measurement?'), async () => {
     showLoading(true);
@@ -2117,6 +2133,7 @@ async function delScheda(id) {
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
     cleanupPrintSnapshots(data, ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple']);
+    cleanupPatientPhotos(cartellaAperta, id);
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ Scheda eliminata','🗑️ Form deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina Scheda','⚠️ Delete Form'), okLabel: _L('Elimina','Delete') });
@@ -2344,6 +2361,14 @@ async function delCartella(id) {
       const { data: diarioFotos } = await sb.from('diario_alimentare_foto').select('storage_path').eq('cartella_id', id);
       (diarioFotos || []).forEach(f => { if (f.storage_path) fileToRemovePaths.push(f.storage_path); });
     } catch (_) { /* best-effort, non blocca la cancellazione */ }
+    // schede_valutazione.id — necessario per ripulire patient-photos/<cartellaId>/<schedaId>/...
+    // (foto cliniche caricate da valutazione.html), stesso identico gap delle
+    // altre righe sopra: la FK ON DELETE CASCADE cancella la riga ma non lo storage.
+    let schedaIdsForPhotos = [];
+    try {
+      const { data: schedeRows } = await sb.from('schede_valutazione').select('id').eq('cartella_id', id);
+      schedaIdsForPhotos = (schedeRows || []).map(r => r.id).filter(Boolean);
+    } catch (_) { /* best-effort */ }
     const { data: pianiData, error: errPiani } = await sb.from('piani').delete().eq('cartella_id', id)
       .select('print_image_url, print_image_url_alldays, print_image_url_compact, print_image_url_simple');
     if (errPiani) {
@@ -2357,6 +2382,7 @@ async function delCartella(id) {
     cleanupPrintSnapshots(pianiData, ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple']);
     if (printPaths.length) sb.storage.from('document-prints').remove(printPaths).catch(() => {});
     if (fileToRemovePaths.length) sb.storage.from('patient-files').remove(fileToRemovePaths).catch(() => {});
+    schedaIdsForPhotos.forEach(schedaId => cleanupPatientPhotos(id, schedaId));
     cartellaAperta = null;
     document.getElementById('page-title').textContent = '📁 ' + _L('Cartelle Pazienti','Patient Folders');
     loadCartelle(true);
@@ -3316,7 +3342,11 @@ async function uploadAllegato(input, cartellaId) {
   input.value = '';
   if (errCount > 0) toast('⚠️ ' + errCount + ' ' + _L('file non caricati (verifica bucket patient-files in Supabase)','files not uploaded (check patient-files bucket in Supabase)'), 'warn');
   else toast(_L('📎 File allegati!','📎 Files attached!'), 'ok');
-  await renderCartellaDetail(cartellaId);
+  // Il caricamento multi-file può richiedere tempo: se nel frattempo il
+  // dietista ha navigato su un'altra cartella, cartellaAperta non è più
+  // cartellaId — un render qui sovrascriverebbe silenziosamente la cartella
+  // ora visibile con quella dell'upload appena finito (race cross-paziente).
+  if (cartellaId === cartellaAperta) await renderCartellaDetail(cartellaId);
 }
 
 async function downloadAllegato(fileId, storagePath, filename) {
@@ -4085,7 +4115,10 @@ async function diarioFotoSave() {
     closeM('modal-diario-foto');
     toast(_L('📸 Diario alimentare salvato!','📸 Food diary saved!'), 'ok');
     _diarioFoto = null;
-    await renderCartellaDetail(s.cartellaId);
+    // Come in uploadAllegato: se il dietista ha cambiato cartella mentre
+    // l'upload della foto era in corso, evita di sovrascrivere la cartella
+    // ora visibile con quella (diversa) a cui apparteneva la foto.
+    if (s.cartellaId === cartellaAperta) await renderCartellaDetail(s.cartellaId);
   } catch (e) {
     showLoading(false);
     toast(_L('Errore: ','Error: ') + (e.message || e), 'err');

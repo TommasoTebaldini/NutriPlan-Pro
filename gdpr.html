@@ -817,6 +817,23 @@ async function eseguiOblio() {
       }
       if (allPaths.length) await sb.storage.from('document-prints').remove(allPaths);
     } catch (_) { /* best-effort, non blocca la cancellazione dati DB */ }
+    // Foto cliniche caricate da valutazione.html sotto patient-photos/<cartellaId>/<schedaId>/...
+    // (vedi caricaFotoSalvate()/uploadFoto() in valutazione.html) — stesso identico
+    // gap dei blocchi sopra: la cancellazione della riga schede_valutazione più
+    // sotto non tocca questo bucket, quindi ogni richiesta di cancellazione GDPR
+    // lasciava finora queste foto orfane invece di eliminare davvero tutti i dati
+    // del paziente. Best-effort: un fallimento qui non deve bloccare la cancellazione.
+    try {
+      const { data: schedeRows } = await sb.from('schede_valutazione').select('id').eq('cartella_id', id);
+      for (const row of (schedeRows || [])) {
+        if (!row.id) continue;
+        const { data: photoFiles } = await sb.storage.from('patient-photos').list(`${id}/${row.id}`);
+        if (photoFiles && photoFiles.length) {
+          const photoPaths = photoFiles.map(f => `${id}/${row.id}/${f.name}`);
+          await sb.storage.from('patient-photos').remove(photoPaths);
+        }
+      }
+    } catch (_) { /* best-effort, non blocca la cancellazione dati DB */ }
     // Elimina dati correlati — ogni delete è verificato: se una qualsiasi
     // fallisce (RLS/vincolo/rete), ci si ferma SUBITO invece di continuare e
     // dichiarare "tutti i dati eliminati" con dati clinici ancora presenti

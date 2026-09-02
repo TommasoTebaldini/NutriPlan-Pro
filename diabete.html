@@ -837,8 +837,13 @@ function showTab(id) {
 function stampaSoloDepliant() {
   const old = document.body.dataset.printMode || '';
   document.body.dataset.printMode = 'depliant';
+  // window.print() non blocca su ogni browser/SO (es. dialog di stampa
+  // asincrono) — ripristinare printMode subito dopo la chiamata può correre
+  // prima che il rendering sia completo, corrompendo/svuotando la stampa.
+  // Stesso fix già usato altrove in questo codebase (vedi
+  // stampaCompattaSpecialistica in js/utils.js) per lo stesso problema.
+  window.addEventListener('afterprint', () => { document.body.dataset.printMode = old; }, { once: true });
   window.print();
-  document.body.dataset.printMode = old;
 }
 
 // ── Calcolo I:C ──

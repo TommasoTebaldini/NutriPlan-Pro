@@ -1885,12 +1885,44 @@ function apriModificaBIA(biaId, cartellaId) {
   window.location.href = 'bia.html?biaId=' + encodeURIComponent(biaId) + '&cartella=' + encodeURIComponent(cartellaId);
 }
 
+// Snapshot document-prints (js/print-capture.js) salvati come URL firmato
+// singolo o array JSON di URL (documenti multipagina) in print_image_url e
+// varianti. La cancellazione della riga DB non tocca lo storage — senza
+// questo helper i PNG restano orfani nel bucket 'document-prints' ad ogni
+// eliminazione. Best-effort: chiamare dopo un delete().select() riuscito,
+// un fallimento qui non deve mai bloccare un'eliminazione già avvenuta.
+function cleanupPrintSnapshots(rows, cols) {
+  try {
+    const marker = '/document-prints/';
+    let paths = [];
+    (rows || []).forEach(row => {
+      cols.forEach(c => {
+        const raw = row?.[c];
+        if (!raw) return;
+        let urls;
+        try { const parsed = JSON.parse(raw); urls = Array.isArray(parsed) ? parsed : [raw]; }
+        catch (_) { urls = [raw]; }
+        urls.forEach(u => {
+          if (typeof u !== 'string') return;
+          const idx = u.indexOf(marker);
+          if (idx === -1) return;
+          let path = u.slice(idx + marker.length);
+          const q = path.indexOf('?');
+          paths.push(q !== -1 ? path.slice(0, q) : path);
+        });
+      });
+    });
+    if (paths.length) sb.storage.from('document-prints').remove(paths).catch(() => {});
+  } catch (_) { /* best-effort */ }
+}
+
 async function delBIA(id, cartellaId) {
   customConfirm(_L('Eliminare questa misurazione BIA?','Delete this BIA measurement?'), async () => {
     showLoading(true);
-    const { error } = await sb.from('bia_records').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
+    const { data, error } = await sb.from('bia_records').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id).select('print_image_url');
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
+    cleanupPrintSnapshots(data, ['print_image_url']);
     await renderCartellaDetail(cartellaId);
     toast(_L('🗑️ BIA eliminata','🗑️ BIA deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina BIA','⚠️ Delete BIA'), okLabel: _L('Elimina','Delete') });
@@ -2056,9 +2088,11 @@ function caricaPiano(id) {
 async function delPiano(id) {
   customConfirm(_L('Eliminare questo piano?','Delete this plan?'), async () => {
     showLoading(true);
-    const { error } = await sb.from('piani').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
+    const { data, error } = await sb.from('piani').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id)
+      .select('print_image_url, print_image_url_alldays, print_image_url_compact, print_image_url_simple');
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
+    cleanupPrintSnapshots(data, ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple']);
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ Piano eliminato','🗑️ Plan deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina Piano','⚠️ Delete Plan'), okLabel: _L('Elimina','Delete') });
@@ -2067,9 +2101,10 @@ async function delPiano(id) {
 async function delNCPt(id) {
   customConfirm(_L('Eliminare questa scheda NCPt?','Delete this NCPt form?'), async () => {
     showLoading(true);
-    const { error } = await sb.from('ncpt').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
+    const { data, error } = await sb.from('ncpt').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id).select('print_image_url');
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
+    cleanupPrintSnapshots(data, ['print_image_url']);
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ NCPt eliminato','🗑️ NCPt deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina NCPt','⚠️ Delete NCPt'), okLabel: _L('Elimina','Delete') });
@@ -2078,9 +2113,10 @@ async function delNCPt(id) {
 async function delScheda(id) {
   customConfirm(_L('Eliminare questa scheda valutazione?','Delete this assessment form?'), async () => {
     showLoading(true);
-    const { error } = await sb.from('schede_valutazione').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
+    const { data, error } = await sb.from('schede_valutazione').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id).select('print_image_url, print_image_url_alldays, print_image_url_compact, print_image_url_simple');
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
+    cleanupPrintSnapshots(data, ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple']);
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ Scheda eliminata','🗑️ Form deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina Scheda','⚠️ Delete Form'), okLabel: _L('Elimina','Delete') });
@@ -2089,9 +2125,10 @@ async function delScheda(id) {
 async function delNoteSpec(id) {
   customConfirm(_L('Eliminare questa scheda specialistica?','Delete this specialist note?'), async () => {
     showLoading(true);
-    const { error } = await sb.from('note_specialistiche').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id);
+    const { data, error } = await sb.from('note_specialistiche').delete().eq('id', id).eq('user_id', studioOwnerId || currentUser.id).select('print_image_url, print_image_url_alldays, print_image_url_compact, print_image_url_simple');
     showLoading(false);
     if (error) { toast(_L('❌ Errore durante l\'eliminazione','❌ Error while deleting'), 'err'); return; }
+    cleanupPrintSnapshots(data, ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple']);
     await renderCartellaDetail(cartellaAperta);
     toast(_L('🗑️ Scheda eliminata','🗑️ Form deleted'), 'info');
   }, { danger: true, title: _L('⚠️ Elimina Scheda','⚠️ Delete Form'), okLabel: _L('Elimina','Delete') });
@@ -2261,7 +2298,48 @@ async function delCartella(id) {
   if (id === _altroCartellaId) { toast(_L('⚠️ La cartella "Altro" non può essere eliminata.','⚠️ The "Other" folder cannot be deleted.'), 'warn'); return; }
   customConfirm(_L('Eliminare questa cartella e tutti i piani al suo interno?','Delete this folder and all plans inside it?'), async () => {
     showLoading(true);
-    const { error: errPiani } = await sb.from('piani').delete().eq('cartella_id', id);
+    // bia_records/ncpt/schede_valutazione/note_specialistiche hanno FK ON
+    // DELETE CASCADE su cartelle_raw (verificato via pg_constraint): la delete
+    // sotto sulla cartella cancella già le loro righe da sola. Ma la cascade
+    // FK non può toccare lo Storage — senza leggere questi path PRIMA, i PNG
+    // in document-prints e gli allegati in patient-files restano orfani per
+    // sempre. Stesso approccio già usato in gdpr.html eseguiOblio() per lo
+    // stesso identico problema. Best-effort: letture qui non bloccano mai la
+    // cancellazione.
+    let printPaths = [], fileToRemovePaths = [];
+    try {
+      const printCols = {
+        bia_records: ['print_image_url'],
+        ncpt: ['print_image_url'],
+        note_specialistiche: ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple'],
+        schede_valutazione: ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple'],
+      };
+      const marker = '/document-prints/';
+      for (const [tbl, cols] of Object.entries(printCols)) {
+        const { data: rows } = await sb.from(tbl).select(cols.join(',')).eq('cartella_id', id);
+        (rows || []).forEach(row => {
+          cols.forEach(c => {
+            const raw = row?.[c];
+            if (!raw) return;
+            let urls;
+            try { const parsed = JSON.parse(raw); urls = Array.isArray(parsed) ? parsed : [raw]; }
+            catch (_) { urls = [raw]; }
+            urls.forEach(u => {
+              if (typeof u !== 'string') return;
+              const idx = u.indexOf(marker);
+              if (idx === -1) return;
+              let p = u.slice(idx + marker.length);
+              const q = p.indexOf('?');
+              printPaths.push(q !== -1 ? p.slice(0, q) : p);
+            });
+          });
+        });
+      }
+      const { data: files } = await sb.from('patient_files').select('storage_path').eq('cartella_id', id);
+      fileToRemovePaths = (files || []).map(f => f.storage_path).filter(Boolean);
+    } catch (_) { /* best-effort, non blocca la cancellazione */ }
+    const { data: pianiData, error: errPiani } = await sb.from('piani').delete().eq('cartella_id', id)
+      .select('print_image_url, print_image_url_alldays, print_image_url_compact, print_image_url_simple');
     if (errPiani) {
       showLoading(false);
       toast(_L('❌ Errore durante l\'eliminazione dei piani — cartella non toccata.','❌ Error deleting plans — folder untouched.'), 'err');
@@ -2270,6 +2348,9 @@ async function delCartella(id) {
     const { error: errCartella } = await sb.from('cartelle').delete().eq('id', id);
     showLoading(false);
     if (errCartella) { toast(_L('❌ Errore durante l\'eliminazione della cartella','❌ Error deleting folder'), 'err'); return; }
+    cleanupPrintSnapshots(pianiData, ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple']);
+    if (printPaths.length) sb.storage.from('document-prints').remove(printPaths).catch(() => {});
+    if (fileToRemovePaths.length) sb.storage.from('patient-files').remove(fileToRemovePaths).catch(() => {});
     cartellaAperta = null;
     document.getElementById('page-title').textContent = '📁 ' + _L('Cartelle Pazienti','Patient Folders');
     loadCartelle(true);

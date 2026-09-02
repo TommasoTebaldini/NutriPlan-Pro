@@ -765,6 +765,49 @@ async function eseguiOblio() {
       const paths = files.map(f => f.storage_path);
       await sb.storage.from('patient-files').remove(paths);
     }
+    // Elimina snapshot document-prints (bia_records, ncpt, note_specialistiche,
+    // schede_valutazione) — la cancellazione righe più sotto non tocca lo
+    // storage: senza questo, ogni richiesta di cancellazione GDPR lascia
+    // questi file orfani nel bucket invece di eliminare davvero tutti i dati
+    // del paziente. Le immagini sono salvate da js/print-capture.js sotto
+    // <patientId oppure dietistaId di fallback>/<tabella>_<recordId>_p<N>.png
+    // — la cartella non è ricostruibile con certezza da qui (dipende da quale
+    // fallback si è applicato al momento della cattura), quindi i path vengono
+    // estratti direttamente dagli URL firmati già salvati sulle righe (stringa
+    // singola o array JSON per i documenti multipagina) invece di indovinare
+    // la cartella. Best-effort: un fallimento qui non deve bloccare la
+    // cancellazione DB già verificata passo-passo sotto.
+    try {
+      function extractPrintPaths(raw) {
+        if (!raw) return [];
+        let urls;
+        try { const parsed = JSON.parse(raw); urls = Array.isArray(parsed) ? parsed : [raw]; }
+        catch (_) { urls = [raw]; }
+        const marker = '/document-prints/';
+        return urls.map(u => {
+          if (typeof u !== 'string') return null;
+          const idx = u.indexOf(marker);
+          if (idx === -1) return null;
+          let path = u.slice(idx + marker.length);
+          const q = path.indexOf('?');
+          return q !== -1 ? path.slice(0, q) : path;
+        }).filter(Boolean);
+      }
+      const printCols = {
+        bia_records: ['print_image_url'],
+        ncpt: ['print_image_url'],
+        note_specialistiche: ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple'],
+        schede_valutazione: ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple'],
+      };
+      let allPaths = [];
+      for (const [tbl, cols] of Object.entries(printCols)) {
+        const { data: rows } = await sb.from(tbl).select(cols.join(',')).eq('cartella_id', id);
+        (rows || []).forEach(row => {
+          cols.forEach(c => { allPaths = allPaths.concat(extractPrintPaths(row[c])); });
+        });
+      }
+      if (allPaths.length) await sb.storage.from('document-prints').remove(allPaths);
+    } catch (_) { /* best-effort, non blocca la cancellazione dati DB */ }
     // Elimina dati correlati — ogni delete è verificato: se una qualsiasi
     // fallisce (RLS/vincolo/rete), ci si ferma SUBITO invece di continuare e
     // dichiarare "tutti i dati eliminati" con dati clinici ancora presenti

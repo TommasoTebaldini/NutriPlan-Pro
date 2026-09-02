@@ -8462,3 +8462,71 @@ END $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_105_realtime_publication_gap', '10 tabelle (agenda_events, whatsapp_messages, piani, bia_records, schede_valutazione, liste_spesa, daily_wellness, weight_logs, shared_recipes, medication_reminders) avevano già codice client con .channel(...).on(''postgres_changes'', ...) verso nomi tabella/colonna corretti, ma nessuna era nella pubblicazione supabase_realtime — nessun evento veniva mai pubblicato, fallimento silenzioso senza errori lato client. Aggiunte alla pubblicazione (RLS già attiva su tutte, verificato via pg_class.relrowsecurity, quindi nessuna esposizione nuova di dati). Trovato durante l''8° giro di scansione ciclica del 2026-09-02.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 106 — patient_diets mancante dalla pubblicazione supabase_realtime
+-- (stesso bug class di SEZIONE 105, trovato durante la verifica del 9° giro)
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- src/context/NotificationContext.jsx (Diet-Plan-Pro-app-claude) sottoscrive
+-- .channel(...).on('postgres_changes', {table:'patient_diets', filter:
+-- 'user_id=eq.<uid>'}) per notificare il paziente quando il dietista
+-- crea/aggiorna il piano — nomi tabella/colonna corretti (verificato contro
+-- lo schema reale) ma la tabella non è nella pubblicazione: nessun evento
+-- veniva mai pubblicato. RLS già attiva (verificato via
+-- pg_class.relrowsecurity), quindi nessuna esposizione nuova di dati.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND tablename = 'patient_diets'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE patient_diets;
+  END IF;
+END $$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_106_patient_diets_realtime_gap', 'patient_diets aveva già codice client (NotificationContext.jsx) sottoscritto via postgres_changes con nomi tabella/colonna corretti, ma non era nella pubblicazione supabase_realtime — stesso bug class di SEZIONE 105, trovato durante la verifica manuale del 9° giro di scansione ciclica (interrotto per limite di spesa mensile prima di scrivere questo fix). RLS già attiva, nessuna esposizione nuova.')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 107 — bucket storage recipe-photos senza NESSUNA policy RLS
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato durante la verifica manuale del fix "cleanup foto orfana al delete
+-- ricetta" (9° giro): storage.objects ha RLS attiva (relrowsecurity=true) e
+-- NON esiste alcuna policy con bucket_id='recipe-photos' (verificato contro
+-- pg_policies — a differenza di ogni altro bucket usato dall'app, tutti con
+-- almeno una policy). Il bucket non è tracciato in nessun file di migrazione
+-- di questo repo, quindi è stato creato a mano dalla dashboard Supabase senza
+-- mai aggiungere le policy. Conseguenze pratiche:
+--   - RecipesPage.jsx/FoodDatabasePage.jsx: l'upload foto ricetta
+--     (supabase.storage.from('recipe-photos').upload(...), client-side con
+--     il JWT dell'utente) fallisce sempre con "new row violates row-level
+--     security policy" — la UI ha già un percorso di errore dedicato per
+--     questo caso ("La ricetta verrà salvata senza foto"), quindi il sintomo
+--     visibile è "la foto non si allega mai", non un crash.
+--   - Il cleanup allo storage aggiunto in questo stesso giro (delete riga →
+--     rimuovi file) fallisce silenziosamente allo stesso modo (try/catch
+--     best-effort) — corretto qui a monte, non serve toccare quel codice.
+-- Policy modellate esattamente su quelle già esistenti per progress-photos
+-- (stessa convenzione di path: <user.id>/<file>), unica differenza: qui la
+-- lettura pubblica passa comunque dall'endpoint /storage/v1/object/public/
+-- (bucket public=true, bypassa RLS) quindi la policy SELECT qui serve solo
+-- per le chiamate autenticate come storage.list() usate nel cleanup sopra.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='storage' AND tablename='objects' AND policyname='recipe_photos_owner_all') THEN
+    CREATE POLICY "recipe_photos_owner_all" ON storage.objects FOR ALL
+      USING (bucket_id = 'recipe-photos' AND auth.uid()::text = (storage.foldername(name))[1])
+      WITH CHECK (bucket_id = 'recipe-photos' AND auth.uid()::text = (storage.foldername(name))[1]);
+  END IF;
+END $$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_107_recipe_photos_storage_rls_gap', 'Il bucket storage recipe-photos non aveva NESSUNA policy RLS (verificato contro pg_policies) nonostante storage.objects abbia RLS attiva — upload foto ricetta lato client sempre fallito con permission denied (mascherato da un messaggio "ricetta salvata senza foto" già presente in RecipesPage.jsx), e il cleanup file orfano al delete (aggiunto in questo stesso giro) sarebbe stato un no-op silenzioso. Aggiunta policy ALL scoped a auth.uid()=primo segmento del path, stesso pattern già usato per progress-photos. Trovato durante la verifica manuale del 9° giro di scansione ciclica del 2026-09-02.')
+ON CONFLICT (id) DO NOTHING;

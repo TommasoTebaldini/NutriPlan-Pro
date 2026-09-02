@@ -460,8 +460,35 @@ async function openSavedVisita(id) {
 
 async function eliminaVisita(id) {
   if (!confirm(_L('Eliminare questa visita?','Delete this visit?'))) return;
-  const { error } = await sb.from('note_specialistiche').delete().eq('id', id);
+  // .select() sulla delete restituisce la riga appena cancellata: serve per
+  // ripulire gli snapshot document-prints (js/print-capture.js, non caricato
+  // in questa pagina) salvati come URL firmato in print_image_url e varianti
+  // — senza questo la cancellazione della riga lascia i PNG orfani nel bucket.
+  const { data, error } = await sb.from('note_specialistiche').delete().eq('id', id)
+    .select('print_image_url, print_image_url_alldays, print_image_url_compact, print_image_url_simple');
   if (error) { toast(_L('Errore eliminazione','Delete error'), 'err'); return; }
+  try {
+    const marker = '/document-prints/';
+    let paths = [];
+    (data || []).forEach(row => {
+      ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple'].forEach(c => {
+        const raw = row?.[c];
+        if (!raw) return;
+        let urls;
+        try { const parsed = JSON.parse(raw); urls = Array.isArray(parsed) ? parsed : [raw]; }
+        catch (_) { urls = [raw]; }
+        urls.forEach(u => {
+          if (typeof u !== 'string') return;
+          const idx = u.indexOf(marker);
+          if (idx === -1) return;
+          let path = u.slice(idx + marker.length);
+          const q = path.indexOf('?');
+          paths.push(q !== -1 ? path.slice(0, q) : path);
+        });
+      });
+    });
+    if (paths.length) sb.storage.from('document-prints').remove(paths).catch(() => {});
+  } catch (_) { /* best-effort */ }
   toast(_L('Eliminata','Deleted'), 'ok');
   await loadSavedVisite();
 }

@@ -1917,12 +1917,21 @@ window.addEventListener('afterprint', _ncptRestoreAfterPrint);
 
 function printAllNCPt() {
   document.querySelectorAll('.ncpt-panel').forEach(p => p.classList.add('active'));
-  window.print();
-  setTimeout(() => {
+  // Un timeout fisso invece di afterprint collassa i pannelli mentre il
+  // dialog di stampa/PDF è ancora aperto se l'utente ci mette più di 1s a
+  // interagire (normale su un documento multi-pannello) — la stampa
+  // risulterebbe troncata a un solo pannello. afterprint (con fallback a
+  // timeout più lungo per i browser che non lo emettono in modo affidabile)
+  // evita la race.
+  function _restore() {
+    window.removeEventListener('afterprint', _restore);
     document.querySelectorAll('.ncpt-panel').forEach((p, i) => {
       p.classList.toggle('active', i === currentTab);
     });
-  }, 1000);
+  }
+  window.addEventListener('afterprint', _restore);
+  setTimeout(_restore, 5000);
+  window.print();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

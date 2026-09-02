@@ -822,8 +822,17 @@ function stampaModulo(tipo) {
     _ls.textContent = '@media print { @page { size: A4 landscape; margin: 8mm; } }';
     document.head.appendChild(_ls);
   }
+  // window.print() non blocca su ogni browser/SO (dialog di stampa
+  // asincrono): svuotare area.innerHTML subito dopo la chiamata può correre
+  // prima che il rendering sia completo, producendo una stampa vuota/troncata.
+  // afterprint (con fallback a timeout, come la pulizia landscape 3 righe
+  // sotto) evita la race.
+  window.addEventListener('afterprint', function _clearArea() {
+    window.removeEventListener('afterprint', _clearArea);
+    area.innerHTML = '';
+  });
+  setTimeout(() => { area.innerHTML = ''; }, 4000);
   window.print();
-  area.innerHTML = '';
   if (_ls) {
     window.addEventListener('afterprint', function _rmLs() {
       const e = document.getElementById('_diario-landscape'); if (e) e.remove();

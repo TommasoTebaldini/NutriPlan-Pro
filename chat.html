@@ -1198,6 +1198,15 @@ async function loadMessages(patientId) {
       .limit(100);
   }
 
+  // Se il dietista ha già cambiato paziente mentre questa query era in
+  // volo, selectedPatientId punta a un altro paziente: scrivere comunque
+  // in chatMessages mostrerebbe i messaggi di patientId sotto l'header del
+  // paziente nuovo (stessa race già documentata e gestita in sendMessage()
+  // più sotto, qui mancava). La loadMessages() del paziente giusto è già
+  // stata avviata da selectPatient() e sovrascriverà chatMessages appena
+  // risolve.
+  if (patientId !== selectedPatientId) return;
+
   chatMessages = (res.data || []).slice().reverse();
   renderMessages();
 }

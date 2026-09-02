@@ -8407,3 +8407,58 @@ END $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_104_mfa_chat_messages_raw_gap', 'La correzione 2026-08-20 di 20260721150000__enforce_2fa_rls.sql (rinomina cartelle/note_specialistiche/ncpt in *_raw nell''array mfa_required) non includeva chat_messages, rinominata anch''essa in chat_messages_raw lo stesso giorno da SEZIONE 80 — su un ambiente ricreato da zero la policy non verrebbe mai creata su chat_messages_raw. Sul DB esistente la policy ereditata dal RENAME è rimasta valida (non rimossa, solo non più ricreabile da quel file); qui ricreata esplicitamente per nome corretto, file migrazione sorgente corretto in parallelo. Trovato durante il 7° giro di scansione ciclica del 2026-09-02.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 105 — 10 tabelle sottoscritte via postgres_changes lato client ma
+-- mai aggiunte alla pubblicazione supabase_realtime
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Verificato via query diretta su pg_publication_tables: la pubblicazione
+-- supabase_realtime contiene solo chat_group_messages, patient_documents,
+-- profiles (più chat_messages_raw gestita separatamente via Broadcast from
+-- Database, SEZIONE 80 — resta volutamente FUORI da questa lista per lo
+-- stesso motivo). Tutte le altre 10 tabelle sotto hanno codice client che
+-- fa .channel(...).on('postgres_changes', {table:'<t>', ...}) con nome
+-- tabella/colonna corretti (verificato contro lo schema reale — non è il
+-- bug già corretto di diet_plans/patient_id inesistenti) ma restano
+-- "sottoscritte a vuoto": nessun evento viene mai pubblicato perché la
+-- tabella non è nella pubblicazione, senza alcun errore lato client (stesso
+-- sintomo di fallimento silenzioso, causa diversa). Trovato durante l'8°
+-- giro di scansione ciclica del 2026-09-02:
+--   agenda_events        — agenda.html (sync multi-tab/dispositivo agenda)
+--   whatsapp_messages    — whatsapp.html (refresh live thread)
+--   piani                — patient-portal.html (tab "Dieta" del paziente)
+--   bia_records           patient-portal.html (refresh documenti)
+--   schede_valutazione    patient-portal.html (refresh documenti)
+--   liste_spesa           patient-portal.html (refresh documenti)
+--   daily_wellness        patient-portal.html (diario paziente multi-device)
+--   weight_logs           patient-portal.html (diario paziente multi-device)
+--   shared_recipes        Diet-Plan-Pro-app-claude BottomNav.jsx (badge ricette condivise)
+--   medication_reminders  Diet-Plan-Pro-app-claude NotificationContext.jsx (promemoria farmaci)
+--
+-- Tutte e 10 hanno RLS attiva (verificato via pg_class.relrowsecurity):
+-- postgres_changes filtra comunque riga per riga secondo le policy SELECT
+-- esistenti, quindi l'aggiunta alla pubblicazione non espone nulla che
+-- l'utente non potesse già leggere con una query diretta.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$
+DECLARE t TEXT;
+BEGIN
+  FOREACH t IN ARRAY ARRAY[
+    'agenda_events', 'whatsapp_messages', 'piani', 'bia_records',
+    'schede_valutazione', 'liste_spesa', 'daily_wellness', 'weight_logs',
+    'shared_recipes', 'medication_reminders'
+  ] LOOP
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_publication_tables
+      WHERE pubname = 'supabase_realtime' AND tablename = t
+    ) THEN
+      EXECUTE format('ALTER PUBLICATION supabase_realtime ADD TABLE %I', t);
+    END IF;
+  END LOOP;
+END $$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_105_realtime_publication_gap', '10 tabelle (agenda_events, whatsapp_messages, piani, bia_records, schede_valutazione, liste_spesa, daily_wellness, weight_logs, shared_recipes, medication_reminders) avevano già codice client con .channel(...).on(''postgres_changes'', ...) verso nomi tabella/colonna corretti, ma nessuna era nella pubblicazione supabase_realtime — nessun evento veniva mai pubblicato, fallimento silenzioso senza errori lato client. Aggiunte alla pubblicazione (RLS già attiva su tutte, verificato via pg_class.relrowsecurity, quindi nessuna esposizione nuova di dati). Trovato durante l''8° giro di scansione ciclica del 2026-09-02.')
+ON CONFLICT (id) DO NOTHING;

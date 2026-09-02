@@ -333,6 +333,13 @@
           mainEl.style.marginLeft = '0';
           mainEl.style.paddingLeft = '16px';
           mainEl.style.paddingRight = '16px';
+          // Quando target === document.body (formato "normale", container=null)
+          // main è il contenuto da catturare, ma eredita il visibility:hidden
+          // appena impostato su body (riga sopra) e nessun altro ramo lo
+          // riporta visibile: senza questa riga la cattura "normale" produce
+          // sempre un PNG bianco/vuoto (bug scoperto dopo il fix del 404 di
+          // html2canvas, che prima impediva a questo ramo di essere eseguito).
+          if (target === document.body) mainEl.style.visibility = 'visible';
         }
         // Only apply compact-print-mode when capturing the compact area directly
         // (NOT when capturing a panel print area built by buildAllPanelsPrintArea,
@@ -538,7 +545,7 @@
         .eq('id', recordId);
       if (error) {
         console.warn(`print-capture: ${table}.update failed`, error.message);
-        if (window.toast) toast('⚠️ Immagine caricata ma update DB fallito: ' + error.message, 'err');
+        if (window.toast && opts.silent !== true) toast('⚠️ Immagine caricata ma update DB fallito: ' + error.message, 'err');
         return value;
       }
 
@@ -552,10 +559,10 @@
         console.warn('[print-capture] Verify SELECT failed:', verifErr.message);
       } else if (!verif) {
         console.warn('[print-capture] RECORD NOT FOUND in DB! recordId:', recordId);
-        if (window.toast) toast('⚠️ Record non trovato nel DB — ricarica la pagina e salva di nuovo', 'err');
+        if (window.toast && opts.silent !== true) toast('⚠️ Record non trovato nel DB — ricarica la pagina e salva di nuovo', 'err');
       } else if (!verif.print_image_url) {
         console.warn('[print-capture] DB update silently blocked (RLS or wrong user)! print_image_url is still null for', recordId);
-        if (window.toast) toast('⚠️ Aggiornamento DB bloccato (RLS). Controlla le policy.', 'err');
+        if (window.toast && opts.silent !== true) toast('⚠️ Aggiornamento DB bloccato (RLS). Controlla le policy.', 'err');
       } else {
         console.log('[print-capture] DB verified ok:', table, recordId, numPages + ' page(s)');
       }

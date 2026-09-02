@@ -1827,11 +1827,17 @@ async function sendMessage() {
   } else if (data) {
     // Show it immediately instead of waiting for the realtime echo, which may be
     // delayed or missed entirely if the websocket is disconnected/reconnecting.
-    if (!chatMessages.find(m => m.id === data.id)) {
+    // Usa msgPayload.patient_id (catturato PRIMA dell'await) invece del globale
+    // selectedPatientId: se il dietista cambia paziente mentre l'invio è in
+    // volo, selectedPatientId punta già al nuovo paziente e chatMessages è già
+    // stato riassegnato da loadMessages() — pushare qui inserirebbe il
+    // messaggio di A nella conversazione (e nell'anteprima sidebar) di B.
+    const targetPatientId = msgPayload.patient_id;
+    if (selectedPatientId === targetPatientId && !chatMessages.find(m => m.id === data.id)) {
       chatMessages.push(data);
       renderMessages();
     }
-    const p = chatPatients.find(x => x.id === selectedPatientId);
+    const p = chatPatients.find(x => x.id === targetPatientId);
     if (p) {
       p.lastMessage = data.content;
       p.lastTime = data.created_at;
@@ -2238,11 +2244,17 @@ async function saveConsentAsTemplate() {
   const editor = document.getElementById('consent-editor');
   if (!editor) return;
   const newText = editor.innerHTML;
-  const {error: pErr} = await sb.from('profiles').update({consent_template: newText}).eq('id', currentUser.id);
+  // Il template è a livello di studio (letto sempre da studioOwnerId in
+  // getConsentTemplate() e i consensi sono creati con dietitian_id=studioOwnerId
+  // in createConsent()): un collaboratore deve scrivere sullo stesso id, non sul
+  // proprio — altrimenti il salvataggio "riesce" (0 errori) ma scrive sul
+  // profilo sbagliato e non aggiorna nessun consenso esistente (RLS/WHERE su
+  // dietitian_id non corrisponde a nessuna riga per il collaboratore).
+  const {error: pErr} = await sb.from('profiles').update({consent_template: newText}).eq('id', studioOwnerId || currentUser.id);
   if (pErr) { toast(_L('❌ Errore salvataggio modello: ','❌ Error saving template: ') + pErr.message, 'err'); return; }
   const {error: cErr} = await sb.from('patient_consents')
     .update({consent_text: newText})
-    .eq('dietitian_id', currentUser.id)
+    .eq('dietitian_id', studioOwnerId || currentUser.id)
     .is('signed_at', null);
   if (cErr) { toast(_L('⚠️ Modello salvato, errore su consensi esistenti: ','⚠️ Template saved, error on existing consents: ') + cErr.message, 'warn'); return; }
   toast(_L('✅ Modello salvato e applicato a tutti i consensi non ancora firmati','✅ Template saved and applied to all unsigned consents'), 'ok');

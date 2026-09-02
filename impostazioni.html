@@ -917,7 +917,7 @@ async function loadFiscalData() {
   // tabella non esiste ancora (SEZIONE 62 non eseguita).
   const { data, error } = await sb.from('dietitian_credentials')
     .select('fiscal_ragione_sociale,fiscal_codice_fiscale,fiscal_partita_iva,fiscal_regime,fiscal_indirizzo,fiscal_cap,fiscal_comune,fiscal_provincia,fic_api_token,fic_company_id,sts_api_username,sts_api_password,sts_username,sts_password,sts_pincode,sts_erogatore_registrato')
-    .eq('id', currentUser.id).maybeSingle();
+    .eq('id', studioOwnerId || currentUser.id).maybeSingle();
   if (error && (error.code === '42P01' || error.code === 'PGRST205')) {
     console.warn('Tabella dietitian_credentials non ancora creata: esegui la SEZIONE 62 di supabase_setup.sql');
     return;
@@ -964,7 +964,12 @@ async function saveFiscalData() {
     sts_pincode: val('sts-pincode'),
   };
   const msgEl = document.getElementById('fiscal-save-msg');
-  const { error } = await sb.from('dietitian_credentials').upsert({ id: currentUser.id, ...payload });
+  // dietitian_credentials è condiviso a livello di studio (letto da
+  // pagamenti.html e dagli endpoint server api/fatture.js/whatsapp-webhook.js
+  // via studioOwnerId/titolare_id), non del singolo collaboratore — RLS
+  // disabilitata su questa tabella, quindi un currentUser.id qui scriverebbe
+  // silenziosamente una riga isolata mai letta dal resto dell'app.
+  const { error } = await sb.from('dietitian_credentials').upsert({ id: studioOwnerId || currentUser.id, ...payload });
   if (error) {
     if (msgEl) {
       msgEl.style.color = 'var(--red)';
@@ -1007,11 +1012,11 @@ async function registraErogatoreSTS() {
 async function loadWhatsappData() {
   if (!currentUser) return;
   const urlEl = document.getElementById('wa-webhook-url-display');
-  if (urlEl) urlEl.textContent = `${location.origin}/api/whatsapp-webhook?dietitian_id=${currentUser.id}`;
+  if (urlEl) urlEl.textContent = `${location.origin}/api/whatsapp-webhook?dietitian_id=${studioOwnerId || currentUser.id}`;
 
   const { data, error } = await sb.from('dietitian_credentials')
     .select('wa_phone_number_id,wa_access_token,wa_business_account_id,wa_webhook_verify_token,wa_app_secret,wa_template_name,wa_template_lang')
-    .eq('id', currentUser.id).maybeSingle();
+    .eq('id', studioOwnerId || currentUser.id).maybeSingle();
   if (error && (error.code === '42P01' || error.code === 'PGRST205')) return; // SEZIONE 62 non ancora eseguita
   if (error || !data) { if (error) console.warn('loadWhatsappData error:', error.message); return; }
   const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };

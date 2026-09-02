@@ -1739,7 +1739,11 @@ async function salvaNCPt() {
     payload.created_at = new Date().toISOString();
     payload.visible_to_patient = false;
     result = await sb.from('ncpt').insert(payload).select().single();
-    if(result.data) { currentNcptId = result.data.id; currentNcptCartellaId = currentCartellaId; }
+    // Usa il cartella_id già catturato in payload PRIMA dell'await, non il
+    // globale currentCartellaId (che nel frattempo può già puntare a un
+    // altro paziente se il dietista ha cambiato cartella durante il salvataggio) —
+    // stesso bug class già corretto altrove (es. currentBiaId).
+    if(result.data) { currentNcptId = result.data.id; currentNcptCartellaId = payload.cartella_id; }
   }
   showLoading(false);
   if(result.error){

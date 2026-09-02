@@ -816,6 +816,7 @@ function waInsertTemplate(key) {
 let _waMediaRecorder = null;
 let _waAudioChunks = [];
 let _waVoiceRecording = false;
+let _waVoiceRecordingGroupId = null; // gruppo destinatario "fissato" all'avvio della registrazione
 
 async function waToggleVoiceRecord() {
   const btn = document.getElementById('wa-mic-btn');
@@ -824,6 +825,12 @@ async function waToggleVoiceRecord() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     _waAudioChunks = [];
+    // Fissa il gruppo destinatario ora: se il dietista cambia gruppo mentre la
+    // registrazione è ancora in corso (fino a 60s, vedi auto-stop sotto), il
+    // vocale deve comunque andare al gruppo per cui è stata avviata, non a
+    // quello aperto al momento dello stop — stesso pattern già usato per i
+    // vocali 1:1 in chat.html (_voiceRecordingPatientId).
+    _waVoiceRecordingGroupId = activeWaGroupId;
     _waMediaRecorder = new MediaRecorder(stream);
     _waMediaRecorder.ondataavailable = e => { if (e.data.size > 0) _waAudioChunks.push(e.data); };
     _waMediaRecorder.onstop = async () => {
@@ -832,7 +839,7 @@ async function waToggleVoiceRecord() {
       stream.getTracks().forEach(t => t.stop());
       const blob = new Blob(_waAudioChunks, { type: 'audio/webm' });
       if (blob.size < 100) return;
-      await waSendVoiceMessage(blob);
+      await waSendVoiceMessage(blob, _waVoiceRecordingGroupId);
     };
     _waMediaRecorder.start();
     _waVoiceRecording = true;
@@ -844,18 +851,19 @@ async function waToggleVoiceRecord() {
   }
 }
 
-async function waSendVoiceMessage(blob) {
-  if (!activeWaGroupId) return;
+async function waSendVoiceMessage(blob, targetGroupId) {
+  targetGroupId = targetGroupId || activeWaGroupId;
+  if (!targetGroupId) return;
   showLoading(true);
   try {
-    const path = `${activeWaGroupId}/${Date.now()}.webm`;
+    const path = `${targetGroupId}/${Date.now()}.webm`;
     const { error: upErr } = await sb.storage.from('group-chat-media').upload(path, blob, { contentType: 'audio/webm' });
     if (upErr) throw upErr;
     // Salva il solo storage path, non un URL firmato a validità decennale —
     // vedi waResolveVoiceUrls(), che richiede un URL a breve scadenza a ogni
     // visualizzazione rivalutando l'appartenenza al gruppo.
     const { error } = await sb.from('chat_group_messages').insert({
-      group_id: activeWaGroupId, sender_id: currentUser.id, content: path, type: 'voice', status: 'sent'
+      group_id: targetGroupId, sender_id: currentUser.id, content: path, type: 'voice', status: 'sent'
     });
     if (error) throw error;
     toast('🎤 ' + _L('Messaggio vocale inviato!','Voice message sent!'), 'ok');

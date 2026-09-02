@@ -517,7 +517,14 @@ async function saveFood() {
     fiber_100g: row.fibre,
     sugar_100g: row.zuccheri,
     fat_sat_100g: row.grassi_saturi,
-    created_by: currentUser.id
+    // Deve combaciare con alimenti_custom.user_id sotto (studioOwnerId condiviso
+    // dallo studio, non il singolo collaboratore): public_foods RLS su
+    // UPDATE/DELETE richiede auth.uid() = created_by, quindi se qui restasse
+    // currentUser.id un collaboratore diverso dal creatore originale (o lo
+    // stesso studio owner) non potrebbe più modificare/eliminare la riga
+    // pubblica — l'update/delete verrebbe bloccato in silenzio da RLS mentre
+    // alimenti_custom risulterebbe comunque aggiornato.
+    created_by: studioOwnerId || currentUser.id
   };
 
   let error;

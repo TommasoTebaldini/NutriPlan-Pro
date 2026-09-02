@@ -1244,14 +1244,29 @@ function renderMessages() {
         <span style="font-size:13px;font-weight:600">${isSent ? _L('Hai avviato un videoconsulto','You started a video consultation') : _L('Videoconsulto avviato dal paziente','Patient started a video call')}</span>
         <a href="${esc(_jitsiUrl(room))}" target="_blank" rel="noopener" style="padding:4px 12px;background:${isSent ? 'rgba(255,255,255,.25)' : '#0EA5E9'};color:#fff;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0">${_L('Entra','Join')}</a>
       </div>`;
-    } else if (m.message_type === 'image' && m.file_url && /^https:\/\//.test(m.file_url)) {
-      // Foto inviata dal paziente (bucket chat-media, signed URL ~10 anni):
-      // prima di questo ramo appariva come bolla vuota lato dietista.
-      msgContent = `<a href="${esc(m.file_url)}" target="_blank" rel="noopener"><img src="${esc(m.file_url)}" alt="${esc(m.file_name || 'Foto')}" loading="lazy" style="max-width:200px;max-height:220px;border-radius:10px;display:block"></a>`;
-    } else if ((m.message_type === 'audio' && m.file_url && /^https:\/\//.test(m.file_url))) {
-      msgContent = `<audio controls src="${esc(m.file_url)}" style="max-width:200px;height:32px"></audio>`;
-    } else if (m.type === 'voice' && m.content && /^https:\/\//.test(m.content)) {
-      msgContent = `<audio controls src="${esc(m.content)}" style="max-width:200px;height:32px"></audio>`;
+    } else if (m.message_type === 'image' && m.file_url) {
+      // Foto inviata dal paziente (bucket chat-media): prima di questo ramo
+      // appariva come bolla vuota lato dietista. Le righe più recenti
+      // salvano il solo storage path, non un URL firmato valido 10 anni
+      // indipendentemente da revoche successive del collegamento paziente-
+      // dietista — niente src finché resolveChatMediaUrls() non recupera un
+      // URL firmato a validità breve dopo il render (stesso pattern di
+      // group-chat-media/broadcast.html). Le righe vecchie con URL completo
+      // restano compatibili, mostrate subito.
+      msgContent = /^https:\/\//.test(m.file_url)
+        ? `<a href="${esc(m.file_url)}" target="_blank" rel="noopener"><img src="${esc(m.file_url)}" alt="${esc(m.file_name || 'Foto')}" loading="lazy" style="max-width:200px;max-height:220px;border-radius:10px;display:block"></a>`
+        : `<img data-media-path="${esc(m.file_url)}" data-media-bucket="chat-media" alt="${esc(m.file_name || 'Foto')}" loading="lazy" style="max-width:200px;max-height:220px;border-radius:10px;display:block;background:#F1F5F9">`;
+    } else if (m.message_type === 'audio' && m.file_url) {
+      // Bucket voice-messages se il mittente è il dietista (sendVoiceMessage),
+      // chat-media se è il paziente (uploadToStorage in ChatPage.jsx).
+      const audioBucket = isSent ? 'voice-messages' : 'chat-media';
+      msgContent = /^https:\/\//.test(m.file_url)
+        ? `<audio controls src="${esc(m.file_url)}" style="max-width:200px;height:32px"></audio>`
+        : `<audio controls data-media-path="${esc(m.file_url)}" data-media-bucket="${audioBucket}" style="max-width:200px;height:32px"></audio>`;
+    } else if (m.type === 'voice' && m.content) {
+      msgContent = /^https:\/\//.test(m.content)
+        ? `<audio controls src="${esc(m.content)}" style="max-width:200px;height:32px"></audio>`
+        : `<audio controls data-media-path="${esc(m.content)}" data-media-bucket="voice-messages" style="max-width:200px;height:32px"></audio>`;
     } else {
       msgContent = esc(m.content || '');
     }
@@ -1264,6 +1279,28 @@ function renderMessages() {
 
   area.innerHTML = html;
   area.scrollTop = area.scrollHeight;
+  resolveChatMediaUrls(area);
+}
+
+// Recupera un URL firmato a validità breve (1h) per ogni foto/vocale
+// renderizzato col solo storage path — la policy di storage (RLS) viene
+// così rivalutata ad ogni visualizzazione invece di restare fissata per
+// sempre a chi aveva accesso al momento dell'invio. Stesso pattern usato in
+// broadcast.html per i vocali di gruppo.
+function resolveChatMediaUrls(area) {
+  area.querySelectorAll('[data-media-path]').forEach(async el => {
+    const path = el.dataset.mediaPath;
+    const bucket = el.dataset.mediaBucket;
+    el.removeAttribute('data-media-path');
+    el.removeAttribute('data-media-bucket');
+    const { data } = await sb.storage.from(bucket).createSignedUrl(path, 3600);
+    if (!data?.signedUrl) return;
+    el.src = data.signedUrl;
+    if (el.tagName === 'IMG') {
+      el.style.cursor = 'pointer';
+      el.onclick = () => window.open(data.signedUrl, '_blank');
+    }
+  });
 }
 
 function setupRealtime(patientId) {
@@ -1596,12 +1633,11 @@ async function sendVoiceMessage(blob, targetPatientId) {
     const path = `voice-messages/${targetPatientId}/${Date.now()}.webm`;
     const { error: upErr } = await sb.storage.from('voice-messages').upload(path, blob, { contentType: 'audio/webm' });
     if (upErr) throw upErr;
-    // Bucket privato (SEZIONE 33): URL firmato ~10 anni invece di getPublicUrl,
-    // stesso pattern di chat-media/group-chat-media. Il destinatario (paziente
-    // collegato) può aprirlo perché la policy di storage lo autorizza.
-    const { data: signed, error: signErr } = await sb.storage.from('voice-messages').createSignedUrl(path, 315360000);
-    if (signErr) throw signErr;
-    const voiceUrl = signed.signedUrl;
+    // Bucket privato (SEZIONE 33): salva il solo storage path, non un URL
+    // firmato ~10 anni indipendente da revoche successive del collegamento
+    // paziente-dietista — vedi resolveChatMediaUrls() in renderMessages(),
+    // che richiede un URL firmato a breve scadenza ad ogni visualizzazione.
+    // Stesso pattern già usato per i vocali di gruppo in broadcast.html.
     // Doppia convenzione: type:'voice' (questo file), message_type:'audio' +
     // file_url (ChatPage.jsx dell'app paziente) — senza la seconda il paziente
     // vedeva il vocale come URL di testo grezzo, non come player audio.
@@ -1609,10 +1645,10 @@ async function sendVoiceMessage(blob, targetPatientId) {
       patient_id: targetPatientId,
       sender_id: currentUser.id,
       sender_role: 'dietitian',
-      content: voiceUrl,
+      content: path,
       type: 'voice',
       message_type: 'audio',
-      file_url: voiceUrl,
+      file_url: path,
       status: 'sent'
     });
     if (error) throw error;

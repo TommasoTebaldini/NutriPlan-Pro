@@ -1192,8 +1192,12 @@ function openGCalEventDetail(id) {
   // Reset the delete button in case a previous modal open (e.g. a patient-booked
   // appointment) rebound it to cancelPatientAppt() with a stale patient/appt id —
   // this modal already provides its own Edit/Delete buttons in the body below.
+  // Must bind to deleteGCalEvent (not deleteCurrentEvent): deleteCurrentEvent only
+  // touches the local `events` array/agenda_events table, which never contains a
+  // pure Google Calendar event — clicking it was a silent no-op that still showed
+  // a false "Appuntamento eliminato" success toast.
   const delBtn = document.getElementById('btn-del-event');
-  delBtn.onclick = deleteCurrentEvent;
+  delBtn.onclick = () => deleteGCalEvent(id);
   delBtn.textContent = _L('🗑️ Elimina','🗑️ Delete');
   const d = ev.data ? formatStoredDate(ev.data, {weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '';
   document.getElementById('modal-event-title').textContent = ev.titolo || 'Evento Google Calendar';

@@ -971,7 +971,14 @@ async function salvaBIA() {
   } else {
     toast(isUpdate ? _L('✅ BIA aggiornata!','✅ BIA updated!') : _L('✅ BIA salvata nella cartella paziente!','✅ BIA saved to patient file!'), 'ok');
     loadStorico();
-    if (window.capturePrintAndSave && currentBiaId) {
+    // Snapshot subito dopo il salvataggio: capturePrintAndSave() arriva solo dopo
+    // un setTimeout di 800ms più sotto, e nel frattempo showLoading(false) ha già
+    // riabilitato la UI — se il dietista cambia cartella/paziente e salva di nuovo
+    // prima che questa continuazione riprenda, il globale currentBiaId punterebbe
+    // già al NUOVO record dell'altro paziente, e l'UPDATE finale sovrascriverebbe
+    // il suo print_image_url con lo screenshot di questo paziente (cross-patient).
+    const capturedBiaId = currentBiaId;
+    if (window.capturePrintAndSave && capturedBiaId) {
       // Activate results panel without calling showBIA() — after `await`, window.event is
       // null and showBIA accesses event.target which throws, aborting the capture.
       document.querySelectorAll('.bia-panel').forEach(p => p.classList.remove('active'));
@@ -1012,7 +1019,7 @@ async function salvaBIA() {
         });
         biaPd.appendChild(clone);
       }
-      capturePrintAndSave({ table: 'bia_records', recordId: currentBiaId, cartellaId: cartella_id, container: biaPd, windowWidth: 850, silent: true }).then(() => {
+      capturePrintAndSave({ table: 'bia_records', recordId: capturedBiaId, cartellaId: cartella_id, container: biaPd, windowWidth: 850, silent: true }).then(() => {
         biaPd.innerHTML = ''; biaPd.style.cssText = 'display:none';
       }).catch(err => {
         console.warn('BIA capture failed:', err);

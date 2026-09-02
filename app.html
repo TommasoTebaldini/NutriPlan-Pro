@@ -2111,17 +2111,23 @@ async function salvaPiano() {
   };
   showLoading(true);
   let result;
+  // Catturato PRIMA dell'await: se il dietista cambia piano/paziente mentre
+  // l'update è in volo, currentPianoId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedPianoId = currentPianoId;
   if (currentPianoId) { result = await sb.from('piani').update(payload).eq('id', currentPianoId).eq('user_id', studioOwnerId || currentUser.id); }
-  else { payload.visible_to_patient = false; result = await sb.from('piani').insert(payload).select().single(); if (result.data) currentPianoId = result.data.id; }
+  else { payload.visible_to_patient = false; result = await sb.from('piani').insert(payload).select().single(); if (result.data) { currentPianoId = result.data.id; savedPianoId = result.data.id; } }
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   dirty = false;
   localStorage.removeItem('draftPiano');
   toast(`💾 "${nome}" ` + _L('salvato!','saved!'), 'ok');
-  if (window.capturePrintAndSave && currentPianoId) {
+  if (window.capturePrintAndSave && savedPianoId) {
     const _capContainer = buildPianoAutoCaptureContainer();
     capturePrintAndSave({
-      table: 'piani', recordId: currentPianoId, cartellaId: finalCartellaId,
+      table: 'piani', recordId: savedPianoId, cartellaId: finalCartellaId,
       type: 'piano_alimentare', title: nome, container: _capContainer,
       windowWidth: 700, silent: true
     }).catch(() => {}).finally(() => {

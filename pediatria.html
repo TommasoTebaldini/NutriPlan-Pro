@@ -1681,6 +1681,12 @@ async function salvaPediatria() {
   showLoading(true);
   let result;
   const isUpdatePed = !!editingPedNoteId && editingPedNoteCartellaId === cartella_id;
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingPedNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedPedNoteId = editingPedNoteId;
   if (isUpdatePed) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingPedNoteId);
   } else {
@@ -1692,9 +1698,9 @@ async function salvaPediatria() {
     return;
   }
   toast(isUpdatePed ? _L('✅ Scheda Pediatrica aggiornata!','✅ Paediatric record updated!') : _L('✅ Scheda Pediatrica salvata nella cartella!','✅ Paediatric record saved to the file!'),'ok');
-  if (!isUpdatePed && result.data?.[0]?.id) { editingPedNoteId = result.data[0].id; editingPedNoteCartellaId = cartella_id; }
-  if (window.capturePrintAndSave && editingPedNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPedNoteId, cartellaId: cartella_id, panelSelector: '.ped-panel', silent: true }).catch(err => console.warn('pediatria.html capture failed:', err));
+  if (!isUpdatePed && result.data?.[0]?.id) { editingPedNoteId = result.data[0].id; editingPedNoteCartellaId = cartella_id; savedPedNoteId = result.data[0].id; }
+  if (window.capturePrintAndSave && savedPedNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedPedNoteId, cartellaId: cartella_id, panelSelector: '.ped-panel', silent: true }).catch(err => console.warn('pediatria.html capture failed:', err));
   }
 }
 

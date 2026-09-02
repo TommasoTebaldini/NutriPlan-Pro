@@ -1251,6 +1251,12 @@ async function salvaDisfagia() {
   // paziente originale nella cartella del nuovo paziente. In quel caso si
   // crea una nuova scheda.
   const wasNew = !editingDisNoteId || editingDisNoteCartellaId !== cartella_id;
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingDisNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedDisNoteId = editingDisNoteId;
   if (!wasNew) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDisNoteId);
   } else {
@@ -1263,10 +1269,10 @@ async function salvaDisfagia() {
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
-  if (wasNew && result.data?.[0]?.id) { editingDisNoteId = result.data[0].id; editingDisNoteCartellaId = cartella_id; }
+  if (wasNew && result.data?.[0]?.id) { editingDisNoteId = result.data[0].id; editingDisNoteCartellaId = cartella_id; savedDisNoteId = result.data[0].id; }
   toast(!wasNew ? _L('✅ Scheda aggiornata!','✅ Record updated!') : _L('✅ Scheda Disfagia salvata!','✅ Dysphagia record saved!'), 'ok');
-  if (window.capturePrintAndSave && editingDisNoteId && cartella_id) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingDisNoteId, cartellaId: cartella_id, panelSelector: '.dis-panel', silent: true }).catch(err => console.warn('disfagia.html capture failed:', err));
+  if (window.capturePrintAndSave && savedDisNoteId && cartella_id) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedDisNoteId, cartellaId: cartella_id, panelSelector: '.dis-panel', silent: true }).catch(err => console.warn('disfagia.html capture failed:', err));
   }
 }
 

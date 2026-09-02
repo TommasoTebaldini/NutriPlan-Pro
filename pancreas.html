@@ -971,6 +971,12 @@ async function salvaPancreas() {
   showLoading(true);
   let result;
   const isUpdatePan = !!editingPanNoteId && editingPanNoteCartellaId === cartella_id;
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingPanNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedPanNoteId = editingPanNoteId;
   if (isUpdatePan) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingPanNoteId);
   } else {
@@ -982,9 +988,9 @@ async function salvaPancreas() {
     return;
   }
   toast(isUpdatePan ? _L('✅ Scheda IPE aggiornata!','✅ EPI record updated!') : _L('✅ Dati IPE salvati nella cartella!','✅ EPI data saved to the file!'),'ok');
-  if (!isUpdatePan && result.data?.[0]?.id) { editingPanNoteId = result.data[0].id; editingPanNoteCartellaId = cartella_id; }
-  if (window.capturePrintAndSave && editingPanNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingPanNoteId, cartellaId: cartella_id, panelSelector: '.p-panel', silent: true }).catch(err => console.warn('pancreas.html capture failed:', err));
+  if (!isUpdatePan && result.data?.[0]?.id) { editingPanNoteId = result.data[0].id; editingPanNoteCartellaId = cartella_id; savedPanNoteId = result.data[0].id; }
+  if (window.capturePrintAndSave && savedPanNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedPanNoteId, cartellaId: cartella_id, panelSelector: '.p-panel', silent: true }).catch(err => console.warn('pancreas.html capture failed:', err));
   }
 }
 

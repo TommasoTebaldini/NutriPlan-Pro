@@ -1193,6 +1193,12 @@ async function salvaSport() {
   showLoading(true);
   let result;
   const isUpdateSport = !!editingSportNoteId && editingSportNoteCartellaId === cartella_id;
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingSportNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedSportNoteId = editingSportNoteId;
   if (isUpdateSport) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingSportNoteId);
   } else {
@@ -1204,9 +1210,9 @@ async function salvaSport() {
     return;
   }
   toast(isUpdateSport ? _L('✅ Scheda Sport aggiornata!','✅ Sports record updated!') : _L('✅ Scheda Sportiva salvata nella cartella!','✅ Sports record saved to folder!'),'ok');
-  if (!isUpdateSport && result.data?.[0]?.id) { editingSportNoteId = result.data[0].id; editingSportNoteCartellaId = cartella_id; }
-  if (window.capturePrintAndSave && editingSportNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingSportNoteId, cartellaId: cartella_id, panelSelector: '.sport-panel', silent: true }).catch(err => console.warn('sport.html capture failed:', err));
+  if (!isUpdateSport && result.data?.[0]?.id) { editingSportNoteId = result.data[0].id; editingSportNoteCartellaId = cartella_id; savedSportNoteId = result.data[0].id; }
+  if (window.capturePrintAndSave && savedSportNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedSportNoteId, cartellaId: cartella_id, panelSelector: '.sport-panel', silent: true }).catch(err => console.warn('sport.html capture failed:', err));
   }
 }
 

@@ -671,6 +671,11 @@ async function loadWaMessages(gid) {
   // order for display — ordering ascending+limit(200) would instead return the
   // OLDEST 200 messages once a thread exceeds 200 rows, hiding all recent activity.
   const { data } = await sb.from('chat_group_messages').select('*').eq('group_id', gid).order('created_at',{ascending:false}).limit(200);
+  // Se nel frattempo il dietista ha selezionato un altro gruppo, activeWaGroupId
+  // punta già altrove — applicare comunque questo risultato mostrerebbe i
+  // messaggi del gruppo sbagliato sotto l'header del gruppo ora attivo (stesso
+  // bug class già corretto in chat.html loadMessages()).
+  if (gid !== activeWaGroupId) return;
   waMessages = (data || []).reverse();
   renderWaMessages();
 }

@@ -1473,6 +1473,12 @@ async function salvaRenale() {
   showLoading(true);
   let result;
   const wasNew = !(!!editingRenNoteId && editingRenNoteCartellaId === cartella_id);
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingRenNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedRenNoteId = editingRenNoteId;
   if (!wasNew) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingRenNoteId);
   } else {
@@ -1485,10 +1491,10 @@ async function salvaRenale() {
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
-  if (wasNew && result.data?.[0]?.id) { editingRenNoteId = result.data[0].id; editingRenNoteCartellaId = cartella_id; }
+  if (wasNew && result.data?.[0]?.id) { editingRenNoteId = result.data[0].id; editingRenNoteCartellaId = cartella_id; savedRenNoteId = result.data[0].id; }
   toast(!wasNew ? _L('✅ Scheda IRC aggiornata!','✅ CKD record updated!') : _L('✅ Dati IRC salvati nella cartella!','✅ CKD data saved to folder!'), 'ok');
-  if (window.capturePrintAndSave && editingRenNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRenNoteId, cartellaId: cartella_id, panelSelector: '.ren-panel', silent: true }).catch(err => console.warn('renale.html capture failed:', err));
+  if (window.capturePrintAndSave && savedRenNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedRenNoteId, cartellaId: cartella_id, panelSelector: '.ren-panel', silent: true }).catch(err => console.warn('renale.html capture failed:', err));
   }
 }
 

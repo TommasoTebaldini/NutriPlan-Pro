@@ -1617,6 +1617,12 @@ async function salvaKeto() {
   // paziente originale nella cartella del nuovo paziente. In quel caso si
   // crea una nuova scheda.
   const wasNew = !editingKetoNoteId || editingKetoNoteCartellaId !== cartella_id;
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingKetoNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedKetoNoteId = editingKetoNoteId;
   if (!wasNew) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingKetoNoteId);
   } else {
@@ -1629,10 +1635,10 @@ async function salvaKeto() {
     } else { toast('❌ ' + result.error.message, 'err'); }
     return;
   }
-  if (wasNew && result.data?.[0]?.id) { editingKetoNoteId = result.data[0].id; editingKetoNoteCartellaId = cartella_id; }
+  if (wasNew && result.data?.[0]?.id) { editingKetoNoteId = result.data[0].id; editingKetoNoteCartellaId = cartella_id; savedKetoNoteId = result.data[0].id; }
   toast(!wasNew ? _L('✅ Scheda Chetogenica aggiornata!','✅ Ketogenic record updated!') : _L('✅ Dati salvati nella cartella!','✅ Data saved to folder!'), 'ok');
-  if (window.capturePrintAndSave && editingKetoNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingKetoNoteId, cartellaId: cartella_id, panelSelector: '.keto-panel', silent: true }).catch(err => console.warn('chetogenica.html capture failed:', err));
+  if (window.capturePrintAndSave && savedKetoNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedKetoNoteId, cartellaId: cartella_id, panelSelector: '.keto-panel', silent: true }).catch(err => console.warn('chetogenica.html capture failed:', err));
   }
 }
 

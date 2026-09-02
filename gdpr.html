@@ -765,6 +765,15 @@ async function eseguiOblio() {
       const paths = files.map(f => f.storage_path);
       await sb.storage.from('patient-files').remove(paths);
     }
+    // diario_alimentare_foto ha anch'essa FK ON DELETE CASCADE su cartelle_raw
+    // e una colonna storage_path (bucket patient-files, stesso di sopra) mai
+    // letta qui prima d'ora — stesso identico gap di patient_files, trovato
+    // durante il 10° giro di scansione ciclica.
+    const { data: diarioFotos } = await sb.from('diario_alimentare_foto').select('storage_path').eq('cartella_id', id);
+    if (diarioFotos && diarioFotos.length) {
+      const diarioPaths = diarioFotos.map(f => f.storage_path).filter(Boolean);
+      if (diarioPaths.length) await sb.storage.from('patient-files').remove(diarioPaths);
+    }
     // Elimina snapshot document-prints (bia_records, ncpt, note_specialistiche,
     // schede_valutazione) — la cancellazione righe più sotto non tocca lo
     // storage: senza questo, ogni richiesta di cancellazione GDPR lascia

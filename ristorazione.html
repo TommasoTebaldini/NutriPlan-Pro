@@ -1159,6 +1159,12 @@ async function salvaRistorazione() {
   showLoading(true);
   let result;
   const isUpdateRist = !!editingRistNoteId && editingRistNoteCartellaId === cartella_id;
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingRistNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedRistNoteId = editingRistNoteId;
   if (isUpdateRist) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingRistNoteId);
   } else {
@@ -1170,9 +1176,9 @@ async function salvaRistorazione() {
     return;
   }
   toast(isUpdateRist ? _L('✅ Piano Ristorazione aggiornato!','✅ Catering plan updated!') : _L('✅ Piano Ristorazione salvato!','✅ Catering plan saved!'),'ok');
-  if (!isUpdateRist && result.data?.[0]?.id) { editingRistNoteId = result.data[0].id; editingRistNoteCartellaId = cartella_id; }
-  if (window.capturePrintAndSave && editingRistNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingRistNoteId, cartellaId: cartella_id, panelSelector: '.rist-panel', silent: true }).catch(err => console.warn('ristorazione.html capture failed:', err));
+  if (!isUpdateRist && result.data?.[0]?.id) { editingRistNoteId = result.data[0].id; editingRistNoteCartellaId = cartella_id; savedRistNoteId = result.data[0].id; }
+  if (window.capturePrintAndSave && savedRistNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedRistNoteId, cartellaId: cartella_id, panelSelector: '.rist-panel', silent: true }).catch(err => console.warn('ristorazione.html capture failed:', err));
   }
 }
 

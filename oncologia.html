@@ -1196,17 +1196,23 @@ async function salvaOncologia() {
   showLoading(true);
   let result;
   const isUpdateOnc = !!editingOncNoteId && editingOncNoteCartellaId === cartella_id;
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingOncNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedOncNoteId = editingOncNoteId;
   if (isUpdateOnc) {
     result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editingOncNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false }).select('id');
-    if (result.data?.[0]?.id) { editingOncNoteId = result.data[0].id; editingOncNoteCartellaId = cartella_id; }
+    if (result.data?.[0]?.id) { editingOncNoteId = result.data[0].id; editingOncNoteCartellaId = cartella_id; savedOncNoteId = result.data[0].id; }
   }
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   toast(_L('💾 Scheda oncologica salvata!','💾 Oncology record saved!'), 'ok');
-  if (window.capturePrintAndSave && editingOncNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingOncNoteId, cartellaId: cartella_id, panelSelector: '.onc-panel', silent: true }).catch(err => console.warn('oncologia.html capture failed:', err));
+  if (window.capturePrintAndSave && savedOncNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedOncNoteId, cartellaId: cartella_id, panelSelector: '.onc-panel', silent: true }).catch(err => console.warn('oncologia.html capture failed:', err));
   }
 }
 

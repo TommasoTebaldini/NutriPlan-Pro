@@ -1733,6 +1733,14 @@ async function salvaNCPt() {
   // da quella attualmente selezionata (paziente cambiato senza reset), non va
   // aggiornato: va creato un nuovo NCPt per la cartella corrente.
   const isUpdate = !!currentNcptId && currentNcptCartellaId === currentCartellaId;
+  // Catturati PRIMA dell'await per la cattura PNG più sotto: se il dietista
+  // cambia cartella/record mentre l'update/insert è in volo, currentNcptId/
+  // currentCartellaId puntano già al record ora aperto — usarli dopo l'await
+  // attaccherebbe lo screenshot (del pannello ora visibile) al record sbagliato.
+  // Stesso bug class già corretto altrove (es. currentBiaId) ma qui presente
+  // sulla successiva chiamata a capturePrintAndSave.
+  const savedCartellaId = payload.cartella_id;
+  let savedNcptId = currentNcptId;
   if(isUpdate){
     result = await sb.from('ncpt').update(payload).eq('id',currentNcptId).eq('user_id',studioOwnerId || currentUser.id);
   } else {
@@ -1743,7 +1751,7 @@ async function salvaNCPt() {
     // globale currentCartellaId (che nel frattempo può già puntare a un
     // altro paziente se il dietista ha cambiato cartella durante il salvataggio) —
     // stesso bug class già corretto altrove (es. currentBiaId).
-    if(result.data) { currentNcptId = result.data.id; currentNcptCartellaId = payload.cartella_id; }
+    if(result.data) { currentNcptId = result.data.id; currentNcptCartellaId = payload.cartella_id; savedNcptId = result.data.id; }
   }
   showLoading(false);
   if(result.error){
@@ -1754,11 +1762,11 @@ async function salvaNCPt() {
     return;
   }
   toast(_L('💾 NCPt salvato nella cartella!','💾 NCPt saved to folder!'),'ok');
-  if (window.capturePrintAndSave && currentNcptId) {
+  if (window.capturePrintAndSave && savedNcptId) {
     capturePrintAndSave({
       table: 'ncpt',
-      recordId: currentNcptId,
-      cartellaId: currentCartellaId,
+      recordId: savedNcptId,
+      cartellaId: savedCartellaId,
       panelSelector: '.ncpt-panel',
       removeSelectors: ['.ncpt-nav'],
       titleHtml: '<div style="background:linear-gradient(135deg,#0F766E,#0C5F58);color:white;padding:14px 20px;border-radius:10px;margin-bottom:16px"><div style="font-size:17px;font-weight:700">📋 NCPt — Nutrition Care Process</div><div style="font-size:10px;opacity:.8;margin-top:3px">DietPlan Pro · ' + new Date().toLocaleDateString(_L('it','en')) + '</div></div>',

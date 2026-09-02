@@ -2337,6 +2337,12 @@ async function delCartella(id) {
       }
       const { data: files } = await sb.from('patient_files').select('storage_path').eq('cartella_id', id);
       fileToRemovePaths = (files || []).map(f => f.storage_path).filter(Boolean);
+      // diario_alimentare_foto ha anch'essa FK ON DELETE CASCADE su cartelle_raw
+      // e una colonna storage_path (bucket patient-files, stesso di sopra) mai
+      // letta qui prima d'ora — stesso identico gap di patient_files, trovato
+      // durante il 10° giro di scansione ciclica.
+      const { data: diarioFotos } = await sb.from('diario_alimentare_foto').select('storage_path').eq('cartella_id', id);
+      (diarioFotos || []).forEach(f => { if (f.storage_path) fileToRemovePaths.push(f.storage_path); });
     } catch (_) { /* best-effort, non blocca la cancellazione */ }
     const { data: pianiData, error: errPiani } = await sb.from('piani').delete().eq('cartella_id', id)
       .select('print_image_url, print_image_url_alldays, print_image_url_compact, print_image_url_simple');

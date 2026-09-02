@@ -1367,18 +1367,24 @@ async function salvaObesita() {
   // da quella selezionata ora (paziente cambiato senza reset), non va
   // aggiornata: va creata una nuova scheda per la cartella corrente.
   const isUpdateOb = !!editingObNoteId && editingObNoteCartellaId === cartella_id;
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingObNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedObNoteId = editingObNoteId;
   if (isUpdateOb) {
     result = await sb.from('note_specialistiche').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editingObNoteId);
   } else {
     result = await sb.from('note_specialistiche').insert({ ...payload, created_at: new Date().toISOString(), visible_to_patient: false }).select('id');
-    if (result.data?.[0]?.id) { editingObNoteId = result.data[0].id; editingObNoteCartellaId = cartella_id; }
+    if (result.data?.[0]?.id) { editingObNoteId = result.data[0].id; editingObNoteCartellaId = cartella_id; savedObNoteId = result.data[0].id; }
   }
   showLoading(false);
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   toast(_L('💾 Scheda obesità salvata!','💾 Obesity record saved!'), 'ok');
   autoSavePage_ob();
-  if (window.capturePrintAndSave && editingObNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingObNoteId, cartellaId: cartella_id, panelSelector: '.ob-panel', silent: true }).catch(err => console.warn('obesita.html capture failed:', err));
+  if (window.capturePrintAndSave && savedObNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedObNoteId, cartellaId: cartella_id, panelSelector: '.ob-panel', silent: true }).catch(err => console.warn('obesita.html capture failed:', err));
   }
 }
 

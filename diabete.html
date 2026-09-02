@@ -1145,6 +1145,12 @@ async function salvaDiabete() {
   // clinica del paziente originale nella cartella del nuovo paziente
   // selezionato. In quel caso si crea una nuova scheda.
   const isUpdateDg = !!editingDgNoteId && editingDgNoteCartellaId === cartella_id;
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingDgNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedDgNoteId = editingDgNoteId;
   if (isUpdateDg) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDgNoteId);
   } else {
@@ -1158,9 +1164,9 @@ async function salvaDiabete() {
     return;
   }
   toast(isUpdateDg ? _L('✅ Scheda Diabete aggiornata!','✅ Diabetes record updated!') : _L('✅ Dati diabete salvati nella cartella!','✅ Diabetes data saved to file!'),'ok');
-  if (!isUpdateDg && result.data?.[0]?.id) { editingDgNoteId = result.data[0].id; editingDgNoteCartellaId = cartella_id; }
-  if (window.capturePrintAndSave && editingDgNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingDgNoteId, cartellaId: cartella_id, panelSelector: '.dg-panel', silent: true }).catch(err => console.warn('diabete.html capture failed:', err));
+  if (!isUpdateDg && result.data?.[0]?.id) { editingDgNoteId = result.data[0].id; editingDgNoteCartellaId = cartella_id; savedDgNoteId = result.data[0].id; }
+  if (window.capturePrintAndSave && savedDgNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedDgNoteId, cartellaId: cartella_id, panelSelector: '.dg-panel', silent: true }).catch(err => console.warn('diabete.html capture failed:', err));
   }
 }
 

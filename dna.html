@@ -1492,6 +1492,12 @@ async function salvaDca() {
   // paziente originale nella cartella del nuovo paziente. In quel caso si
   // crea una nuova scheda.
   const isUpdateDca = !!editingDcaNoteId && editingDcaNoteCartellaId === cartella_id;
+  // Catturato PRIMA dell'await: se il dietista cambia paziente/scheda mentre
+  // l'update è in volo, editingDcaNoteId può già puntare altrove al resolve —
+  // usarlo direttamente per la cattura PNG più sotto attaccherebbe lo
+  // screenshot al record sbagliato (stesso bug class già corretto altrove,
+  // es. currentBiaId/currentNcptId).
+  let savedDcaNoteId = editingDcaNoteId;
   if (isUpdateDca) {
     result = await sb.from('note_specialistiche').update({...payload, updated_at: new Date().toISOString()}).eq('id', editingDcaNoteId);
   } else {
@@ -1503,9 +1509,9 @@ async function salvaDca() {
     return;
   }
   toast(isUpdateDca ? _L('✅ Scheda DCA aggiornata!','✅ ED record updated!') : _L('✅ Scheda DCA salvata nella cartella!','✅ ED record saved to folder!'), 'ok');
-  if (!isUpdateDca && result.data?.[0]?.id) { editingDcaNoteId = result.data[0].id; editingDcaNoteCartellaId = cartella_id; }
-  if (window.capturePrintAndSave && editingDcaNoteId) {
-    capturePrintAndSave({ table: 'note_specialistiche', recordId: editingDcaNoteId, cartellaId: cartella_id, panelSelector: '.dna-panel', silent: true }).catch(err => console.warn('dna.html capture failed:', err));
+  if (!isUpdateDca && result.data?.[0]?.id) { editingDcaNoteId = result.data[0].id; editingDcaNoteCartellaId = cartella_id; savedDcaNoteId = result.data[0].id; }
+  if (window.capturePrintAndSave && savedDcaNoteId) {
+    capturePrintAndSave({ table: 'note_specialistiche', recordId: savedDcaNoteId, cartellaId: cartella_id, panelSelector: '.dna-panel', silent: true }).catch(err => console.warn('dna.html capture failed:', err));
   }
 }
 

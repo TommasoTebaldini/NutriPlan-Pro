@@ -215,6 +215,11 @@ async function loadThread(cartellaId) {
   const { data } = await sb.from('whatsapp_messages').select('*')
     .eq('dietitian_id', studioOwnerId || currentUser.id).eq('cartella_id', cartellaId)
     .order('created_at', { ascending: false }).limit(200);
+  // Se nel frattempo il dietista ha cliccato su un altro contatto, activeCartellaId
+  // punta già altrove — applicare comunque questo risultato mostrerebbe i messaggi
+  // del contatto sbagliato sotto l'header del contatto ora attivo (stesso bug class
+  // già corretto in chat.html loadMessages()).
+  if (cartellaId !== activeCartellaId) return;
   const messages = (data || []).reverse();
 
   const area = document.getElementById('wa-messages-area');

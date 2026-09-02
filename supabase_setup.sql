@@ -8313,3 +8313,60 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_102_rollback_sezione_100', 'ROLLBACK di SEZIONE 100: chat_groups/chat_group_members/chat_group_messages non erano un sistema orfano ma la chat di gruppo reale usata da broadcast.html/whatsapp.html (NutriPlan-Pro) — la diagnosi originale aveva controllato solo il repo Diet-Plan-Pro-app-claude. Ricreate tabelle/indici/RLS/policy (versione finale SEZIONE 65)/funzione is_chat_group_member (grant finale SEZIONE 94)/bucket storage/realtime. Ripristinata anche profiles_select_combined, cascade-eliminata insieme a chat_group_members: era l''UNICA policy SELECT su profiles, la sua assenza bloccava la lettura di QUALSIASI profilo per chiunque. Trovato durante il 6° giro di scansione ciclica del 2026-09-02.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 103 — INVIO SERVER-SIDE dei messaggi programmati (chat 1:1 e di
+-- gruppo), finora mai davvero automatico
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- chat.html/ChatPage.jsx/broadcast.html promuovono un messaggio da
+-- 'scheduled' a 'sent' con un poller lato CLIENT (checkScheduledMessages/
+-- waCheckScheduled), eseguito solo mentre il browser del MITTENTE ha quella
+-- pagina aperta. Se il dietista chiude la scheda prima dell'orario
+-- programmato, il messaggio resta 'scheduled' per sempre — mai inviato,
+-- nessun errore visibile, il paziente semplicemente non riceve nulla.
+--
+-- Non risolvibile con un cron Vercel: il piano Hobby di questo progetto ha
+-- solo 2 slot cron rimasti (vedi vercel.json) ed esegue al massimo una volta
+-- al giorno — inutile per una programmazione "tra 1 ora" o a un orario
+-- preciso. pg_cron gira invece DENTRO Postgres stesso (indipendente dai
+-- limiti di piano Vercel), qui schedulato ogni minuto: sufficiente per la
+-- precisione richiesta da un messaggio programmato.
+--
+-- UPDATE diretto su chat_messages_raw (non sulla vista chat_messages) per
+-- evitare qualunque interazione con l'INSTEAD OF trigger di decifratura —
+-- tocca solo la colonna status, mai content_enc. Il trigger esistente
+-- trg_chat_messages_broadcast (AFTER INSERT OR UPDATE) notifica comunque il
+-- destinatario in realtime; chat_group_messages è già nella publication
+-- supabase_realtime, un UPDATE viene replicato automaticamente.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+CREATE OR REPLACE FUNCTION public.dispatch_scheduled_messages()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  UPDATE chat_messages_raw SET status = 'sent'
+    WHERE status = 'scheduled' AND scheduled_at IS NOT NULL AND scheduled_at <= now();
+  UPDATE chat_group_messages SET status = 'sent'
+    WHERE status = 'scheduled' AND scheduled_at IS NOT NULL AND scheduled_at <= now();
+END;
+$$;
+-- Chiamata solo da pg_cron (ruolo interno), mai da client via API.
+REVOKE EXECUTE ON FUNCTION public.dispatch_scheduled_messages() FROM PUBLIC, anon, authenticated;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'dispatch-scheduled-messages') THEN
+    PERFORM cron.unschedule('dispatch-scheduled-messages');
+  END IF;
+END $$;
+SELECT cron.schedule('dispatch-scheduled-messages', '* * * * *', 'SELECT public.dispatch_scheduled_messages();');
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_103_dispatch_scheduled_messages', 'Invio server-side dei messaggi programmati (chat 1:1 chat_messages_raw + gruppo chat_group_messages), prima dipendente da un poller client-side attivo solo col browser del mittente aperto — un messaggio programmato non veniva mai inviato se il dietista chiudeva la pagina prima dell''orario. pg_cron (attivato qui) esegue dispatch_scheduled_messages() ogni minuto, promuove scheduled->sent via UPDATE diretto sulle tabelle raw (mai sulla vista cifrata chat_messages, nessuna interazione con la decifratura). I trigger/publication realtime esistenti notificano comunque il destinatario. Non risolvibile con cron Vercel: piano Hobby, 2 slot rimasti, frequenza massima giornaliera.')
+ON CONFLICT (id) DO NOTHING;

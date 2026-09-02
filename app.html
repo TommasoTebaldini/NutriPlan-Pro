@@ -1994,6 +1994,57 @@ function _eseguiNuovoPiano() {
   toast(_L('🔄 Nuovo piano','🔄 New plan'), 'info');
 }
 
+// Contenitore leggero fuori schermo per la cattura PNG silenziosa ad ogni
+// salvataggio (salvaPiano sotto) — NON riusa document.body come formato
+// "normale" di autoCapturePianoForVisibility: quella è un'azione esplicita
+// dell'utente con la sua barra di progresso dedicata, accettabile che sia
+// pesante; questa gira invece silenziosa dopo OGNI click su "Salva". Con
+// html2canvas che ora carica correttamente (prima 404-ava e questo ramo non
+// veniva mai eseguito), catturare l'intera pagina bloccava il thread
+// principale per svariati secondi ad ogni salvataggio, con topbar/header
+// che sembravano "ricaricarsi" (in realtà il browser restava bloccato e poi
+// ridipingeva tutto in un colpo solo). Stesso identico HTML "semplice" già
+// usato — e già testato dal vivo — dalla condivisione esplicita col
+// paziente, quindi copre correttamente anche i piani multi-giorno. Non
+// riusa #simple-print-area (stesso id di autoCapturePianoForVisibility) per
+// evitare che le due catture si sovrascrivano a vicenda se capitano vicine.
+function buildPianoAutoCaptureContainer() {
+  const nomeP = document.getElementById('cartella-selected')?.textContent?.replace(/^✅\s*/, '') || '';
+  const dataPiano = document.getElementById('inp-data')?.value || '';
+  const nomePiano = document.getElementById('inp-nome')?.value || '';
+  const isMultiDay = giorni.length > 1;
+  let html = '<div style="font-family:\'DM Sans\',sans-serif;max-width:680px;margin:0 auto;color:#1E293B;padding:24px 20px">';
+  html += '<div style="text-align:center;padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid #0F766E">';
+  html += '<div style="font-size:22px;font-weight:700;color:#0F766E">' + (esc(nomeP) || 'Piano Alimentare') + '</div>';
+  if (nomePiano) html += '<div style="font-size:13px;color:#475569;margin-top:4px">' + esc(nomePiano) + '</div>';
+  if (dataPiano) {
+    const parts = dataPiano.split('-').map(Number);
+    if (parts.length === 3 && parts.every(n => !isNaN(n))) {
+      const [y, m, d] = parts;
+      html += '<div style="font-size:12px;color:#94A3B8;margin-top:3px">' + new Date(y, m - 1, d).toLocaleDateString('it', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + '</div>';
+    }
+  }
+  html += '</div>';
+  let gTotKcal = 0, gTotProt = 0, gTotCho = 0, gTotFat = 0, gTotFib = 0;
+  giorni.forEach(giorno => {
+    const res = _buildSimpleDayHTML(giorno, isMultiDay);
+    html += res.html;
+    gTotKcal += res.totKcal; gTotProt += res.totProt; gTotCho += res.totCho; gTotFat += res.totFat; gTotFib += res.totFib;
+  });
+  if (isMultiDay) {
+    html += '<div style="margin-top:16px;padding:12px 16px;background:#0F766E;border-radius:8px;font-size:12px;color:white;font-weight:600;text-align:center">';
+    html += '📊 Totale: 🔥 ' + Math.round(gTotKcal) + ' kcal · P:' + r1(gTotProt) + 'g · CHO:' + r1(gTotCho) + 'g · Gr:' + r1(gTotFat) + 'g · Fi:' + r1(gTotFib) + 'g';
+    html += '</div>';
+  }
+  if (typeof profiloFirmaHtml === 'function') html += profiloFirmaHtml();
+  html += '</div>';
+  let container = document.getElementById('autocapture-print-area');
+  if (!container) { container = document.createElement('div'); container.id = 'autocapture-print-area'; document.body.appendChild(container); }
+  container.innerHTML = html;
+  container.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:700px;z-index:-1;background:white';
+  return container;
+}
+
 async function salvaPiano() {
   const nomeEl = document.getElementById('inp-nome');
   const nome = (nomeEl ? nomeEl.value.trim() : '') || 'Piano ' + new Date().toLocaleDateString(_L('it','en'));
@@ -2068,10 +2119,15 @@ async function salvaPiano() {
   localStorage.removeItem('draftPiano');
   toast(`💾 "${nome}" ` + _L('salvato!','saved!'), 'ok');
   if (window.capturePrintAndSave && currentPianoId) {
+    const _capContainer = buildPianoAutoCaptureContainer();
     capturePrintAndSave({
       table: 'piani', recordId: currentPianoId, cartellaId: finalCartellaId,
-      type: 'piano_alimentare', title: nome, silent: true
-    }).catch(() => {});
+      type: 'piano_alimentare', title: nome, container: _capContainer,
+      windowWidth: 700, silent: true
+    }).catch(() => {}).finally(() => {
+      _capContainer.innerHTML = '';
+      _capContainer.style.cssText = '';
+    });
   }
 }
 

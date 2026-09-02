@@ -51,7 +51,9 @@ const htmlFiles = findHtmlFiles(__dirname).reduce((inputs, filePath) => {
 // un asset che sa hashare — qui copiato verbatim per restare un percorso fisso
 // e stabile, coerente con come questo file gestiva già icons/manifest),
 // robots.txt, template_pazienti.csv (bottone "Scarica template CSV" in
-// pazienti.html, download diretto).
+// pazienti.html, download diretto), vendor/ (html2canvas.min.js caricato da
+// print-capture.js iniettando un <script> il cui src è una stringa JS —
+// 404 in produzione dopo ogni salvataggio piano, capture PNG sempre fallita).
 //
 // manifest.webmanifest stesso NON è in questa lista: viene già rilevato da Vite
 // tramite <link rel="manifest">, hashato e spostato sotto assets/webmanifest/ —
@@ -63,6 +65,7 @@ function copyClassicScriptsPlugin() {
     closeBundle() {
       fs.cpSync(resolve(__dirname, 'js'), resolve(__dirname, 'dist/js'), { recursive: true });
       fs.cpSync(resolve(__dirname, 'icons'), resolve(__dirname, 'dist/icons'), { recursive: true });
+      fs.cpSync(resolve(__dirname, 'vendor'), resolve(__dirname, 'dist/vendor'), { recursive: true });
       for (const file of ['sw.js', 'favicon.svg', 'robots.txt', 'template_pazienti.csv']) {
         fs.copyFileSync(resolve(__dirname, file), resolve(__dirname, 'dist', file));
       }

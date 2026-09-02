@@ -569,7 +569,7 @@
       return value;
     } catch (e) {
       console.error('print-capture failed:', e);
-      if (window.toast) toast('❌ Salvataggio immagine fallito: ' + (e.message || e), 'err');
+      if (window.toast && opts.silent !== true) toast('❌ Salvataggio immagine fallito: ' + (e.message || e), 'err');
       return null;
     } finally {
       _captureCount--;

@@ -452,10 +452,16 @@ function collectAvailabilityPayload() {
 async function geocodeCity(city) {
   if (!city) return null;
   try {
+    // Bound the request: this is called synchronously from saveProfile() before
+    // the Save buttons get disabled, so a slow/unreachable geocoding host would
+    // otherwise leave the form appearing frozen for an indefinite time.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1&accept-language=it`,
-      { headers: { 'Accept-Language': 'it' } }
+      { headers: { 'Accept-Language': 'it' }, signal: controller.signal }
     );
+    clearTimeout(timeoutId);
     const data = await res.json();
     if (data.length > 0) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
   } catch {}
@@ -721,7 +727,7 @@ const PATIENT_APP_URL_PP = 'https://diet-plan-pro-app-claude.vercel.app';
 
 function setupInviteLink() {
   if (!currentUser) return;
-  const link = `${PATIENT_APP_URL_PP}/register?ref=${currentUser.id}`;
+  const link = `${PATIENT_APP_URL_PP}/register?ref=${studioOwnerId || currentUser.id}`;
   const linkInput = document.getElementById('invite-link-input');
   const qrImg = document.getElementById('invite-qr');
   const wrap = document.getElementById('invite-link-wrap');
@@ -743,14 +749,25 @@ function copyInviteLink() {
   });
 }
 
-function downloadInviteQR() {
+async function downloadInviteQR() {
   const img = document.getElementById('invite-qr');
   if (!img || !img.src) return;
-  const a = document.createElement('a');
-  a.href = img.src;
-  a.download = 'invito-pazienti-qr.png';
-  a.target = '_blank';
-  a.click();
+  // The `download` attribute is ignored by browsers for cross-origin URLs (this QR
+  // image is served from api.qrserver.com) — they just navigate to it instead of
+  // saving a file. Fetch it as a blob and download that same-origin object URL.
+  try {
+    const res = await fetch(img.src);
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = 'invito-pazienti-qr.png';
+    a.click();
+    URL.revokeObjectURL(blobUrl);
+  } catch (e) {
+    // Fallback: open in a new tab so the user can still save it manually
+    window.open(img.src, '_blank');
+  }
 }
 </script>
 </body>

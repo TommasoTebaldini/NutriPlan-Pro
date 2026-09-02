@@ -208,10 +208,14 @@ async function loadThread(cartellaId) {
   document.getElementById('wa-thread-name').textContent = `${c.nome || ''} ${c.cognome || ''}`.trim();
   document.getElementById('wa-thread-phone').textContent = c.telefono || '';
 
+  // Fetch the most recent 200 messages (descending) then reverse to chronological
+  // order for display — ordering ascending+limit(200) would instead return the
+  // OLDEST 200 messages once a thread exceeds 200 rows, hiding all recent activity
+  // (and corrupting the 24h-window check below, which needs the true last inbound message).
   const { data } = await sb.from('whatsapp_messages').select('*')
     .eq('dietitian_id', studioOwnerId || currentUser.id).eq('cartella_id', cartellaId)
-    .order('created_at', { ascending: true }).limit(200);
-  const messages = data || [];
+    .order('created_at', { ascending: false }).limit(200);
+  const messages = (data || []).reverse();
 
   const area = document.getElementById('wa-messages-area');
   area.innerHTML = messages.map(m => `

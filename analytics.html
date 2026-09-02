@@ -247,7 +247,10 @@ function isWithin30Days(dateStr) {
 }
 
 function renderAll() {
-  if (!allPatients.length && !allAppts.length) return;
+  // Note: intentionally NOT early-returning when both arrays are empty — a
+  // brand-new account with zero patients/appointments must still render the
+  // zero-state (KPIs at 0, "Nessun dato" in the cohort table), otherwise the
+  // table is left showing its "Caricamento..." placeholder forever.
   const labels = getMonthLabels(activeMonths);
   const now = new Date();
 
@@ -495,7 +498,13 @@ async function loadAnalytics() {
     allAppts = aRes.data || [];
     allDocs = dRes.data || [];
     allFoodLogs = fRes.data || [];
+    if (pRes.error) console.warn('profiles (pazienti) non disponibile:', pRes.error.message);
+    if (aRes.error) console.warn('agenda_events (visite) non disponibile:', aRes.error.message);
+    if (dRes.error) console.warn('patient_documents non disponibile:', dRes.error.message);
     if (fRes.error) console.warn('food_logs (aderenza) non disponibile:', fRes.error.message);
+    if (pRes.error || aRes.error || dRes.error) {
+      toast(_L('Alcuni dati potrebbero essere incompleti (errore di caricamento)','Some data may be incomplete (load error)'), 'err');
+    }
     renderAll();
   } catch(e) {
     toast(_L('Errore caricamento dati: ','Error loading data: ') + e.message, 'err');

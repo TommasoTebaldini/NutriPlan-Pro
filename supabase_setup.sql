@@ -8370,3 +8370,40 @@ SELECT cron.schedule('dispatch-scheduled-messages', '* * * * *', 'SELECT public.
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_103_dispatch_scheduled_messages', 'Invio server-side dei messaggi programmati (chat 1:1 chat_messages_raw + gruppo chat_group_messages), prima dipendente da un poller client-side attivo solo col browser del mittente aperto — un messaggio programmato non veniva mai inviato se il dietista chiudeva la pagina prima dell''orario. pg_cron (attivato qui) esegue dispatch_scheduled_messages() ogni minuto, promuove scheduled->sent via UPDATE diretto sulle tabelle raw (mai sulla vista cifrata chat_messages, nessuna interazione con la decifratura). I trigger/publication realtime esistenti notificano comunque il destinatario. Non risolvibile con cron Vercel: piano Hobby, 2 slot rimasti, frequenza massima giornaliera.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 104 — mfa_required su chat_messages_raw: chiude un gap lasciato
+-- dalla correzione del 2026-08-20 in 20260721150000__enforce_2fa_rls.sql
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Quella correzione ha aggiornato l'array delle tabelle protette da
+-- mfa_required sostituendo cartelle/note_specialistiche/ncpt con
+-- cartelle_raw/note_specialistiche_raw/ncpt_raw (diventate viste cifrate,
+-- una policy RLS richiede una tabella base) ma NON chat_messages, rinominata
+-- anch'essa in chat_messages_raw lo stesso giorno da SEZIONE 80. Con
+-- 'chat_messages' ancora nell'array di quel file, il controllo
+-- 'table_type = BASE TABLE' la esclude silenziosamente — su un ambiente
+-- ricreato da zero (disaster recovery, nuovo staging) chat_messages_raw non
+-- riceverebbe mai la policy mfa_required, nonostante il commento di SEZIONE
+-- 90 sopra la dia per scontata ("parallelo a chat_messages_raw che è
+-- cifrato+MFA"). Sul DB già in produzione la vecchia policy (creata quando
+-- la tabella si chiamava ancora chat_messages) è sopravvissuta al RENAME e
+-- resta valida — questa sezione la ricrea esplicitamente per nome corretto,
+-- idempotente, per allinearla al resto e coprire anche gli ambienti nuovi.
+-- File migrazione sorgente corretto in parallelo (non ri-eseguito
+-- automaticamente da qui).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables
+             WHERE table_schema = 'public' AND table_name = 'chat_messages_raw' AND table_type = 'BASE TABLE') THEN
+    EXECUTE 'DROP POLICY IF EXISTS "mfa_required" ON public.chat_messages_raw';
+    EXECUTE 'CREATE POLICY "mfa_required" ON public.chat_messages_raw AS RESTRICTIVE FOR ALL '
+            'USING (public.mfa_ok()) WITH CHECK (public.mfa_ok())';
+  END IF;
+END $$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_104_mfa_chat_messages_raw_gap', 'La correzione 2026-08-20 di 20260721150000__enforce_2fa_rls.sql (rinomina cartelle/note_specialistiche/ncpt in *_raw nell''array mfa_required) non includeva chat_messages, rinominata anch''essa in chat_messages_raw lo stesso giorno da SEZIONE 80 — su un ambiente ricreato da zero la policy non verrebbe mai creata su chat_messages_raw. Sul DB esistente la policy ereditata dal RENAME è rimasta valida (non rimossa, solo non più ricreabile da quel file); qui ricreata esplicitamente per nome corretto, file migrazione sorgente corretto in parallelo. Trovato durante il 7° giro di scansione ciclica del 2026-09-02.')
+ON CONFLICT (id) DO NOTHING;

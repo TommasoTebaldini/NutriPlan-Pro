@@ -27,6 +27,23 @@
 --    anche 'AND table_type = ''BASE TABLE''' al controllo di esistenza per
 --    evitare lo stesso problema se in futuro altre tabelle di questa lista
 --    vengono rinominate per lo stesso pattern.
+--
+-- ⚠️ AGGIORNATO 2026-09-02: la correzione del 2026-08-20 sopra aveva
+--    sistemato cartelle/note_specialistiche/ncpt ma NON chat_messages, che
+--    quello stesso giorno (SEZIONE 80 di supabase_setup.sql) è diventata
+--    anch'essa una vista cifrata con tabella base chat_messages_raw. Con
+--    'chat_messages' ancora nell'array, il controllo 'table_type = BASE
+--    TABLE' esclude silenziosamente la tabella reale: su un ambiente
+--    ricreato da zero (disaster recovery, nuovo staging) chat_messages_raw
+--    non riceverebbe mai la policy mfa_required, nonostante il commento di
+--    SEZIONE 90 in supabase_setup.sql la dia per scontata ("parallelo a
+--    chat_messages_raw che è cifrato+MFA"). Sul DB già in produzione questo
+--    resta mascherato: la policy creata quando la tabella si chiamava ancora
+--    chat_messages è sopravvissuta al RENAME (Postgres la preserva), quindi
+--    non è mai stata rimossa — solo non più ricreabile da questo file finché
+--    non veniva corretto. Corretto qui + applicato esplicitamente in
+--    SEZIONE 104 di supabase_setup.sql per chiudere il gap anche lì dove
+--    questo file da solo non arriverebbe (non è ri-eseguito automaticamente).
 -- ============================================================================
 
 -- Helper: TRUE se l'utente può accedere ai dati clinici in questa sessione.
@@ -59,7 +76,7 @@ DECLARE
   tables text[] := ARRAY[
     'cartelle_raw', 'esami_biochimici', 'note_specialistiche_raw', 'bia_records',
     'schede_valutazione', 'ncpt_raw', 'patient_documents', 'patient_consents',
-    'patient_signatures', 'patient_files', 'chat_messages', 'piani',
+    'patient_signatures', 'patient_files', 'chat_messages_raw', 'piani',
     'daily_wellness', 'weight_logs', 'menstrual_cycle', 'fatture',
     'liste_spesa', 'patient_specialty_access'
   ];
@@ -85,7 +102,7 @@ END $$;
 --   DECLARE t text; tables text[] := ARRAY['cartelle_raw','esami_biochimici',
 --     'note_specialistiche_raw','bia_records','schede_valutazione','ncpt_raw',
 --     'patient_documents','patient_consents','patient_signatures',
---     'patient_files','chat_messages','piani','daily_wellness','weight_logs',
+--     'patient_files','chat_messages_raw','piani','daily_wellness','weight_logs',
 --     'menstrual_cycle','fatture','liste_spesa','patient_specialty_access'];
 --   BEGIN
 --     FOREACH t IN ARRAY tables LOOP

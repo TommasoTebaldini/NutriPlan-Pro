@@ -2364,10 +2364,17 @@ async function delCartella(id) {
     // schede_valutazione.id — necessario per ripulire patient-photos/<cartellaId>/<schedaId>/...
     // (foto cliniche caricate da valutazione.html), stesso identico gap delle
     // altre righe sopra: la FK ON DELETE CASCADE cancella la riga ma non lo storage.
-    let schedaIdsForPhotos = [];
+    // La pulizia va eseguita QUI, PRIMA della delete su cartelle sotto: la
+    // policy RLS di patient-photos richiede che la riga cartelle_raw esista
+    // ancora (EXISTS su cartelle_raw.id) — chiamata dopo la cancellazione
+    // della cartella fallirebbe sempre silenziosamente (stesso identico bug
+    // già trovato per group-chat-media in questo stesso giro, qui sulla
+    // stessa funzione).
     try {
       const { data: schedeRows } = await sb.from('schede_valutazione').select('id').eq('cartella_id', id);
-      schedaIdsForPhotos = (schedeRows || []).map(r => r.id).filter(Boolean);
+      for (const row of (schedeRows || [])) {
+        if (row.id) await cleanupPatientPhotos(id, row.id);
+      }
     } catch (_) { /* best-effort */ }
     const { data: pianiData, error: errPiani } = await sb.from('piani').delete().eq('cartella_id', id)
       .select('print_image_url, print_image_url_alldays, print_image_url_compact, print_image_url_simple');
@@ -2382,7 +2389,6 @@ async function delCartella(id) {
     cleanupPrintSnapshots(pianiData, ['print_image_url', 'print_image_url_alldays', 'print_image_url_compact', 'print_image_url_simple']);
     if (printPaths.length) sb.storage.from('document-prints').remove(printPaths).catch(() => {});
     if (fileToRemovePaths.length) sb.storage.from('patient-files').remove(fileToRemovePaths).catch(() => {});
-    schedaIdsForPhotos.forEach(schedaId => cleanupPatientPhotos(id, schedaId));
     cartellaAperta = null;
     document.getElementById('page-title').textContent = '📁 ' + _L('Cartelle Pazienti','Patient Folders');
     loadCartelle(true);

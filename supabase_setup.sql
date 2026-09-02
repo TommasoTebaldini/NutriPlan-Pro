@@ -8530,3 +8530,36 @@ END $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_107_recipe_photos_storage_rls_gap', 'Il bucket storage recipe-photos non aveva NESSUNA policy RLS (verificato contro pg_policies) nonostante storage.objects abbia RLS attiva — upload foto ricetta lato client sempre fallito con permission denied (mascherato da un messaggio "ricetta salvata senza foto" già presente in RecipesPage.jsx), e il cleanup file orfano al delete (aggiunto in questo stesso giro) sarebbe stato un no-op silenzioso. Aggiunta policy ALL scoped a auth.uid()=primo segmento del path, stesso pattern già usato per progress-photos. Trovato durante la verifica manuale del 9° giro di scansione ciclica del 2026-09-02.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 108 — bucket storage group-chat-media senza policy DELETE
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato durante la verifica manuale del fix "cleanup media orfani al delete
+-- gruppo" (11° giro, broadcast.html deleteActiveGroup()): il bucket
+-- group-chat-media ha SOLO due policy — group_chat_media_insert e
+-- group_chat_media_select, entrambe con is_chat_group_member(group_id,
+-- auth.uid()) — NESSUNA policy DELETE (verificato contro pg_policies,
+-- interrogando l'intero set per il bucket, non solo le prime righe trovate).
+-- Il fix del giro 11 chiama sb.storage.from('group-chat-media').remove(...)
+-- PRIMA di cancellare la riga chat_groups (per rimanere ancora membro del
+-- gruppo secondo is_chat_group_member, dato che chat_group_members cascata
+-- con chat_groups) — ma senza ALCUNA policy DELETE per questo bucket, quella
+-- remove() sarebbe comunque sempre stata bloccata da RLS, indipendentemente
+-- dall'ordine delle operazioni: il cleanup era un no-op silenzioso (try/catch
+-- best-effort, nessun errore visibile) sia prima che dopo il fix del giro 11.
+-- Aggiunta la policy DELETE mancante, stessa condizione già usata per
+-- INSERT/SELECT sullo stesso bucket.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='storage' AND tablename='objects' AND policyname='group_chat_media_delete') THEN
+    CREATE POLICY "group_chat_media_delete" ON storage.objects FOR DELETE
+      USING (bucket_id = 'group-chat-media' AND auth.uid() IS NOT NULL AND is_chat_group_member(((storage.foldername(name))[1])::uuid, auth.uid()));
+  END IF;
+END $$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_108_group_chat_media_delete_policy_gap', 'Il bucket group-chat-media aveva solo policy INSERT/SELECT (is_chat_group_member), NESSUNA policy DELETE — verificato interrogando l''intero set pg_policies per il bucket, non solo le prime righe trovate leggendo il codice. Il cleanup media-orfani-al-delete-gruppo aggiunto nell''11° giro (broadcast.html deleteActiveGroup()) sarebbe stato un no-op silenzioso senza questa policy, indipendentemente dall''ordine delle operazioni. Aggiunta policy DELETE con la stessa condizione già usata per INSERT/SELECT. Trovato durante la verifica manuale dell''11° giro di scansione ciclica del 2026-09-02.')
+ON CONFLICT (id) DO NOTHING;

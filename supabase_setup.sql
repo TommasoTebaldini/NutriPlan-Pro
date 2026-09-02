@@ -8136,3 +8136,180 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_101_docs_inbox_broadcast', 'Broadcast from Database per due canali rimasti su postgres_changes contro viste cifrate (mai un evento): docs:<cartella_id> (trigger su ncpt_raw/note_specialistiche_raw, refresh documenti paziente in patient-portal.html) e inbox:<dietitian_id> (trigger su chat_messages_raw, badge non letti in js/utils.js). Policy RLS su realtime.messages via patient_dietitian.cartella_id e get_studio_owner(). Codice client aggiornato nello stesso commit (patient-portal.html, js/utils.js/js/utils.min.js) da postgres_changes a canale broadcast privato. NON eseguita da questa sessione (accesso MCP Supabase read-only) — va lanciata manualmente dal SQL Editor prima che il codice client abbia effetto; fino ad allora il comportamento resta quello di prima (nessun refresh/badge in tempo reale, invariato).')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 102 — ROLLBACK URGENTE DI SEZIONE 100: chat_groups/chat_group_
+-- members/chat_group_messages NON erano un sistema orfano, sono la chat di
+-- gruppo stile WhatsApp usata davvero da broadcast.html/whatsapp.html
+-- (dietista → gruppi di pazienti) — SEZIONE 100 le ha eliminate per errore,
+-- verificato durante il 6° giro di scansione ciclica del 2026-09-02.
+--
+-- Cosa è successo: nella sessione dell'8/31 avevo trovato che l'app pazienti
+-- (Diet-Plan-Pro-app-claude, ChatPage.jsx) apriva a volte come schermata
+-- predefinita un thread "di gruppo" (chat_group_messages) invece della vera
+-- chat 1:1 col dietista (chat_messages) — messaggi scritti lì dal paziente
+-- non arrivavano mai al dietista. Diagnosi corretta per quel sintomo, ma la
+-- conclusione "sistema orfano, nessun altro consumer" era sbagliata: avevo
+-- controllato solo il repo Diet-Plan-Pro-app-claude, MAI NutriPlan-Pro, dove
+-- broadcast.html/whatsapp.html usano queste stesse tabelle per davvero (il
+-- dietista crea gruppi di pazienti e ci scrive, i pazienti li leggono/
+-- rispondono dall'app — feature reale, non residua). Il "gruppo" di test che
+-- avevo trovato (1 gruppo "Tommaso Tebaldini", 2 membri, 2 messaggi) non era
+-- test del sistema patient-side: era un messaggio VERO mandato dal dietista
+-- via broadcast.html/whatsapp.html.
+--
+-- Danno causato da SEZIONE 100, oltre alla perdita delle 3 tabelle:
+-- DROP TABLE ... CASCADE ha eliminato in silenzio anche la policy RLS
+-- "profiles_select_combined" (SEZIONE 65), l'UNICA policy SELECT rimasta
+-- sulla tabella profiles — da quel momento NESSUNO (dietista o paziente) può
+-- leggere ALCUN profilo via RLS, propria riga inclusa. Verificato dal vivo:
+-- pg_policy su public.profiles mostrava solo profiles_insert_own e
+-- profiles_update_combined, nessuna policy SELECT. Probabile rottura visibile
+-- su gran parte dell'app dal momento in cui SEZIONE 100 è stata eseguita.
+--
+-- Questa sezione ricrea tabelle/indici/RLS/policy/funzione/bucket storage/
+-- realtime esattamente come risultavano prima di SEZIONE 100 (ricostruito da
+-- git history di supabase_setup.sql: SEZIONE 16/17/18/27/65/92/94), inclusa
+-- profiles_select_combined. Il codice client per la UI di gruppo lato
+-- paziente (ChatPage.jsx) va ripristinato separatamente (commit collegato
+-- nel repo Diet-Plan-Pro-app-claude).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS chat_groups (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  name          TEXT        NOT NULL,
+  color         TEXT        NOT NULL DEFAULT '#0F766E',
+  created_by    UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS chat_group_members (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  group_id      UUID        NOT NULL REFERENCES chat_groups(id) ON DELETE CASCADE,
+  user_id       UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  member_role   TEXT        NOT NULL CHECK (member_role IN ('dietitian','patient')),
+  last_read_at  TIMESTAMPTZ,
+  added_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (group_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_chat_group_members_group ON chat_group_members(group_id);
+CREATE INDEX IF NOT EXISTS idx_chat_group_members_user  ON chat_group_members(user_id);
+
+CREATE TABLE IF NOT EXISTS chat_group_messages (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  group_id      UUID        NOT NULL REFERENCES chat_groups(id) ON DELETE CASCADE,
+  sender_id     UUID        NOT NULL REFERENCES auth.users(id),
+  content       TEXT        NOT NULL,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_chat_group_messages_group_created ON chat_group_messages(group_id, created_at DESC);
+
+ALTER TABLE chat_group_messages ADD COLUMN IF NOT EXISTS type TEXT NOT NULL DEFAULT 'text' CHECK (type IN ('text','voice'));
+ALTER TABLE chat_group_messages ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'sent' CHECK (status IN ('sent','scheduled'));
+ALTER TABLE chat_group_messages ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMPTZ;
+
+ALTER TABLE chat_groups          ENABLE ROW LEVEL SECURITY;
+ALTER TABLE chat_group_members   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE chat_group_messages  ENABLE ROW LEVEL SECURITY;
+
+CREATE OR REPLACE FUNCTION is_chat_group_member(gid UUID, uid UUID)
+RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT EXISTS (SELECT 1 FROM chat_group_members WHERE group_id = gid AND user_id = uid);
+$$;
+REVOKE EXECUTE ON FUNCTION is_chat_group_member(UUID, UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION is_chat_group_member(UUID, UUID) TO authenticated;
+
+-- ── Policy finali (versione SEZIONE 65, con auth.uid() wrappato per performance) ──
+DROP POLICY IF EXISTS "chat_group_members_creator_delete" ON chat_group_members;
+CREATE POLICY "chat_group_members_creator_delete" ON chat_group_members
+  FOR DELETE USING (EXISTS (SELECT 1 FROM chat_groups WHERE chat_groups.id = chat_group_members.group_id AND chat_groups.created_by = (select auth.uid())));
+DROP POLICY IF EXISTS "chat_group_members_creator_insert" ON chat_group_members;
+CREATE POLICY "chat_group_members_creator_insert" ON chat_group_members
+  FOR INSERT WITH CHECK (
+    (EXISTS (SELECT 1 FROM chat_groups WHERE chat_groups.id = chat_group_members.group_id AND chat_groups.created_by = (select auth.uid())))
+    AND ((user_id = (select auth.uid())) OR (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = chat_group_members.user_id AND pd.dietitian_id = (select auth.uid()))) OR (EXISTS (SELECT 1 FROM profiles WHERE profiles.id = chat_group_members.user_id AND profiles.role = 'dietitian')))
+  );
+DROP POLICY IF EXISTS "chat_group_members_select" ON chat_group_members;
+CREATE POLICY "chat_group_members_select" ON chat_group_members
+  FOR SELECT USING (is_chat_group_member(group_id, (select auth.uid())));
+DROP POLICY IF EXISTS "chat_group_members_self_update" ON chat_group_members;
+CREATE POLICY "chat_group_members_self_update" ON chat_group_members
+  FOR UPDATE USING ((select auth.uid()) = user_id) WITH CHECK ((select auth.uid()) = user_id);
+
+DROP POLICY IF EXISTS "chat_group_messages_member_insert" ON chat_group_messages;
+CREATE POLICY "chat_group_messages_member_insert" ON chat_group_messages
+  FOR INSERT WITH CHECK (((select auth.uid()) = sender_id) AND is_chat_group_member(group_id, (select auth.uid())));
+DROP POLICY IF EXISTS "chat_group_messages_member_select" ON chat_group_messages;
+CREATE POLICY "chat_group_messages_member_select" ON chat_group_messages
+  FOR SELECT USING (is_chat_group_member(group_id, (select auth.uid())) AND ((status = 'sent') OR (sender_id = (select auth.uid()))));
+DROP POLICY IF EXISTS "chat_group_messages_sender_update" ON chat_group_messages;
+CREATE POLICY "chat_group_messages_sender_update" ON chat_group_messages
+  FOR UPDATE USING ((select auth.uid()) = sender_id) WITH CHECK ((select auth.uid()) = sender_id);
+
+DROP POLICY IF EXISTS "chat_groups_creator_delete" ON chat_groups;
+CREATE POLICY "chat_groups_creator_delete" ON chat_groups
+  FOR DELETE USING ((select auth.uid()) = created_by);
+DROP POLICY IF EXISTS "chat_groups_dietitian_insert" ON chat_groups;
+CREATE POLICY "chat_groups_dietitian_insert" ON chat_groups
+  FOR INSERT WITH CHECK (((select auth.uid()) = created_by) AND (EXISTS (SELECT 1 FROM profiles WHERE profiles.id = (select auth.uid()) AND profiles.role = 'dietitian')));
+DROP POLICY IF EXISTS "chat_groups_member_select" ON chat_groups;
+CREATE POLICY "chat_groups_member_select" ON chat_groups
+  FOR SELECT USING (is_chat_group_member(id, (select auth.uid())) OR (created_by = (select auth.uid())));
+DROP POLICY IF EXISTS "chat_groups_creator_update" ON chat_groups;
+CREATE POLICY "chat_groups_creator_update" ON chat_groups
+  FOR UPDATE USING ((select auth.uid()) = created_by) WITH CHECK ((select auth.uid()) = created_by);
+
+-- ── profiles_select_combined: CASCADE-eliminata insieme a chat_group_members
+-- (referenziata in una EXISTS interna) — è l'UNICA policy SELECT su profiles,
+-- senza questa nessuno può leggere alcun profilo. Priorità massima.
+DROP POLICY IF EXISTS "profiles_select_combined" ON profiles;
+CREATE POLICY "profiles_select_combined" ON profiles
+  FOR SELECT USING (
+    check_is_admin()
+    OR (EXISTS (SELECT 1 FROM chat_group_members m1 JOIN chat_group_members m2 ON m1.group_id = m2.group_id WHERE m1.user_id = (select auth.uid()) AND m2.user_id = profiles.id))
+    OR (EXISTS (SELECT 1 FROM patient_dietitian WHERE patient_dietitian.dietitian_id = profiles.id AND patient_dietitian.patient_id = (select auth.uid())))
+    OR (EXISTS (SELECT 1 FROM patient_dietitian WHERE patient_dietitian.patient_id = profiles.id AND patient_dietitian.dietitian_id = get_studio_owner((select auth.uid()))))
+    OR ((select auth.uid()) = id)
+    OR (get_studio_owner(id) = get_studio_owner((select auth.uid())))
+  );
+
+-- Realtime per chat_group_messages (vedi SEZIONE 14)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND tablename = 'chat_group_messages'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE chat_group_messages;
+  END IF;
+END $$;
+
+-- Storage bucket messaggi vocali di gruppo + policy
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES ('group-chat-media', 'group-chat-media', false, 10485760,
+        ARRAY['audio/webm','audio/ogg','audio/mp4','audio/mpeg'])
+ON CONFLICT (id) DO UPDATE SET
+  file_size_limit = EXCLUDED.file_size_limit,
+  allowed_mime_types = EXCLUDED.allowed_mime_types;
+
+DROP POLICY IF EXISTS "group_chat_media_insert" ON storage.objects;
+CREATE POLICY "group_chat_media_insert" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'group-chat-media'
+    AND auth.uid() IS NOT NULL
+    AND is_chat_group_member(((storage.foldername(name))[1])::uuid, auth.uid())
+  );
+
+DROP POLICY IF EXISTS "group_chat_media_select" ON storage.objects;
+CREATE POLICY "group_chat_media_select" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'group-chat-media'
+    AND auth.uid() IS NOT NULL
+    AND is_chat_group_member(((storage.foldername(name))[1])::uuid, auth.uid())
+  );
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_102_rollback_sezione_100', 'ROLLBACK di SEZIONE 100: chat_groups/chat_group_members/chat_group_messages non erano un sistema orfano ma la chat di gruppo reale usata da broadcast.html/whatsapp.html (NutriPlan-Pro) — la diagnosi originale aveva controllato solo il repo Diet-Plan-Pro-app-claude. Ricreate tabelle/indici/RLS/policy (versione finale SEZIONE 65)/funzione is_chat_group_member (grant finale SEZIONE 94)/bucket storage/realtime. Ripristinata anche profiles_select_combined, cascade-eliminata insieme a chat_group_members: era l''UNICA policy SELECT su profiles, la sua assenza bloccava la lettura di QUALSIASI profilo per chiunque. Trovato durante il 6° giro di scansione ciclica del 2026-09-02.')
+ON CONFLICT (id) DO NOTHING;

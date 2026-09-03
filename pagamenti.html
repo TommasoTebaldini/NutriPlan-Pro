@@ -1172,7 +1172,12 @@ async function deleteFattura(id) {
     const arr = lsLoadFatture().filter(x => x.id !== id);
     lsSaveFatture(arr);
   } else {
-    await sb.from('fatture').delete().eq('id', id);
+    // L'esito non veniva mai controllato: in caso di errore (RLS, rete) la
+    // fattura spariva comunque dalla lista in memoria sotto un finto
+    // successo, salvo poi ricomparire al prossimo reload — stessa classe di
+    // bug "toast silenzioso" del giro 8, qui su un dato fiscale.
+    const { error } = await sb.from('fatture').delete().eq('id', id);
+    if (error) { toast('❌ ' + error.message, 'err'); return; }
   }
   fatture = fatture.filter(x => x.id !== id);
   updateSummary(); renderFatture();

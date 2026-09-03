@@ -1229,8 +1229,14 @@ async function addCollaborator() {
 async function removeCollaborator(id) {
   customConfirm('Rimuovere questo collaboratore dallo studio?', async () => {
     showLoading(true);
-    await sb.from('studio_collaborators').delete().eq('id', id);
+    const { error } = await sb.from('studio_collaborators').delete().eq('id', id);
     showLoading(false);
+    // Qui l'esito conta più che altrove: senza controllarlo, un errore
+    // RLS/rete mostrava comunque "rimosso" mentre il collaboratore restava
+    // con accesso pieno ai dati di tutti i pazienti dello studio — falsa
+    // sensazione di aver revocato un accesso. Stessa classe di bug "toast
+    // silenzioso" del giro 8.
+    if (error) { toast('❌ ' + error.message, 'err'); return; }
     toast('🗑️ ' + _L('Collaboratore rimosso','Collaborator removed'), 'ok');
     await loadCollaborators();
   }, { danger: true, title: '🗑️ Rimuovi collaboratore', okLabel: 'Rimuovi' });

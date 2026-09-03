@@ -636,8 +636,12 @@ async function delRicetta(id) {
     return;
   }
   showLoading(true);
-  await sb.from('ricette').delete().eq('id', id);
+  const { error } = await sb.from('ricette').delete().eq('id', id);
   showLoading(false);
+  // Stessa classe di bug "toast silenzioso" del giro 8: senza il controllo,
+  // un errore RLS/rete mostrava comunque "eliminata" mentre la ricetta
+  // restava nel DB, per poi ricomparire al prossimo loadRicette().
+  if (error) { toast('❌ ' + error.message, 'err'); return; }
   toast('🗑️ ' + _L('Ricetta eliminata','Recipe deleted'), 'info');
   loadRicette();
 }

@@ -2272,7 +2272,12 @@ async function saveConsentAsTemplate() {
 
 async function revokeConsent(consentId) {
   if (!confirm(_L('Annullare l\'invio del modulo? Il paziente non potrà più firmarlo.','Cancel sending the form? The patient will no longer be able to sign it.'))) return;
-  await sb.from('patient_consents').delete().eq('id', consentId);
+  const { error } = await sb.from('patient_consents').delete().eq('id', consentId);
+  // L'esito non veniva mai controllato: in caso di errore (RLS, rete) il
+  // dietista vedeva comunque "rimosso" mentre il modulo di consenso restava
+  // firmabile dal paziente — stessa classe di bug "toast silenzioso" del
+  // giro 8, qui mai coperta.
+  if (error) { toast(_L('❌ Errore rimozione modulo: ','❌ Error removing form: ') + error.message, 'err'); return; }
   toast(_L('🗑️ Modulo rimosso','🗑️ Form removed'), 'ok');
   loadPrivacy();
 }

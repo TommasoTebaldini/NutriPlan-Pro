@@ -3382,8 +3382,13 @@ async function deleteAllegato(fileId, storagePath, cartellaId) {
   customConfirm(_L('Eliminare questo allegato?','Delete this attachment?'), async () => {
     showLoading(true);
     await sb.storage.from('patient-files').remove([storagePath]);
-    await sb.from('patient_files').delete().eq('id', fileId);
+    const { error } = await sb.from('patient_files').delete().eq('id', fileId);
     showLoading(false);
+    // La riga DB è quella che conta (è ciò che il paziente vede in
+    // patient-portal.html): senza controllarne l'esito, un errore RLS/rete
+    // mostrava comunque "eliminato" mentre l'allegato restava visibile —
+    // stessa classe di bug "toast silenzioso" del giro 8.
+    if (error) { toast(_L('❌ Errore eliminazione: ','❌ Deletion error: ') + error.message, 'err'); return; }
     toast(_L('🗑️ Allegato eliminato','🗑️ Attachment deleted'), 'ok');
     await renderCartellaDetail(cartellaId);
   }, { danger: true, title: _L('🗑️ Elimina Allegato','🗑️ Delete Attachment'), okLabel: _L('Elimina','Delete') });

@@ -575,6 +575,19 @@ async function handleAvatarUpload(input) {
   setAvatarUI(url);
   statusEl.style.color = 'var(--teal-d)';
   statusEl.textContent = _L('✅ Foto caricata — ricorda di salvare il profilo','✅ Photo uploaded — remember to save the profile');
+
+  // Il path è `${currentUser.id}/avatar.${ext}`: upsert:true sovrascrive solo
+  // se l'estensione non cambia. Se l'utente carica un'estensione diversa da
+  // quella precedente (es. da .jpg a .png), il file vecchio non viene mai
+  // sovrascritto né altrimenti rimosso — resterebbe orfano nello storage per
+  // sempre (richiede SEZIONE 109 di supabase_setup.sql eseguita, altrimenti
+  // la policy DELETE mancante rende questa remove() un no-op silenzioso).
+  // Pulizia best-effort delle sole altre estensioni supportate, non bloccante.
+  try {
+    const staleExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'].filter(e => e !== ext);
+    const stalePaths = staleExts.map(e => `${currentUser.id}/avatar.${e}`);
+    if (stalePaths.length) await sb.storage.from(BUCKET).remove(stalePaths);
+  } catch (_) { /* best-effort */ }
 }
 
 function fillForm(data) {

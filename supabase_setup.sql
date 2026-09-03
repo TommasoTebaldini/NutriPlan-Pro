@@ -8563,3 +8563,33 @@ END $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_108_group_chat_media_delete_policy_gap', 'Il bucket group-chat-media aveva solo policy INSERT/SELECT (is_chat_group_member), NESSUNA policy DELETE — verificato interrogando l''intero set pg_policies per il bucket, non solo le prime righe trovate leggendo il codice. Il cleanup media-orfani-al-delete-gruppo aggiunto nell''11° giro (broadcast.html deleteActiveGroup()) sarebbe stato un no-op silenzioso senza questa policy, indipendentemente dall''ordine delle operazioni. Aggiunta policy DELETE con la stessa condizione già usata per INSERT/SELECT. Trovato durante la verifica manuale dell''11° giro di scansione ciclica del 2026-09-02.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 109 — bucket storage dietitian-avatars senza policy DELETE
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato durante il 12° giro di scansione ciclica: il bucket
+-- dietitian-avatars ha SOLO tre policy — "dietitian upload own avatar"
+-- (INSERT), "dietitian update own avatar" (UPDATE), "public read dietitian
+-- avatars" (SELECT) — NESSUNA policy DELETE (verificato contro pg_policies,
+-- interrogando l'intero set per il bucket). profilo-pubblico.html carica
+-- l'avatar con path `${currentUser.id}/avatar.${ext}` e upload({upsert:true}):
+-- se l'utente cambia estensione (es. da .jpg a .png) il file vecchio non
+-- viene mai sovrascritto — il cleanup aggiunto in questo stesso giro per le
+-- altre estensioni sarebbe stato un no-op silenzioso senza questa policy,
+-- stessa identica classe di bug di SEZIONE 108 (group-chat-media). Aggiunta
+-- la policy DELETE mancante, stessa condizione già usata per UPDATE/INSERT
+-- sullo stesso bucket (primo segmento del path = auth.uid()).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='storage' AND tablename='objects' AND policyname='dietitian delete own avatar') THEN
+    CREATE POLICY "dietitian delete own avatar" ON storage.objects FOR DELETE
+      USING (bucket_id = 'dietitian-avatars' AND (storage.foldername(name))[1] = auth.uid()::text);
+  END IF;
+END $$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_109_dietitian_avatars_delete_policy_gap', 'Il bucket dietitian-avatars aveva solo policy INSERT/UPDATE/SELECT, NESSUNA policy DELETE — verificato interrogando l''intero set pg_policies per il bucket. profilo-pubblico.html carica l''avatar con path `${currentUser.id}/avatar.${ext}` e upsert:true: cambiando estensione il file vecchio non viene mai sovrascritto e restava orfano; il cleanup aggiunto in questo stesso giro sarebbe stato un no-op silenzioso senza questa policy, stessa classe di bug di SEZIONE 108. Aggiunta policy DELETE con la stessa condizione già usata per UPDATE/INSERT sullo stesso bucket. Trovato durante il 12° giro di scansione ciclica.')
+ON CONFLICT (id) DO NOTHING;

@@ -1010,13 +1010,19 @@ async function deleteActiveGroup() {
       await sb.storage.from('group-chat-media').remove(mediaPaths);
     }
   } catch (_) { /* best-effort */ }
-  await sb.from('chat_groups').delete().eq('id', groupIdToDelete);
+  const { error: delGroupErr } = await sb.from('chat_groups').delete().eq('id', groupIdToDelete);
+  showLoading(false);
+  // Senza controllare l'esito, l'interfaccia si chiudeva comunque su uno
+  // stato "nessun gruppo" anche se la delete falliva (RLS/rete) — il gruppo
+  // restava nel DB, riapparendo solo al successivo loadWaGroups() sotto,
+  // senza alcuna spiegazione del perché. Stessa classe di bug "toast
+  // silenzioso" del giro 8/15/16.
+  if (delGroupErr) { toast(_L('❌ Errore eliminazione gruppo: ','❌ Error deleting group: ') + delGroupErr.message, 'err'); return; }
   if (waRealtimeChannel) { waRealtimeChannel.unsubscribe(); waRealtimeChannel = null; }
   activeWaGroupId = null;
   document.getElementById('wa-thread').style.display = 'none';
   document.getElementById('wa-thread-empty').style.display = 'flex';
   await loadWaGroups();
-  showLoading(false);
 }
 
 // ── Gestione membri ─────────────────────────────────────────────────────────
@@ -1083,11 +1089,16 @@ async function addSelectedMembers() {
 async function removeMember(userId) {
   if (!confirm(_L('Rimuovere questo membro dal gruppo?','Remove this member from the group?'))) return;
   showLoading(true);
-  await sb.from('chat_group_members').delete().eq('group_id', activeWaGroupId).eq('user_id', userId);
+  const { error } = await sb.from('chat_group_members').delete().eq('group_id', activeWaGroupId).eq('user_id', userId);
+  showLoading(false);
+  // Come removeCollaborator (giro 15): senza controllare l'esito, un errore
+  // RLS/rete lasciava il membro con accesso pieno al gruppo senza che il
+  // dietista se ne accorgesse — nessun toast, la lista si sarebbe solo
+  // "non aggiornata" al reload sotto, senza spiegazione.
+  if (error) { toast(_L('❌ Errore rimozione membro: ','❌ Error removing member: ') + error.message, 'err'); return; }
   await loadWaGroups();
   renderCurrentMembersList();
   renderAddMemberList();
-  showLoading(false);
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

@@ -921,10 +921,13 @@ function drawWaterChart(d) {
 }
 
 
+let _savingBia=false; // vedi guard sotto: currentBiaId resta invariato finché l'insert non risponde, un doppio click/tap creerebbe una misurazione duplicata (stesso bug class del giro 18)
 async function salvaBIA() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'), 'err'); return; }
   const cartella_id = document.getElementById('bia-cartella').value;
   if (!cartella_id) { toast(_L('Seleziona prima una cartella paziente','Please select a patient file first'), 'err'); return; }
+  if (_savingBia) return;
+  _savingBia = true;
 
   const d = getBIAInputs();
   calcBIA();
@@ -961,6 +964,7 @@ async function salvaBIA() {
     if (result.data) { currentBiaId = result.data.id; currentBiaCartellaId = cartella_id; }
   }
   showLoading(false);
+  _savingBia = false;
 
   if (error) {
     if (error.message.includes('does not exist')) {

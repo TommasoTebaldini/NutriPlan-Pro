@@ -959,6 +959,7 @@ function ripristinaDatiPan(dati) {
   }
 }
 
+let _savingNota=false; // vedi guard in salvaPancreas(): un doppio click/tap prima che l'insert risponda creerebbe una scheda duplicata (stesso bug class del giro 18)
 async function salvaPancreas() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'),'err'); return; }
   const cartella_id = document.getElementById('pan-cartella').value;
@@ -967,6 +968,8 @@ async function salvaPancreas() {
   const dati = raccogliDatiPan();
   { const _p=dati.piano||{},_kcal=parseFloat(_p.kcal)||0,_grassi=parseFloat(_p.grassi_tot)||0,_prot=_kcal?Math.round(_kcal*.20/4):0,_cho=_kcal?Math.round(_kcal*.45/4):0,_fat=_grassi||(_kcal?Math.round(_kcal*.35/9):0),_nc=(document.getElementById('pan-cartella-cw-srch')?.value||'').trim();
     dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,ora:p.ora,kcal:'',alimenti:p.alimenti,note:p.note||(parseFloat(p.grassi)?'Grassi: '+p.grassi+' g':'')})),{titolo:_nc||nota,sottotitolo:[_p.causa,_p.enzima].filter(Boolean).join(' · '),totKcal:_kcal,totProt:_prot,totCho:_cho,totFat:_fat,footerNote:_p.note_cliniche||undefined}); }
+  if(_savingNota)return;
+  _savingNota=true;
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'pancreas', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
@@ -983,6 +986,7 @@ async function salvaPancreas() {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
+  _savingNota=false;
   if (result.error) {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) { mostraSetupSQL(); } else { toast('❌ '+result.error.message,'err'); }
     return;

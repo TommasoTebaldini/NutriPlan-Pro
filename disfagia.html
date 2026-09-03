@@ -1235,6 +1235,7 @@ async function loadDisCartelle() {
     data.map(c => `<option value="${c.id}"${c.id===cur?' selected':''}>${c.nome}</option>`).join('');
 }
 
+let _savingNota=false; // vedi guard in salvaDisfagia(): un doppio click/tap prima che l'insert risponda creerebbe una scheda duplicata (stesso bug class del giro 18)
 async function salvaDisfagia() {
   if (!currentUser) { toast(_L('⚠️ Accedi per salvare','⚠️ Log in to save'), 'err'); return; }
   const cartella_id = document.getElementById('dis-cartella').value || null;
@@ -1242,6 +1243,8 @@ async function salvaDisfagia() {
   const datiObj = {iddsi: selIddsi, kcal: selKcal, valutazione: raccogliVal_dis()};
   try { datiObj.stampa_html = buildStampaSpecialisticaHTML(datiObj, 'disfagia', nota); } catch(e) { console.warn('buildStampaSpecialisticaHTML failed:', e); }
   const dati = JSON.stringify(datiObj);
+  if(_savingNota)return;
+  _savingNota=true;
   const payload = {user_id: studioOwnerId || currentUser.id, tipo: 'disfagia', cartella_id, nota, dati};
   showLoading(true);
   let result;
@@ -1263,6 +1266,7 @@ async function salvaDisfagia() {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
+  _savingNota=false;
   if (result.error) {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {
       mostraSetupSQL();

@@ -1185,6 +1185,7 @@ function raccogliDatiONC() {
   };
 }
 
+let _savingNota=false; // vedi guard in salvaOncologia(): un doppio click/tap prima che l'insert risponda creerebbe una scheda duplicata (stesso bug class del giro 18)
 async function salvaOncologia() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'), 'err'); return; }
   const cartellaEl = document.getElementById('onc-cartella');
@@ -1192,6 +1193,8 @@ async function salvaOncologia() {
   if (!cartella_id) { toast(_L('⚠️ Seleziona una cartella paziente','⚠️ Select a patient record'), 'err'); return; }
   const nota = document.getElementById('onc-nota')?.value || '';
   const dati = raccogliDatiONC();
+  if(_savingNota)return;
+  _savingNota=true;
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'oncologia', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
@@ -1209,6 +1212,7 @@ async function salvaOncologia() {
     if (result.data?.[0]?.id) { editingOncNoteId = result.data[0].id; editingOncNoteCartellaId = cartella_id; savedOncNoteId = result.data[0].id; }
   }
   showLoading(false);
+  _savingNota=false;
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   toast(_L('💾 Scheda oncologica salvata!','💾 Oncology record saved!'), 'ok');
   if (window.capturePrintAndSave && savedOncNoteId) {

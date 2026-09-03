@@ -1461,6 +1461,7 @@ function ripristinaDatiRen(dati) {
   }
 }
 
+let _savingNota=false; // vedi guard in salvaRenale(): un doppio click/tap prima che l'insert risponda creerebbe una scheda duplicata (stesso bug class del giro 18)
 async function salvaRenale() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'), 'err'); return; }
   const cartella_id = document.getElementById('ren-cartella').value;
@@ -1469,6 +1470,8 @@ async function salvaRenale() {
   const dati = raccogliDatiRen();
   { const _p=dati.piano||{},_nc=(document.getElementById('ren-cartella-cw-srch')?.value||'').trim();
     dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,alimenti:p.alimenti,kcal:p.kcal})),{titolo:_nc||nota,sottotitolo:_L('Emodialisi — Giornata Senza Dialisi','Haemodialysis — Non-Dialysis Day'),totKcal:_p.kcal||0,totProt:_p.prot_tot||0,totCho:0,totFat:0,footerNote:_L('⚠️ Schema indicativo per paziente ~65 kg. Adattare le quantità al peso del paziente.','⚠️ Indicative plan for ~65 kg patient. Adjust quantities to patient weight.')}); }
+  if(_savingNota)return;
+  _savingNota=true;
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'renale', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
@@ -1485,6 +1488,7 @@ async function salvaRenale() {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
+  _savingNota=false;
   if (result.error) {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {
       mostraSetupSQL();

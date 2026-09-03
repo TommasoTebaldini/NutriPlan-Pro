@@ -1353,6 +1353,7 @@ function raccogliDatiOB() {
 }
 
 // ── Salva ──────────────────────────────────────────
+let _savingNota=false; // vedi guard in salvaObesita(): un doppio click/tap prima che l'insert risponda creerebbe una scheda duplicata (stesso bug class del giro 18)
 async function salvaObesita() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'), 'err'); return; }
   const cartellaEl = document.getElementById('ob-cartella');
@@ -1360,6 +1361,8 @@ async function salvaObesita() {
   if (!cartella_id) { toast(_L('⚠️ Seleziona una cartella paziente','⚠️ Select a patient file'), 'err'); return; }
   const nota = document.getElementById('ob-nota')?.value || '';
   const dati = raccogliDatiOB();
+  if(_savingNota)return;
+  _savingNota=true;
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'obesita', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
@@ -1380,6 +1383,7 @@ async function salvaObesita() {
     if (result.data?.[0]?.id) { editingObNoteId = result.data[0].id; editingObNoteCartellaId = cartella_id; savedObNoteId = result.data[0].id; }
   }
   showLoading(false);
+  _savingNota=false;
   if (result.error) { toast('❌ ' + result.error.message, 'err'); return; }
   toast(_L('💾 Scheda obesità salvata!','💾 Obesity record saved!'), 'ok');
   autoSavePage_ob();

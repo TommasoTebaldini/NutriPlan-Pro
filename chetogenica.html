@@ -1601,6 +1601,7 @@ function ripristinaDatiKeto(dati) {
   if (dati.gki) { sv('gki-glic', dati.gki.glicemia); sv('gki-keton', dati.gki.chetoni); if (dati.gki.glicemia && dati.gki.chetoni) calcGKI(); }
 }
 
+let _savingNota=false; // vedi guard in salvaKeto(): un doppio click/tap prima che l'insert risponda creerebbe una scheda duplicata (stesso bug class del giro 18)
 async function salvaKeto() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'), 'err'); return; }
   const cartella_id = document.getElementById('keto-cartella').value;
@@ -1608,6 +1609,8 @@ async function salvaKeto() {
   const nota = document.getElementById('keto-nota').value.trim() || _L('Sessione Chetogenica ','Ketogenic Session ') + new Date().toLocaleDateString(_L('it','en'));
   const dati = raccogliDatiKeto();
   dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'chetogenica', nota);
+  if(_savingNota)return;
+  _savingNota=true;
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'chetogenica', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
@@ -1629,6 +1632,7 @@ async function salvaKeto() {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
+  _savingNota=false;
   if (result.error) {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {
       mostraSetupSQL();

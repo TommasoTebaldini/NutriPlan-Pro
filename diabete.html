@@ -1128,6 +1128,7 @@ function ripristinaDatiDg(dati) {
   }
 }
 
+let _savingNota=false; // vedi guard in salvaDiabete(): un doppio click/tap prima che l'insert risponda creerebbe una scheda duplicata (stesso bug class del giro 18, valutazione.html/pazienti.html)
 async function salvaDiabete() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Please log in to save'),'err'); return; }
   const cartella_id = document.getElementById('dg-cartella').value;
@@ -1136,6 +1137,8 @@ async function salvaDiabete() {
   const dati = raccogliDatiDg();
   { const _p=dati.piano||{},_kcal=parseFloat(_p.kcal)||0,_cho=parseFloat(_p.cho_tot)||0,_prot=_kcal?Math.round(_kcal*.15/4):0,_fat=_kcal?Math.round(_kcal*.25/9):0,_nc=(document.getElementById('dg-cartella-cw-srch')?.value||'').trim();
     dati.stampa_html=buildStampaCompattaHtml((_p.pasti||[]).filter(p=>p.nome||p.alimenti).map(p=>({nome:p.nome,ora:p.ora,kcal:'',alimenti:p.alimenti,note:p.note||(parseFloat(p.cho)?'CHO: '+p.cho+' g':'')})),{titolo:_nc||nota,sottotitolo:_p.tipo?'Tipo: '+_p.tipo+(_p.insulina?' · Insulina: '+_p.insulina:''):'',totKcal:_kcal,totProt:_prot,totCho:_cho,totFat:_fat}); }
+  if(_savingNota)return;
+  _savingNota=true;
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'diabete', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
@@ -1157,6 +1160,7 @@ async function salvaDiabete() {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
+  _savingNota=false;
   if (result.error) {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {
       mostraSetupSQL();

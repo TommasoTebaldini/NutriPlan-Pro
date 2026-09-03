@@ -1214,6 +1214,7 @@ function aggiornaGDM() {
   else el.innerHTML = `<span class="result-pill pill-danger">🔴 ${count} ${_L('fattori di rischio — Screening urgente; valutare OGTT precoce nel 1° trimestre','risk factors — Urgent screening; consider early OGTT in 1st trimester')}</span>`;
 }
 
+let _savingNota=false; // vedi guard in salvaNota(): un doppio click/tap prima che l'insert risponda creerebbe una scheda duplicata (stesso bug class del giro 18)
 async function salvaNota() {
   if (!currentUser) { toast(_L('Sessione scaduta','Session expired'), 'err'); return; }
   const cartella_id = document.getElementById('grav-cartella').value;
@@ -1234,6 +1235,8 @@ async function salvaNota() {
     tipo: 'gravidanza', nota: sommario,
     dati: { eta, pesoPre, altezza, pesoAtt, settimane, tipo, bmi },
   };
+  if(_savingNota)return;
+  _savingNota=true;
   showLoading(true);
   let result;
   // Se la scheda caricata apparteneva a una cartella diversa da quella ora
@@ -1248,6 +1251,7 @@ async function salvaNota() {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
+  _savingNota=false;
   if (result.error) { toast(_L('Errore','Error') + ': ' + result.error.message, 'err'); return; }
   if (!isUpdateGrav && result.data?.[0]?.id) { editingGravNoteId = result.data[0].id; editingGravNoteCartellaId = cartella_id; }
   _asGrav.clear();

@@ -1405,6 +1405,7 @@ function ripristinaDatiPS(dati) {
   }
 }
 
+let _savingNota=false; // vedi guard in salvaPazienteSano(): un doppio click/tap prima che l'insert risponda creerebbe una scheda duplicata (stesso bug class del giro 18)
 async function salvaPazienteSano() {
   if (!currentUser) { toast(_L('Effettua il login per salvare','Log in to save'), 'err'); return; }
   const cartella_id = document.getElementById('ps-cartella').value;
@@ -1414,6 +1415,8 @@ async function salvaPazienteSano() {
   if (typeof buildStampaSpecialisticaHTML === 'function') {
     try { dati.stampa_html = buildStampaSpecialisticaHTML(dati, 'paziente_sano', nota); } catch(e) {}
   }
+  if(_savingNota)return;
+  _savingNota=true;
   const payload = { cartella_id, user_id: studioOwnerId || currentUser.id, tipo: 'paziente_sano', nota, dati: JSON.stringify(dati) };
   showLoading(true);
   let result;
@@ -1430,6 +1433,7 @@ async function salvaPazienteSano() {
     result = await sb.from('note_specialistiche').insert({...payload, created_at: new Date().toISOString(), visible_to_patient: false}).select('id');
   }
   showLoading(false);
+  _savingNota=false;
   if (result.error) {
     if (result.error.code === '42P01' || result.error.message?.includes('schema cache')) {
       toast(_L('⚠️ Tabella note_specialistiche mancante — eseguire il setup SQL da Gestione Diabete','⚠️ note_specialistiche table missing — run the SQL setup from Diabetes Management'), 'err');

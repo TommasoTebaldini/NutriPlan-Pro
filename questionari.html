@@ -2817,9 +2817,12 @@ function apriSalvaQuestionario() {
   openM('modal-salva-q');
 }
 
+let _savingQuestionario=false; // vedi guard: _editingNoteSpecId resta invariato finché l'insert non risponde (condiviso da salvaQuestionarioInCartella/salvaQFromBar), un doppio click/tap creerebbe un questionario duplicato (stesso bug class del giro 18)
 async function salvaQuestionarioInCartella() {
   const cartellaId = document.getElementById('sq-cartella').value;
   if (!cartellaId) { toast(_L('Seleziona una cartella paziente','Select a patient folder'), 'err'); return; }
+  if (_savingQuestionario) return;
+  _savingQuestionario = true;
   const dataVal = document.getElementById('sq-data').value;
   const nota = `${_qSaveNome} — Score: ${_qSaveDati.score ?? _qSaveDati.global ?? ''}${_qSaveDati.label ? ' — ' + _qSaveDati.label.replace(/[🟢🟡🔴⚠️]/gu, '').trim() : ''}`;
   const now = dataVal ? new Date(dataVal + 'T12:00:00').toISOString() : new Date().toISOString();
@@ -2849,6 +2852,7 @@ async function salvaQuestionarioInCartella() {
     if (res.data?.id) savedId = res.data.id;
   }
   showLoading(false);
+  _savingQuestionario = false;
   if (error) {
     if (error.code === '42P01') {
       mostraSetupSQL();
@@ -2876,6 +2880,8 @@ async function salvaQFromBar() {
   if (!_qSaveNome) { toast(_L('Completa prima un questionario per salvarlo','Complete a questionnaire first before saving it'), 'err'); return; }
   const cartellaId = document.getElementById('qbar-cartella').value;
   if (!cartellaId) { toast(_L('Seleziona una cartella paziente','Select a patient folder'), 'err'); return; }
+  if (_savingQuestionario) return;
+  _savingQuestionario = true;
   const notaExtra = document.getElementById('qbar-note').value.trim();
   const nota = `${_qSaveNome} — Score: ${_qSaveDati.score ?? _qSaveDati.global ?? ''}${_qSaveDati.label ? ' — ' + _qSaveDati.label.replace(/[🟢🟡🔴⚠️]/gu, '').trim() : ''}${notaExtra ? ' — ' + notaExtra : ''}`;
   const now = new Date().toISOString();
@@ -2905,6 +2911,7 @@ async function salvaQFromBar() {
     if (res.data?.id) savedId = res.data.id;
   }
   showLoading(false);
+  _savingQuestionario = false;
   if (error) {
     if (error.code === '42P01') { mostraSetupSQL(); } else { toast('❌ ' + error.message, 'err'); }
     return;

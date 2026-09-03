@@ -1707,8 +1707,11 @@ function raccogliDati() {
   };
 }
 
+let _savingNcpt=false; // vedi guard sotto: currentNcptId resta invariato finché l'insert non risponde, un doppio click/tap creerebbe un NCPt duplicato (stesso bug class del giro 18)
 async function salvaNCPt() {
   if(!currentUser){ toast(_L('Effettua il login per salvare','Log in to save'),'err'); return; }
+  if(_savingNcpt) return;
+  _savingNcpt = true;
   // If no cartella selected but only one result in search, auto-select it
   if(!currentCartellaId){
     const srch = document.getElementById('ncpt-cartella-cw-srch');
@@ -1754,6 +1757,7 @@ async function salvaNCPt() {
     if(result.data) { currentNcptId = result.data.id; currentNcptCartellaId = payload.cartella_id; savedNcptId = result.data.id; }
   }
   showLoading(false);
+  _savingNcpt = false;
   if(result.error){
     if(result.error.code==='42P01'){
       toast(_L('Tabella "ncpt" mancante — esegui SQL','Table "ncpt" missing — run SQL'),'err');

@@ -1908,8 +1908,16 @@ async function caricaFotoSalvate(cartellaId, schedaId) {
   const container = document.getElementById('foto-salvate-container');
   const listEl = document.getElementById('foto-salvate-list');
   if (!container || !listEl) return;
+  // Nessuna guardia impediva al dietista di selezionare un'altra cartella nel
+  // widget (showLoading cambia solo il cursore, non blocca l'interfaccia)
+  // mentre questa chiamata era ancora in volo dopo il salvataggio scheda: le
+  // foto prima/dopo del paziente precedente finivano nella galleria del
+  // form ora aperto su un paziente diverso. Stessa guardia già usata in
+  // whatsapp.html/broadcast.html per la stessa classe di race.
+  const stillCurrent = () => document.getElementById('v-cartella')?.value === cartellaId;
   try {
     const { data: files } = await sb.storage.from('patient-photos').list(`${cartellaId}/${schedaId}`);
+    if (!stillCurrent()) return;
     if (!files || !files.length) { container.style.display = 'none'; return; }
     container.style.display = 'block';
     // Bucket privato (SEZIONE 33): URL firmati (1h, sola visualizzazione) invece
@@ -1926,6 +1934,7 @@ async function caricaFotoSalvate(cartellaId, schedaId) {
         <div style="font-size:10px;color:var(--slate-l)">${new Date(f.created_at||'').toLocaleDateString('it') || ''}</div>
       </div>`;
     }));
+    if (!stillCurrent()) return;
     listEl.innerHTML = cards.join('');
   } catch(e) { console.warn('caricaFotoSalvate error:', e); }
 }

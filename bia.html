@@ -1032,10 +1032,18 @@ async function salvaBIA() {
 async function loadStorico() {
   if (!currentUser) return;
   const cartellaFilt = document.getElementById('storico-cartella')?.value || '';
+  // loadStorico() viene richiamata sia selezionando storico-cartella-cw sia
+  // (indirettamente) bia-cartella-cw: se il dietista cambia paziente mentre
+  // la query precedente è ancora in volo, senza guardia la risposta più
+  // lenta può sovrascrivere per ultima la tabella con lo storico BIA del
+  // paziente sbagliato. Stessa guardia già usata per la stessa classe di
+  // race in whatsapp.html/broadcast.html.
+  const stillCurrent = () => (document.getElementById('storico-cartella')?.value || '') === cartellaFilt;
   let query = sb.from('bia_records').select('id,data_misura,peso,bf_pct,ffm_kg,angolo_fase,cartella_id,note,visible_to_patient').eq('user_id', studioOwnerId || currentUser.id).order('data_misura', {ascending: false});
   if (cartellaFilt) query = query.eq('cartella_id', cartellaFilt);
 
   const { data, error } = await query;
+  if (!stillCurrent()) return;
   const wrap = document.getElementById('storico-table-wrap');
 
   if (error) {

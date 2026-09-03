@@ -2280,44 +2280,57 @@ async function editCartella(id) {
 async function salvaCartella() {
   const nome = document.getElementById('nc-nome').value.trim();
   if (!nome) { toast(_L('Inserisci il nome','Enter the name'), 'err'); return; }
-  const payload = {
-    user_id: studioOwnerId || currentUser.id,
-    nome: nome + (document.getElementById('nc-cognome').value.trim() ? ' ' + document.getElementById('nc-cognome').value.trim() : ''),
-    cognome: document.getElementById('nc-cognome').value.trim(),
-    ddn: document.getElementById('nc-ddn').value || null,
-    sesso: document.getElementById('nc-sesso').value || null,
-    codice_fiscale: document.getElementById('nc-cf').value.trim().toUpperCase() || null,
-    telefono: document.getElementById('nc-telefono').value.trim() || null,
-    note: document.getElementById('nc-note').value.trim() || null,
-    tags: ncSelectedTags.length ? ncSelectedTags : [],
-  };
-  showLoading(true);
-  let result;
-  if (editingCartellaId) {
-    result = await sb.from('cartelle').update(payload).eq('id', editingCartellaId);
-  } else {
-    payload.created_at = new Date().toISOString();
-    result = await sb.from('cartelle').insert(payload);
+  // showLoading() cambia solo il cursore, non blocca l'interfaccia (vedi
+  // renderCartellaDetail, giro 14): senza questo guard un doppio click veloce
+  // su "Crea Cartella" faceva partire due insert identici, creando due
+  // cartelle paziente duplicate. I campi del form restano popolati fino al
+  // successo (_clearNcDraft() più sotto), quindi il secondo insert non
+  // verrebbe nemmeno bloccato da un form già vuoto.
+  const saveBtn = document.getElementById('nc-save-btn');
+  if (saveBtn?.disabled) return;
+  if (saveBtn) saveBtn.disabled = true;
+  try {
+    const payload = {
+      user_id: studioOwnerId || currentUser.id,
+      nome: nome + (document.getElementById('nc-cognome').value.trim() ? ' ' + document.getElementById('nc-cognome').value.trim() : ''),
+      cognome: document.getElementById('nc-cognome').value.trim(),
+      ddn: document.getElementById('nc-ddn').value || null,
+      sesso: document.getElementById('nc-sesso').value || null,
+      codice_fiscale: document.getElementById('nc-cf').value.trim().toUpperCase() || null,
+      telefono: document.getElementById('nc-telefono').value.trim() || null,
+      note: document.getElementById('nc-note').value.trim() || null,
+      tags: ncSelectedTags.length ? ncSelectedTags : [],
+    };
+    showLoading(true);
+    let result;
+    if (editingCartellaId) {
+      result = await sb.from('cartelle').update(payload).eq('id', editingCartellaId);
+    } else {
+      payload.created_at = new Date().toISOString();
+      result = await sb.from('cartelle').insert(payload);
+    }
+    showLoading(false);
+    if (result.error) {
+      const isMissingCol = result.error.message && (result.error.message.includes('tags') || result.error.message.includes('column'));
+      if (isMissingCol) {
+        document.getElementById('nc-tags-warning').style.display = '';
+        toast(_L('⚠️ Colonna mancante — esegui ALTER TABLE nel pannello Supabase SQL','⚠️ Missing column — run ALTER TABLE in the Supabase SQL panel'), 'warn');
+        const payloadFallback = { ...payload }; delete payloadFallback.tags;
+        let r2;
+        if (editingCartellaId) r2 = await sb.from('cartelle').update(payloadFallback).eq('id', editingCartellaId);
+        else { payloadFallback.created_at = new Date().toISOString(); r2 = await sb.from('cartelle').insert(payloadFallback); }
+        if (r2.error) { toast('❌ ' + r2.error.message, 'err'); return; }
+      } else { toast('❌ ' + result.error.message, 'err'); return; }
+    }
+    closeM('modal-nc');
+    _clearNcDraft();
+    toast(editingCartellaId ? _L('✅ Cartella aggiornata!','✅ Folder updated!') : _L('📁 Cartella creata!','📁 Folder created!'), 'ok');
+    editingCartellaId = null;
+    if (cartellaAperta) await renderCartellaDetail(cartellaAperta);
+    else loadCartelle(true);
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
   }
-  showLoading(false);
-  if (result.error) {
-    const isMissingCol = result.error.message && (result.error.message.includes('tags') || result.error.message.includes('column'));
-    if (isMissingCol) {
-      document.getElementById('nc-tags-warning').style.display = '';
-      toast(_L('⚠️ Colonna mancante — esegui ALTER TABLE nel pannello Supabase SQL','⚠️ Missing column — run ALTER TABLE in the Supabase SQL panel'), 'warn');
-      const payloadFallback = { ...payload }; delete payloadFallback.tags;
-      let r2;
-      if (editingCartellaId) r2 = await sb.from('cartelle').update(payloadFallback).eq('id', editingCartellaId);
-      else { payloadFallback.created_at = new Date().toISOString(); r2 = await sb.from('cartelle').insert(payloadFallback); }
-      if (r2.error) { toast('❌ ' + r2.error.message, 'err'); return; }
-    } else { toast('❌ ' + result.error.message, 'err'); return; }
-  }
-  closeM('modal-nc');
-  _clearNcDraft();
-  toast(editingCartellaId ? _L('✅ Cartella aggiornata!','✅ Folder updated!') : _L('📁 Cartella creata!','📁 Folder created!'), 'ok');
-  editingCartellaId = null;
-  if (cartellaAperta) await renderCartellaDetail(cartellaAperta);
-  else loadCartelle(true);
 }
 
 async function delCartella(id) {

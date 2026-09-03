@@ -1024,6 +1024,7 @@ let customKcalGlobale=null;
 let pesoAttualeGlobale=0,piGlobale=0,paGlobale=0,pesoFGlobale=0;
 let metodoTDEE='formula';
 let schedaId=null;
+let _savingScheda=false; // re-entrancy guard: schedaId resta null finché l'insert non risponde (vedi doSalva()), quindi un doppio click prima di allora creerebbe due schede duplicate — stesso guard già usato in pagamenti.html (_savingFattura)
 let formuleGlobali=[],selectedFormula=null;
 const macroDist={prot:20,cho:50,fat:30,fibra:25,prot_mode:'pct',prot_gkg:0,cho_mode:'pct',cho_gkg:0,fat_mode:'pct',fat_gkg:0};
 
@@ -1599,6 +1600,9 @@ function mostraModalSQL(){
 async function doSalva(cartellaId){
   if(!currentUser){toast(_L('Sessione scaduta, ricarica la pagina','Session expired, reload the page'),'err');return;}
   if(!cartellaId){toast(_L('Seleziona o crea una cartella paziente','Select or create a patient folder'),'err');return;}
+  if(_savingScheda)return;
+  _savingScheda=true;
+  try{
   const payload={
     cartella_id:cartellaId,
     user_id:studioOwnerId || currentUser.id,
@@ -1848,6 +1852,9 @@ async function doSalva(cartellaId){
         pd.innerHTML = ''; pd.style.cssText = 'display:none';
       } catch(err) { console.warn('valutazione capture failed:', err); }
     })();
+  }
+  } finally {
+    _savingScheda=false;
   }
 }
 

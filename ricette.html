@@ -523,11 +523,15 @@ function raccogliIngredienti() {
   return ing;
 }
 
+let _savingRicetta=false; // vedi guard sotto: editingRicettaId resta invariato per tutta la funzione (non viene mai impostato al nuovo id su insert), un doppio click/tap creerebbe una ricetta duplicata (stesso bug class del giro 18/19)
 async function salvaRicetta() {
   const nome = document.getElementById('r-nome').value.trim();
   if (!nome) { toast(_L('Inserisci nome ricetta','Enter recipe name'), 'err'); return; }
   const ing = raccogliIngredienti();
   if (!ing.length) { toast(_L('Aggiungi almeno un ingrediente','Add at least one ingredient'), 'err'); return; }
+  if (_savingRicetta) return;
+  _savingRicetta = true;
+  try {
   const now = new Date().toISOString();
   const nome_en = (document.getElementById('r-nome-en')?.value || '').trim() || null;
   const payload = {
@@ -597,6 +601,9 @@ async function salvaRicetta() {
   closeM('modal-ricetta');
   toast(editingRicettaId ? '✅ ' + _L('Ricetta aggiornata!','Recipe updated!') : '✅ ' + _L('Ricetta salvata!','Recipe saved!'), 'ok');
   loadRicette();
+  } finally {
+    _savingRicetta = false;
+  }
 }
 
 async function editRicetta(id) {

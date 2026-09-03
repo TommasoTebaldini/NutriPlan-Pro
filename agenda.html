@@ -992,6 +992,7 @@ function renderUpcoming() {
   }).join('');
 }
 
+let _savingEvent=false; // vedi guard sotto: l'id evento è generato client-side ad ogni chiamata, quindi un doppio click/tap crea due appuntamenti duplicati con id diversi invece di essere bloccato da un conflitto (stesso bug class del giro 18/19)
 async function saveEvent() {
   const paziente = document.getElementById('ev-paziente').value.trim();
   const data = document.getElementById('ev-data').value;
@@ -1003,6 +1004,9 @@ async function saveEvent() {
   const note = buildVideoNote(videoUrl, noteRaw);
 
   if(!paziente || !data) { toast(_L('Inserisci paziente/titolo e data','Enter patient/title and date'),'err'); return; }
+  if (_savingEvent) return;
+  _savingEvent = true;
+  try {
 
   // Collision detection: check for overlapping events on the same date
   if (ora) {
@@ -1100,6 +1104,9 @@ async function saveEvent() {
     Notification.requestPermission().then(p => {
       if(p === 'granted') toast(_L('🔔 Notifiche attivate!','🔔 Notifications enabled!'),'ok');
     });
+  }
+  } finally {
+    _savingEvent = false;
   }
 }
 

@@ -479,10 +479,13 @@ function closeAddFood() {
   _editingFoodId = null;
 }
 
+let _savingFood=false; // vedi guard sotto: _editingFoodId non viene mai impostato al nuovo id per il resto della funzione, un doppio click/tap creerebbe un alimento duplicato (stesso bug class del giro 18/19)
 async function saveFood() {
   const nome = document.getElementById('af-nome').value.trim();
   if (!nome) { toast(_L('Inserisci il nome dell\'alimento','Enter the food name'), 'err'); return; }
   if (!currentUser) { toast(_L('Devi effettuare il login','You must be logged in'), 'err'); return; }
+  if (_savingFood) return;
+  _savingFood = true;
 
   const num = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; };
   const row = {
@@ -544,6 +547,7 @@ async function saveFood() {
     }
   }
 
+  _savingFood = false;
   if (error) { toast(_L('Errore: ','Error: ') + error.message, 'err'); return; }
 
   _asDatabase.clear();

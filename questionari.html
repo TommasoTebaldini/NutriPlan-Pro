@@ -1847,6 +1847,14 @@ async function aggiornaPrecompilaButtons(cartellaId) {
       .eq('cartella_id', cartellaId)
       .eq('user_id', studioOwnerId || currentUser.id)
       .eq('tipo', 'questionario');
+    // Se nel frattempo il dietista ha selezionato un altro paziente nel
+    // widget qbar-cartella-cw, senza questa guardia una risposta arrivata
+    // in ritardo può accendere i bottoni "precompila" in base ai questionari
+    // salvati del paziente precedente, mostrandoli/nascondendoli sotto il
+    // nome del paziente ora selezionato (precompilaFromLast rilegge comunque
+    // la cartella corrente al click, quindi non c'è leak di dati — solo UI
+    // fuorviante). Stessa guardia già usata per la stessa classe di race.
+    if ((document.getElementById('qbar-cartella')?.value || '') !== cartellaId) return;
     if (!data || !data.length) return;
     const savedNames = new Set();
     data.forEach(row => {

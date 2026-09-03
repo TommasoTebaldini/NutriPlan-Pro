@@ -1188,6 +1188,14 @@ async function renderCartellaDetail(id) {
 
   const _owner = studioOwnerId || currentUser.id;
   const cartResult = await sb.from('cartelle').select('id,nome,cognome,ddn,sesso,note,created_at,codice_fiscale,tags,archived,user_id').eq('id', id).eq('user_id', _owner).maybeSingle();
+  // Se nel frattempo il dietista ha aperto un'altra cartella (o è tornato
+  // all'elenco) mentre questa era ancora in volo, cartellaAperta punta già
+  // altrove: senza questa guardia una risposta arrivata in ritardo può
+  // scrivere il dettaglio clinico della cartella sbagliata (o un errore/
+  // cartellaAperta=null) sopra la vista ora attiva. Stessa guardia già
+  // usata per la stessa classe di race in whatsapp.html/broadcast.html,
+  // qui sulla funzione più chiamata dell'intera pagina.
+  if (cartellaAperta !== id) return;
   if (cartResult?.error) {
     console.error('Errore caricamento cartella:', cartResult.error);
     wrap.innerHTML = `<div class="empty-state"><div class="ei">❌</div><h3>${_L('Errore caricamento cartella','Folder loading error')}</h3><p style="color:var(--slate-l);font-size:13px">${esc(cartResult.error.message)}</p><button onclick="loadCartelle()" class="btn btn-ghost btn-sm" style="margin-top:10px">${_L('← Torna all\'elenco','← Back to list')}</button></div>`;
@@ -1208,6 +1216,7 @@ async function renderCartellaDetail(id) {
     safeQuery(sb.from('diario_alimentare_foto').select('id,storage_path,data_diario,ai_description,ai_confidence,foods,totali,note,created_at').eq('cartella_id', id).eq('user_id', _owner).order('data_diario', {ascending:false})),
     safeQuery(sb.from('percorsi_nutrizionali').select('id,nome,data_inizio,durata_settimane,checkin_ogni_giorni,stato').eq('cartella_id', id).eq('dietitian_id', _owner).order('created_at', {ascending:false})),
   ]);
+  if (cartellaAperta !== id) return; // vedi guardia sopra: altre 10 query in parallelo, altrettante occasioni di arrivare in ritardo
 
   const cart = cartResult.data;
   const patientId = patientLink[0]?.patient_id || null;

@@ -2197,21 +2197,28 @@ async function openFirmaConsenso(consentId) {
   });
 }
 
+let _creatingConsent=false; // il bottone sparisce solo al re-render dopo loadPrivacy(): un doppio click prima di allora creerebbe due moduli di consenso duplicati per lo stesso paziente (stesso bug class del giro 18/19/20)
 async function createConsent(cartellaId, patientName, dietEmail) {
-  const template = await getConsentTemplate();
-  const text = template || buildConsentText(patientName, dietEmail);
-  const pid = chatPatients.find(x => x.id === selectedPatientId)?.id || null;
-  const {error} = await sb.from('patient_consents').insert({
-    cartella_id: cartellaId,
-    dietitian_id: studioOwnerId || currentUser.id,
-    patient_id: pid,
-    consent_text: text,
-    visible_to_patient: true,
-    consent_version: '1.0'
-  });
-  if (error) { toast(_L('❌ Errore: ','❌ Error: ') + error.message, 'err'); return; }
-  toast(_L('📤 Modulo inviato al paziente per la firma','📤 Form sent to the patient for signature'), 'ok');
-  loadPrivacy();
+  if (_creatingConsent) return;
+  _creatingConsent = true;
+  try {
+    const template = await getConsentTemplate();
+    const text = template || buildConsentText(patientName, dietEmail);
+    const pid = chatPatients.find(x => x.id === selectedPatientId)?.id || null;
+    const {error} = await sb.from('patient_consents').insert({
+      cartella_id: cartellaId,
+      dietitian_id: studioOwnerId || currentUser.id,
+      patient_id: pid,
+      consent_text: text,
+      visible_to_patient: true,
+      consent_version: '1.0'
+    });
+    if (error) { toast(_L('❌ Errore: ','❌ Error: ') + error.message, 'err'); return; }
+    toast(_L('📤 Modulo inviato al paziente per la firma','📤 Form sent to the patient for signature'), 'ok');
+    loadPrivacy();
+  } finally {
+    _creatingConsent = false;
+  }
 }
 
 async function getConsentTemplate() {

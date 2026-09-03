@@ -92,20 +92,95 @@ li{font-size:13.5px;color:#334155;line-height:1.7;margin-bottom:4px}
       <li>Codice già pronto (<code>PAYMENTS_ACTIVE=false</code>) ma account Stripe non ancora creato — vedi promemoria di progetto.</li>
       <li>Il DPA di Stripe si accetta insieme ai Terms of Service in fase di creazione account (stripe.com/legal/dpa) — nessuna azione separata richiesta oltre l'accettazione standard.</li>
       <li>Da fare quando si crea l'account: abilitare PayPal nel Dashboard Stripe (oltre ai "recurring payments" per PayPal se richiesti separatamente) — vedi SETUP-STRIPE.md.</li>
+      <li>Riguarda anche l'app pazienti (Diet-Plan-Pro-app-claude, piano Pro): stesso flag <code>PAYMENTS_ACTIVE=false</code> lato client + <code>payments_active()</code> lato DB, non ancora attivato.</li>
+    </ul>
+  </div>
+
+  <div class="provider-card">
+    <h3>🧠 Anthropic (Claude) <span class="status status-check">DA VERIFICARE</span></h3>
+    <div class="meta">Servizio: generazione dei piani alimentari con AI (contenuto clinico, modello dedicato separato da Groq) e fallback per l'analisi foto pasto/diario alimentare · Sede: USA</div>
+    <ul>
+      <li>DPA standard disponibile su anthropic.com/legal/commercial-terms — da accettare/verificare prima del lancio commerciale.</li>
+      <li>Riceve: il prompt di generazione piano (dati antropometrici/patologie del paziente inseriti nel form, non necessariamente il nominativo) lato NutriPlan-Pro; l'immagine del pasto/diario quando usata come fallback lato Diet-Plan-Pro-app-claude (Edge Function <code>analyze-meal</code>/<code>analyze-food-diary</code>).</li>
+      <li>Verificare le policy di conservazione/uso dei contenuti API (Anthropic non addestra sui dati inviati via API per impostazione predefinita, da confermare nei ToS attuali).</li>
+    </ul>
+  </div>
+
+  <div class="provider-card">
+    <h3>🔷 Google (Gemini API) <span class="status status-check">DA VERIFICARE</span></h3>
+    <div class="meta">Servizio: analisi AI delle foto pasto/diario alimentare (provider primario, piano gratuito) nell'app pazienti · Sede: USA/UE</div>
+    <ul>
+      <li>DPA standard nei Google APIs Terms of Service / Gemini API Additional Terms — da verificare prima del lancio commerciale.</li>
+      <li>Riceve: la foto del pasto o del diario alimentare caricata dal paziente/dietista, elaborata lato server (Edge Function Supabase, chiave API mai esposta al client).</li>
+      <li>Nota interna: i file <code>api/claude.js</code> e <code>api/gemini.js</code> di NutriPlan-Pro, nonostante il nome, instradano entrambi a Groq (vedi sotto) — il vero Google Gemini è usato solo dalle Edge Function <code>analyze-meal</code>/<code>analyze-food-diary</code> di Diet-Plan-Pro-app-claude. Da chiarire bene con l'avvocato per evitare confusione nella lista fornitori.</li>
+    </ul>
+  </div>
+
+  <div class="provider-card">
+    <h3>📱 Meta Platforms Inc. (WhatsApp Business Cloud API) <span class="status status-check">DA VERIFICARE</span></h3>
+    <div class="meta">Servizio: invio/ricezione messaggi WhatsApp tra dietista e paziente (funzione opzionale, richiede collegamento manuale dell'account Meta for Developers da parte del dietista) · Sede: USA/UE</div>
+    <ul>
+      <li>DPA/Data Processing Terms Meta Business — da verificare, in particolare per il trasferimento extra-UE dei contenuti dei messaggi.</li>
+      <li>Riceve: numero di telefono del paziente e testo/media dei messaggi scambiati via WhatsApp, quando il dietista attiva e usa questa funzione (non è attiva di default).</li>
+      <li>Funzione ad opt-in per singolo dietista: da riflettere in privacy.html come funzione "quando attiva", non come trattamento sistematico di tutti gli account.</li>
+    </ul>
+  </div>
+
+  <div class="provider-card">
+    <h3>✉️ Resend <span class="status status-check">DA VERIFICARE</span></h3>
+    <div class="meta">Servizio: invio email transazionali (reset password), in sostituzione dell'invio email integrato di Supabase · Sede: USA</div>
+    <ul>
+      <li>DPA standard su resend.com/legal/dpa — da accettare/verificare.</li>
+      <li>Riceve: indirizzo email del professionista e link di recupero password monouso — nessun dato clinico.</li>
+    </ul>
+  </div>
+
+  <div class="provider-card">
+    <h3>🧾 Fatture in Cloud <span class="status status-check">DA VERIFICARE</span></h3>
+    <div class="meta">Servizio: emissione e invio allo SDI delle fatture elettroniche del dietista (funzione opzionale) · Sede: Italia</div>
+    <ul>
+      <li>Il collegamento avviene con le credenziali/account Fatture in Cloud <strong>del singolo dietista</strong> (non un account NutriPlan-Pro condiviso) — da chiarire con l'avvocato se questo configura NutriPlan-Pro come mero intermediario tecnico piuttosto che sub-responsabile in senso proprio, e se serve comunque menzione in privacy.html.</li>
+      <li>Riceve: dati della fattura (nome/CF paziente se indicato, importo, causale) quando il dietista usa questa funzione.</li>
+    </ul>
+  </div>
+
+  <div class="provider-card">
+    <h3>🏥 Sistema Tessera Sanitaria (Sistema TS) <span class="status status-check">DA VERIFICARE</span></h3>
+    <div class="meta">Servizio: registrazione erogatore e trasmissione dati fiscali al sistema sanitario nazionale (funzione opzionale, obbligo di legge per chi la attiva) · Sede: Italia (ente pubblico)</div>
+    <ul>
+      <li>Trasmissione con le credenziali del dietista stesso (stesso schema di Fatture in Cloud) — verificare con l'avvocato la corretta qualificazione giuridica (adempimento di obbligo legale del professionista, art. 6.1.c/9.2.h GDPR, più che un rapporto di responsabile del trattamento con NutriPlan-Pro).</li>
+      <li>Riceve: dati fiscali della prestazione sanitaria (CF paziente, importo, tipo prestazione) quando il dietista attiva questa funzione, per l'invio della Dichiarazione dei Redditi precompilata.</li>
+    </ul>
+  </div>
+
+  <div class="provider-card">
+    <h3>🗓️ Google/Apple/Microsoft Calendar (feed iCalendar) <span class="status status-check">DA VERIFICARE</span></h3>
+    <div class="meta">Servizio: sincronizzazione facoltativa dell'agenda del dietista con app calendario esterne, via feed iCalendar (webcal://) o Google Calendar API · Sede: variabile in base all'app scelta dal dietista</div>
+    <ul>
+      <li>A differenza degli altri fornitori in questa pagina, qui è il <strong>dietista</strong> a scegliere autonomamente con quale servizio calendario sincronizzarsi (Google/Apple/Outlook) collegando il proprio account personale — non un sub-responsabile scelto da NutriPlan-Pro.</li>
+      <li>Il feed include il campo "paziente" degli appuntamenti (spesso il nome del paziente): da segnalare chiaramente al dietista nell'interfaccia (già presente in agenda.html) che sincronizzando il calendario, il nome del paziente finisce anche nel suo account Google/Apple/Microsoft personale.</li>
+    </ul>
+  </div>
+
+  <div class="provider-card">
+    <h3>⏱️ Upstash <span class="status status-ok">Rischio basso</span></h3>
+    <div class="meta">Servizio: rate-limiting distribuito (contatori di richieste per IP/utente), fallback in-memory se non configurato · Sede: USA/UE</div>
+    <ul>
+      <li>Non riceve dati clinici o identificativi — solo contatori numerici chiave/valore con TTL breve (minuti). Verifica comunque consigliata ma priorità bassa.</li>
     </ul>
   </div>
 
   <hr class="section-divider">
 
-  <h2>Sub-responsabili NON in uso (per chiarezza)</h2>
-  <p style="font-size:13px;color:#64748B">Nessun altro servizio terzo riceve dati personali dei pazienti al momento. Se in futuro si integrano nuovi strumenti (es. servizio di email transazionali, servizio di supporto clienti tipo Crisp/Tawk.to, provider SMS/push) vanno aggiunti qui prima di andare in produzione, con lo stesso livello di verifica degli altri fornitori.</p>
+  <h2>Sub-responsabili NON in uso al momento</h2>
+  <p style="font-size:13px;color:#64748B">Nessun servizio di live chat/supporto clienti di terze parti (es. Crisp/Tawk.to) è integrato. Se in futuro si aggiungono nuovi strumenti vanno inseriti qui prima di andare in produzione, con lo stesso livello di verifica degli altri fornitori.</p>
 
   <div class="contact-box">
     <h3>📩 Contatti</h3>
     <p>Per domande su questo registro, contatta il Titolare/Responsabile all'indirizzo indicato nell'Informativa Privacy.</p>
   </div>
 
-  <p class="last-update">Ultimo aggiornamento: Luglio 2026 — NutriPlan-Pro</p>
+  <p class="last-update">Ultimo aggiornamento: Settembre 2026 — NutriPlan-Pro</p>
 </div>
 </body>
 </html>

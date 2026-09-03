@@ -98,7 +98,12 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
     <li>Piani alimentari personalizzati, diete prescritte, ricette e diario alimentare/benessere (umore, energia, stress, sonno, idratazione, ciclo mestruale se compilato dal paziente).</li>
     <li>Questionari nutrizionali, schede di valutazione e resoconti visita.</li>
     <li>Note cliniche e appunti del professionista, allegati/documenti caricati in cartella.</li>
-    <li>Messaggi di chat 1:1 e di gruppo (testo, vocali, immagini) tra professionista e paziente, inclusi eventuali messaggi programmati.</li>
+    <li>Messaggi di chat 1:1 e di gruppo (testo, vocali, immagini) tra professionista e paziente, inclusi eventuali messaggi programmati; se il professionista attiva il collegamento WhatsApp, anche numero di telefono e messaggi scambiati tramite WhatsApp Business (Meta) — vedi punto 5.1.</li>
+    <li>Se il professionista usa la funzione di trascrizione automatica delle sedute ("AI Scribe"): l'audio della seduta, registrato solo col consenso esplicito del paziente richiesto prima di avviare la registrazione, viene inviato al fornitore AI per la trascrizione e scartato subito dopo — non viene mai salvato su disco, storage o database. Restano invece salvati, se il professionista li conferma, il testo trascritto e la nota clinica generata.</li>
+    <li>Foto di referti di laboratorio o del diario alimentare caricate per l'estrazione automatica dei valori tramite AI (OCR).</li>
+    <li>Se il professionista attiva la fatturazione elettronica o la trasmissione al Sistema Tessera Sanitaria: dati della fattura e dati fiscali della prestazione, trasmessi tramite l'account personale del professionista presso questi servizi — vedi punto 5.1.</li>
+    <li>Se il professionista sincronizza la propria agenda con un'app calendario esterna (Google/Apple/Outlook): il nome del paziente e l'orario dell'appuntamento vengono inclusi nel feed di sincronizzazione — vedi punto 5.1.</li>
+    <li>Dati clinici esportabili in formato standard FHIR (interoperabilità sanitaria), su richiesta del professionista o del paziente, per il trasferimento ad altri sistemi sanitari.</li>
     <li>Se attivo: dati di fatturazione dell'abbonamento del professionista (non dati di pagamento dei pazienti, che non transitano su questa piattaforma) — vedi punto 5.2.</li>
   </ul>
 
@@ -170,9 +175,39 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
       </tr>
       <tr>
         <td><strong>Groq Inc.</strong></td>
-        <td>Assistente AI (elaborazione di query nutrizionali — nessun dato paziente inviato automaticamente)</td>
+        <td>Assistente AI, OCR di referti/foto e trascrizione vocale "AI Scribe" (elaborazione di query e contenuti inseriti volontariamente — nessun dato identificativo del paziente inviato automaticamente)</td>
         <td>USA</td>
         <td>Standard Contractual Clauses (SCC)</td>
+      </tr>
+      <tr>
+        <td><strong>Anthropic (Claude)</strong></td>
+        <td>Generazione AI dei piani alimentari (modello dedicato per contenuto clinico) e analisi di riserva delle foto pasto/diario alimentare</td>
+        <td>USA</td>
+        <td>Standard Contractual Clauses (SCC)</td>
+      </tr>
+      <tr>
+        <td><strong>Google (Gemini API)</strong></td>
+        <td>Analisi AI delle foto pasto/diario alimentare nell'app pazienti (fornitore primario)</td>
+        <td>USA/UE</td>
+        <td>Standard Contractual Clauses (SCC)</td>
+      </tr>
+      <tr>
+        <td><strong>Meta Platforms Inc.</strong> <span class="todo">se attivato dal professionista</span></td>
+        <td>Invio/ricezione messaggi WhatsApp Business tra professionista e paziente — solo se il professionista collega volontariamente il proprio account WhatsApp Business</td>
+        <td>USA/UE</td>
+        <td>Data Processing Terms Meta Business</td>
+      </tr>
+      <tr>
+        <td><strong>Resend</strong></td>
+        <td>Invio email transazionali (recupero password)</td>
+        <td>USA</td>
+        <td>Standard Contractual Clauses (SCC) + DPA Resend</td>
+      </tr>
+      <tr>
+        <td><strong>Fatture in Cloud</strong> / <strong>Sistema Tessera Sanitaria</strong> <span class="todo">se attivati dal professionista</span></td>
+        <td>Fatturazione elettronica e trasmissione dati fiscali al sistema sanitario nazionale — tramite l'account personale del professionista presso questi servizi, non un account NutriPlan-Pro condiviso</td>
+        <td>Italia</td>
+        <td><span class="todo">da qualificare con l'avvocato (intermediario tecnico vs. sub-responsabile)</span></td>
       </tr>
       <tr>
         <td><strong>Stripe Inc.</strong> <span class="todo">se attivo</span></td>
@@ -183,7 +218,7 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
     </tbody>
   </table>
   </div>
-  <p style="font-size:12.5px;color:var(--muted, #64748B)">L'elenco completo dei sub-responsabili, con i relativi contatti e link ai rispettivi DPA, è mantenuto nel <a href="legal/sub-responsabili.html">registro sub-responsabili</a>.</p>
+  <p style="font-size:12.5px;color:var(--muted, #64748B)">L'elenco completo dei sub-responsabili, con i relativi contatti e link ai rispettivi DPA, è mantenuto nel <a href="legal/sub-responsabili.html">registro sub-responsabili</a>. Se il professionista sincronizza volontariamente la propria agenda con Google/Apple/Outlook Calendar, quel servizio non è un sub-responsabile scelto da NutriPlan-Pro ma un account personale del professionista — vedi lo stesso registro per i dettagli.</p>
 
   <div class="highlight-box">
     <p>⚠️ <strong>Importante:</strong> L'Assistente AI elabora solo le domande inserite volontariamente dall'operatore. Non inviare mai dati identificativi dei pazienti (nome, codice fiscale, ecc.) alle funzioni AI.</p>
@@ -214,10 +249,13 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
   <ul>
     <li>Crittografia delle password (hashing con bcrypt tramite Supabase Auth).</li>
     <li>Comunicazioni cifrate tramite TLS/HTTPS su tutte le connessioni.</li>
+    <li>Cifratura a livello di campo (pgcrypto) per le categorie di dati più sensibili — note cliniche, note specialistiche/NCPt, messaggi di chat — leggibili in chiaro solo dall'utente autorizzato tramite viste dedicate lato database, con le chiavi di cifratura gestite separatamente dai dati (Supabase Vault).</li>
+    <li>Autenticazione a più fattori (MFA) applicabile alle tabelle e agli account con accesso a dati particolarmente sensibili.</li>
     <li>Row Level Security (RLS) nel database: ogni utente accede esclusivamente ai propri dati.</li>
     <li>Accesso agli endpoint API limitato agli utenti autenticati con sessione valida.</li>
     <li>Header di sicurezza HTTP (CSP, HSTS, X-Frame-Options, ecc.).</li>
     <li>Sistema di approvazione degli account: i nuovi account richiedono autorizzazione da un amministratore.</li>
+    <li>Registro di audit (audit log) sulle operazioni più sensibili relative ai dati dei pazienti.</li>
   </ul>
 
   <hr class="section-divider">
@@ -258,7 +296,7 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
     <p style="margin-top:10px">Garante per la Protezione dei Dati Personali: <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener noreferrer">www.garanteprivacy.it</a></p>
   </div>
 
-  <p class="last-update">Ultimo aggiornamento: Luglio 2026 — NutriPlan-Pro</p>
+  <p class="last-update">Ultimo aggiornamento: Settembre 2026 — NutriPlan-Pro</p>
 </div>
 
 <div data-only-lang="en" style="display:none">
@@ -305,7 +343,12 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
     <li>Personalized meal plans, prescribed diets, recipes and food/wellness diary (mood, energy, stress, sleep, hydration, menstrual cycle if filled in by the patient).</li>
     <li>Nutritional questionnaires, assessment records and visit reports.</li>
     <li>Clinical notes and the professional's remarks, attachments/documents uploaded to the file.</li>
-    <li>1:1 and group chat messages (text, voice notes, images) between professional and patient, including any scheduled messages.</li>
+    <li>1:1 and group chat messages (text, voice notes, images) between professional and patient, including any scheduled messages; if the professional enables the WhatsApp connection, also the patient's phone number and messages exchanged via WhatsApp Business (Meta) — see point 5.1.</li>
+    <li>If the professional uses the automatic session-transcription feature ("AI Scribe"): session audio, recorded only with the patient's explicit consent requested before recording starts, is sent to the AI provider for transcription and discarded immediately afterwards — it is never saved to disk, storage or the database. Only the transcribed text and the generated clinical note are kept, and only if the professional confirms them.</li>
+    <li>Photos of lab reports or the food diary uploaded for automatic value extraction via AI (OCR).</li>
+    <li>If the professional enables electronic invoicing or transmission to the Italian Health Card System (Sistema Tessera Sanitaria): invoice data and the visit's fiscal data, transmitted via the professional's own personal account with these services — see point 5.1.</li>
+    <li>If the professional syncs their agenda with an external calendar app (Google/Apple/Outlook): the patient's name and appointment time are included in the sync feed — see point 5.1.</li>
+    <li>Clinical data exportable in the standard FHIR format (healthcare interoperability), at the professional's or patient's request, for transfer to other healthcare systems.</li>
     <li>If active: billing data for the professional's subscription (not patient payment data, which never passes through this platform) — see point 5.2.</li>
   </ul>
 
@@ -377,9 +420,39 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
       </tr>
       <tr>
         <td><strong>Groq Inc.</strong></td>
-        <td>AI Assistant (processing of nutrition queries — no patient data sent automatically)</td>
+        <td>AI Assistant, OCR of lab reports/photos and voice transcription "AI Scribe" (processing of queries and content voluntarily entered — no patient-identifying data sent automatically)</td>
         <td>USA</td>
         <td>Standard Contractual Clauses (SCC)</td>
+      </tr>
+      <tr>
+        <td><strong>Anthropic (Claude)</strong></td>
+        <td>AI generation of meal plans (dedicated model for clinical content) and fallback analysis of meal/food-diary photos</td>
+        <td>USA</td>
+        <td>Standard Contractual Clauses (SCC)</td>
+      </tr>
+      <tr>
+        <td><strong>Google (Gemini API)</strong></td>
+        <td>AI analysis of meal/food-diary photos in the patient app (primary provider)</td>
+        <td>USA/EU</td>
+        <td>Standard Contractual Clauses (SCC)</td>
+      </tr>
+      <tr>
+        <td><strong>Meta Platforms Inc.</strong> <span class="todo">if enabled by the professional</span></td>
+        <td>Sending/receiving WhatsApp Business messages between professional and patient — only if the professional voluntarily connects their own WhatsApp Business account</td>
+        <td>USA/EU</td>
+        <td>Meta Business Data Processing Terms</td>
+      </tr>
+      <tr>
+        <td><strong>Resend</strong></td>
+        <td>Transactional email delivery (password recovery)</td>
+        <td>USA</td>
+        <td>Standard Contractual Clauses (SCC) + Resend DPA</td>
+      </tr>
+      <tr>
+        <td><strong>Fatture in Cloud</strong> / <strong>Italian Health Card System (Sistema TS)</strong> <span class="todo">if enabled by the professional</span></td>
+        <td>Electronic invoicing and transmission of fiscal data to the national healthcare system — via the professional's own personal account with these services, not a shared NutriPlan-Pro account</td>
+        <td>Italy</td>
+        <td><span class="todo">legal characterization to be confirmed (technical intermediary vs. processor)</span></td>
       </tr>
       <tr>
         <td><strong>Stripe Inc.</strong> <span class="todo">if active</span></td>
@@ -390,7 +463,7 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
     </tbody>
   </table>
   </div>
-  <p style="font-size:12.5px;color:var(--muted, #64748B)">The complete list of sub-processors, with their contacts and links to their respective DPAs, is maintained in the <a href="legal/sub-responsabili.html">sub-processors register</a>.</p>
+  <p style="font-size:12.5px;color:var(--muted, #64748B)">The complete list of sub-processors, with their contacts and links to their respective DPAs, is maintained in the <a href="legal/sub-responsabili.html">sub-processors register</a>. If the professional voluntarily syncs their agenda with Google/Apple/Outlook Calendar, that service is not a sub-processor chosen by NutriPlan-Pro but the professional's own personal account — see the same register for details.</p>
 
   <div class="highlight-box">
     <p>⚠️ <strong>Important:</strong> The AI Assistant only processes questions voluntarily entered by the operator. Never send patient-identifying data (name, tax ID, etc.) to the AI functions.</p>
@@ -421,10 +494,13 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
   <ul>
     <li>Password encryption (bcrypt hashing via Supabase Auth).</li>
     <li>Encrypted communications via TLS/HTTPS on all connections.</li>
+    <li>Field-level encryption (pgcrypto) for the most sensitive categories of data — clinical notes, specialist notes/NCPt, chat messages — readable in clear text only by the authorized user through dedicated database views, with encryption keys managed separately from the data (Supabase Vault).</li>
+    <li>Multi-factor authentication (MFA) applicable to tables and accounts with access to particularly sensitive data.</li>
     <li>Row Level Security (RLS) in the database: each user can only access their own data.</li>
     <li>Access to API endpoints restricted to authenticated users with a valid session.</li>
     <li>HTTP security headers (CSP, HSTS, X-Frame-Options, etc.).</li>
     <li>Account approval system: new accounts require authorization from an administrator.</li>
+    <li>Audit log on the most sensitive operations involving patient data.</li>
   </ul>
 
   <hr class="section-divider">
@@ -465,7 +541,7 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
     <p style="margin-top:10px">Italian Data Protection Authority: <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener noreferrer">www.garanteprivacy.it</a></p>
   </div>
 
-  <p class="last-update">Last updated: July 2026 — NutriPlan-Pro</p>
+  <p class="last-update">Last updated: September 2026 — NutriPlan-Pro</p>
 </div>
 </div>
 

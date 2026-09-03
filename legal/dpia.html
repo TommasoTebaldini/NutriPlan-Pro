@@ -116,13 +116,15 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
       <tr><td>Accesso ai dati da parte di un collaboratore di studio oltre le proprie mansioni</td><td class="risk-med">Media</td><td class="risk-med">Media</td><td>Livelli di accesso granulari (segretaria/dietista) con RLS dedicata per ruolo</td></tr>
       <tr><td>Trasferimento extra-UE verso fornitori USA senza garanzie adeguate</td><td class="risk-low">Bassa</td><td class="risk-med">Media</td><td>Clausole Contrattuali Standard; preferenza per opzioni EU quando disponibili senza costi aggiuntivi significativi</td></tr>
       <tr><td>Perdita di dati per malfunzionamento tecnico senza backup verificato</td><td class="risk-low">Bassa</td><td class="risk-high">Alta</td><td>Backup automatici lato infrastruttura cloud — <span class="todo">DA VERIFICARE</span>: eseguire almeno un test di ripristino completo prima del lancio (vedi Piano di lancio, Fase 1)</td></tr>
+      <tr><td>Esposizione di numero di telefono e contenuto messaggi verso Meta (WhatsApp Business), fornitore con proprie policy di conservazione fuori dal controllo diretto della piattaforma</td><td class="risk-med">Media</td><td class="risk-med">Media</td><td>Funzione opzionale, attivata solo su scelta esplicita del singolo professionista; nessun dato clinico strutturato inviato, solo testo/media dei messaggi</td></tr>
+      <tr><td>Registrazione audio di una seduta clinica ("AI Scribe") inviata a fornitore AI esterno (Groq) senza adeguata garanzia del consenso del paziente</td><td class="risk-med">Media</td><td class="risk-high">Alta</td><td>Consenso esplicito del paziente richiesto lato client prima di avviare la registrazione; audio mai scritto su disco/storage/DB, scartato subito dopo la trascrizione; solo testo/nota clinica risultante salvati, a discrezione del professionista</td></tr>
     </tbody>
   </table>
 
   <hr class="section-divider">
 
   <h2>4. Misure previste per affrontare i rischi</h2>
-  <p>Le misure tecniche e organizzative sono descritte in dettaglio nella sezione 6 del <a href="dpa-responsabile-trattamento.html">DPA</a> e includono, in sintesi: cifratura TLS/HTTPS, Row Level Security a livello database, sistema di approvazione account, header di sicurezza HTTP, registro di audit delle scritture cliniche, bucket di storage privati con URL firmati a scadenza, backup regolari lato infrastruttura cloud. La <a href="politica-conservazione-audit.html">Politica di Conservazione e Audit Log</a> definisce inoltre i periodi di ritenzione per categoria di dato.</p>
+  <p>Le misure tecniche e organizzative sono descritte in dettaglio nella sezione 6 del <a href="dpa-responsabile-trattamento.html">DPA</a> e includono, in sintesi: cifratura TLS/HTTPS, cifratura a livello di campo (pgcrypto/Vault) per le categorie di dati più sensibili (note cliniche, note specialistiche/NCPt, messaggi di chat), autenticazione a più fattori (MFA) sulle tabelle più sensibili, Row Level Security a livello database, sistema di approvazione account, header di sicurezza HTTP, registro di audit delle scritture cliniche, bucket di storage privati con URL firmati a scadenza, backup regolari lato infrastruttura cloud. La <a href="politica-conservazione-audit.html">Politica di Conservazione e Audit Log</a> definisce inoltre i periodi di ritenzione per categoria di dato.</p>
   <p>Misura specifica introdotta per questa valutazione: <strong>gate di consenso esplicito</strong> prima del primo utilizzo dell'analisi AI delle foto pasto (schermata dedicata, non un semplice riferimento nella Privacy Policy generale), con registrazione del timestamp di accettazione sul profilo dell'interessato.</p>
 
   <hr class="section-divider">
@@ -164,7 +166,7 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
     <p>Per domande relative a questa valutazione, contatta il Responsabile del Trattamento all'indirizzo email indicato nell'Informativa Privacy.</p>
   </div>
 
-  <p class="last-update">Ultimo aggiornamento: Agosto 2026 — NutriPlan-Pro · Bozza v0.1, non ancora validata legalmente</p>
+  <p class="last-update">Ultimo aggiornamento: Settembre 2026 — NutriPlan-Pro · Bozza v0.1, non ancora validata legalmente</p>
 </div>
 </body>
 </html>

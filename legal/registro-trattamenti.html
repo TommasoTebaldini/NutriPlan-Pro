@@ -158,14 +158,56 @@ tbody tr:last-child td{border-bottom:none}
 
   <div class="activity-card">
     <span class="role role-resp">RESPONSABILE</span>
-    <h3>B.3 — Assistente AI di supporto nutrizionale</h3>
+    <h3>B.3 — Assistente AI di supporto nutrizionale, OCR referti, trascrizione sedute ("AI Scribe")</h3>
     <table>
       <tbody>
-        <tr><td style="width:22%"><strong>Finalità</strong></td><td>Fornire al professionista suggerimenti generali su query nutrizionali inserite volontariamente.</td></tr>
-        <tr><td><strong>Categorie di dati</strong></td><td>Testo della query inserita dal professionista. Istruzioni operative vietano l'inserimento di dati identificativi del paziente nelle query AI (vedi Informativa Privacy sez. 5).</td></tr>
-        <tr><td><strong>Destinatari</strong></td><td>Groq Inc. (elaborazione del modello linguistico).</td></tr>
+        <tr><td style="width:22%"><strong>Finalità</strong></td><td>Fornire al professionista suggerimenti generali su query nutrizionali inserite volontariamente; estrarre automaticamente i valori da foto di referti di laboratorio o del diario alimentare (OCR); trascrivere l'audio di una seduta (registrata solo con consenso esplicito del paziente) e generare una nota clinica strutturata.</td></tr>
+        <tr><td><strong>Categorie di dati</strong></td><td>Testo della query inserita dal professionista; immagine del referto/diario; audio della seduta (scartato subito dopo la trascrizione, mai salvato su disco/storage/DB). Istruzioni operative vietano l'inserimento di dati identificativi del paziente nelle query AI testuali (vedi Informativa Privacy sez. 5).</td></tr>
+        <tr><td><strong>Destinatari</strong></td><td>Groq Inc. (elaborazione del modello linguistico/vision/audio).</td></tr>
         <tr><td><strong>Trasferimenti extra-UE</strong></td><td>Sì (USA), con SCC.</td></tr>
-        <tr><td><strong>Termini di cancellazione</strong></td><td>Le query non sono conservate da NutriPlan-Pro oltre la sessione, salvo cronologia lato client. Politica di conservazione di Groq: <span class="todo">DA VERIFICARE</span> sui termini del fornitore.</td></tr>
+        <tr><td><strong>Termini di cancellazione</strong></td><td>Le query/immagini/audio non sono conservati da NutriPlan-Pro oltre la sessione, salvo cronologia lato client per il testo delle query. Politica di conservazione di Groq: <span class="todo">DA VERIFICARE</span> sui termini del fornitore.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="activity-card">
+    <span class="role role-resp">RESPONSABILE</span>
+    <h3>B.4 — Generazione AI dei piani alimentari</h3>
+    <table>
+      <tbody>
+        <tr><td style="width:22%"><strong>Finalità</strong></td><td>Generare una proposta di piano alimentare personalizzato a partire da dati antropometrici/patologie inseriti dal professionista, tramite un modello AI dedicato per contenuto clinico.</td></tr>
+        <tr><td><strong>Categorie di dati</strong></td><td>Dati antropometrici e patologie/allergie/intolleranze inseriti nel form di generazione (non necessariamente il nominativo del paziente).</td></tr>
+        <tr><td><strong>Destinatari</strong></td><td>Anthropic (Claude).</td></tr>
+        <tr><td><strong>Trasferimenti extra-UE</strong></td><td>Sì (USA), con SCC.</td></tr>
+        <tr><td><strong>Termini di cancellazione</strong></td><td>Il prompt non è conservato da NutriPlan-Pro oltre la sessione. Politica di conservazione di Anthropic: <span class="todo">DA VERIFICARE</span> sui termini del fornitore (Anthropic dichiara di non addestrare sui dati inviati via API).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="activity-card">
+    <span class="role role-resp">RESPONSABILE</span>
+    <h3>B.5 — Messaggistica WhatsApp Business <span class="todo">se attivata dal professionista</span></h3>
+    <table>
+      <tbody>
+        <tr><td style="width:22%"><strong>Finalità</strong></td><td>Consentire al professionista di comunicare con i pazienti tramite WhatsApp, in alternativa/aggiunta alla chat interna.</td></tr>
+        <tr><td><strong>Categorie di dati</strong></td><td>Numero di telefono del paziente, testo e media dei messaggi scambiati.</td></tr>
+        <tr><td><strong>Destinatari</strong></td><td>Meta Platforms Inc. (WhatsApp Business Cloud API).</td></tr>
+        <tr><td><strong>Trasferimenti extra-UE</strong></td><td>Sì (USA/UE), con garanzie Meta Business Data Processing Terms.</td></tr>
+        <tr><td><strong>Termini di cancellazione</strong></td><td><span class="todo">DA VERIFICARE</span> sui termini di conservazione Meta lato webhook/Cloud API.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="activity-card">
+    <span class="role role-resp">RESPONSABILE</span>
+    <h3>B.6 — Fatturazione elettronica e trasmissione Sistema Tessera Sanitaria <span class="todo">se attivati dal professionista</span></h3>
+    <table>
+      <tbody>
+        <tr><td style="width:22%"><strong>Finalità</strong></td><td>Emissione fatture elettroniche verso lo SDI e trasmissione dei dati fiscali della prestazione al sistema sanitario nazionale per la Dichiarazione dei Redditi precompilata.</td></tr>
+        <tr><td><strong>Categorie di dati</strong></td><td>Nome/codice fiscale del paziente (se indicato in fattura), importo, causale/tipo prestazione.</td></tr>
+        <tr><td><strong>Destinatari</strong></td><td>Fatture in Cloud; Sistema Tessera Sanitaria (ente pubblico) — tramite l'account personale del professionista presso questi servizi, non un account NutriPlan-Pro condiviso.</td></tr>
+        <tr><td><strong>Trasferimenti extra-UE</strong></td><td>No (fornitori italiani/UE).</td></tr>
+        <tr><td><strong>Termini di cancellazione</strong></td><td>Secondo gli obblighi di conservazione fiscale (10 anni) e le policy dei rispettivi fornitori. Qualificazione giuridica di NutriPlan-Pro rispetto a questo trattamento (intermediario tecnico vs. sub-responsabile): <span class="todo">DA VERIFICARE con l'avvocato</span>.</td></tr>
       </tbody>
     </table>
   </div>
@@ -180,7 +222,7 @@ tbody tr:last-child td{border-bottom:none}
     <p>Per domande relative al presente registro, contatta il Titolare/Responsabile all'indirizzo indicato nell'Informativa Privacy.</p>
   </div>
 
-  <p class="last-update">Ultimo aggiornamento: Luglio 2026 — NutriPlan-Pro · Bozza v0.1, non ancora validata legalmente</p>
+  <p class="last-update">Ultimo aggiornamento: Settembre 2026 — NutriPlan-Pro · Bozza v0.1, non ancora validata legalmente</p>
 </div>
 </body>
 </html>

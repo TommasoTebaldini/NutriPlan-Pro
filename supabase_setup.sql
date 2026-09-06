@@ -8931,3 +8931,97 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_111_field_encryption_schede_esami_percorsi', 'Estesa la cifratura applicativa (pattern vista trasparente di SEZIONE 40/79) a schede_valutazione.note, esami_biochimici.note, percorsi_nutrizionali.note — trovate dall''analisi approfondita del 2026-09-06 come uniche tabelle rimaste con testo libero clinico non cifrato. Tabelle rinominate *_raw, viste trasparenti con security_invoker=true (RLS del chiamante invariata, segue OID), trigger INSTEAD OF INSERT/UPDATE/DELETE con search_path='''' fissato da subito (non serve un fix successivo come SEZIONE 82). schede_valutazione era anche sottoscritta via postgres_changes (SEZIONE 105): riusato il trigger docs_broadcast() esistente (SEZIONE 101) su schede_valutazione_raw, nessun nuovo canale client necessario (patient-portal.html ascolta già docs:<cartella_id>); rimossa la voce ormai morta dal loop postgres_changes nello stesso commit. esami_biochimici/percorsi_nutrizionali non avevano realtime/trigger/FK in entrata, zero impatto lato client. Zero modifiche richieste al codice per selezioni/scritture esistenti (stesso nome vista, stesse colonne).')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 112 — NUOVA FEATURE: "Il Giornale del Dietista" — rassegna mensile
+-- automatica di studi REALI (PubMed/MEDLINE, incl. Cochrane) su terapie
+-- nutrizionali/integratori (parte dietetica) e scoperte mediche generali
+-- (parte altro), riassunti dall'IA SENZA MAI generare contenuto dalla sola
+-- conoscenza del modello — vedi supabase/functions/generate-giornale/index.ts
+-- per il dettaglio completo della pipeline e delle garanzie anti-invenzione.
+-- Richiesto esplicitamente dall'utente 2026-09-06, con vincolo esplicito:
+-- "l'IA non deve generare nulla solo dalla sua conoscenza, deve prendere gli
+-- studi, analizzarli e poi creare il documento" — e workflow bozza/pubblica
+-- (non pubblicazione automatica) per poter rivedere prima che lo vedano tutti
+-- i dietisti, esattamente come i 100 studi fabbricati in studi.html scoperti
+-- e corretti il 2026-08-10.
+--
+-- NON ANCORA ESEGUITA (accesso MCP read-only, come sempre) — va lanciata a
+-- mano dal SQL Editor. DOPO l'esecuzione, recuperare il secret generato con:
+--   SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'giornale_cron_secret';
+-- e impostarlo come secret della Edge Function:
+--   supabase secrets set GIORNALE_CRON_SECRET=<valore appena recuperato>
+--   supabase functions deploy generate-giornale --no-verify-jwt
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS giornale_numeri (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  mese date NOT NULL UNIQUE, -- primo giorno del mese coperto dal numero (es. 2026-09-01 = "Settembre 2026")
+  stato text NOT NULL DEFAULT 'bozza' CHECK (stato IN ('bozza', 'pubblicato')),
+  titolo text NOT NULL,
+  parte_dietetica jsonb NOT NULL DEFAULT '[]'::jsonb, -- [{pmid,titolo_originale,titolo_it,rivista,data_pubblicazione,tipo_studio,url,riassunto,rilevanza_clinica}]
+  parte_altro jsonb NOT NULL DEFAULT '[]'::jsonb,
+  fonte_periodo_da date,
+  fonte_periodo_a date,
+  provider_ai text, -- quale provider AI ha generato i riassunti (gemini/groq/claude), solo diagnostico
+  note_generazione text, -- avvisi/errori parziali della generazione (es. "nessuno studio trovato per la parte X")
+  generato_at timestamptz NOT NULL DEFAULT now(),
+  pubblicato_at timestamptz,
+  pubblicato_da uuid REFERENCES profiles(id)
+);
+
+ALTER TABLE giornale_numeri ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS giornale_numeri_read ON giornale_numeri;
+CREATE POLICY giornale_numeri_read ON giornale_numeri FOR SELECT
+  USING (stato = 'pubblicato' OR check_is_admin());
+
+DROP POLICY IF EXISTS giornale_numeri_admin_write ON giornale_numeri;
+CREATE POLICY giornale_numeri_admin_write ON giornale_numeri FOR ALL
+  USING (check_is_admin()) WITH CHECK (check_is_admin());
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON giornale_numeri TO authenticated;
+
+-- Secret dedicato in Vault per autenticare la chiamata pg_cron -> Edge
+-- Function (stesso pattern di SEZIONE 75/notify_on_event_webhook_token: mai
+-- la service_role key in chiaro nel comando del cron job, generato qui
+-- casualmente, mai hardcoded in questo file).
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM vault.secrets WHERE name = 'giornale_cron_secret') THEN
+    PERFORM vault.create_secret(
+      encode(extensions.gen_random_bytes(32), 'hex'),
+      'giornale_cron_secret',
+      'Segreto condiviso tra il cron mensile e la Edge Function generate-giornale. Va impostato come secret GIORNALE_CRON_SECRET della funzione dopo l''esecuzione di SEZIONE 112.'
+    );
+  END IF;
+END $$;
+
+-- Cron mensile: 1° giorno del mese, 06:00 UTC — genera la bozza del numero
+-- relativo al mese appena concluso (la Edge Function calcola il mese target
+-- di default come "mese corrente - 1" quando il body è vuoto).
+SELECT cron.schedule(
+  'generate-giornale-monthly',
+  '0 6 1 * *',
+  $cron$
+  DO $do$
+  DECLARE
+    v_secret text;
+  BEGIN
+    SELECT decrypted_secret INTO v_secret FROM vault.decrypted_secrets WHERE name = 'giornale_cron_secret';
+    IF v_secret IS NOT NULL THEN
+      PERFORM net.http_post(
+        url := 'https://hvdwqowkhutfsdpiubxe.supabase.co/functions/v1/generate-giornale',
+        headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || v_secret),
+        body := '{}'::jsonb,
+        timeout_milliseconds := 60000
+      );
+    END IF;
+  END;
+  $do$;
+  $cron$
+);
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_112_giornale_dietista', 'Nuova feature "Il Giornale del Dietista" (richiesta utente 2026-09-06): tabella giornale_numeri (RLS: lettura pubblicata a tutti gli autenticati, bozza+scrittura solo check_is_admin()), secret dedicato in Vault (giornale_cron_secret, mai la service_role key in chiaro nel cron) e job pg_cron mensile (1° del mese, 06:00 UTC) che invoca via pg_net la Edge Function generate-giornale (supabase/functions/generate-giornale/index.ts) — questa recupera studi REALI da PubMed/MEDLINE (incl. Cochrane) e usa l''AI SOLO per riassumerli, mai per inventare contenuto; pubblica sempre come bozza, mai pubblicazione automatica, per revisione admin prima che tutti i dietisti la vedano. Codice client in giornale.html + voce di navigazione "Strumenti" aggiunta a tutte le pagine, stesso commit.')
+ON CONFLICT (id) DO NOTHING;

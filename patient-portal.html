@@ -792,8 +792,11 @@ function setupDocsRealtime() {
     }
 
     // remaining document tables that are real tables (use `visible_to_patient`
-    // column) — ncpt/note_specialistiche are handled separately below, see comment.
-    for (const table of ['bia_records', 'schede_valutazione', 'liste_spesa']) {
+    // column) — ncpt/note_specialistiche/schede_valutazione are handled
+    // separately below, see comment (schede_valutazione cifrata SEZIONE 111,
+    // ora una vista: stesso problema di ncpt/note_specialistiche, copre già
+    // il canale broadcast docs:<cid> esistente sotto, nessun listener nuovo).
+    for (const table of ['bia_records', 'liste_spesa']) {
       for (const event of ['INSERT', 'UPDATE', 'DELETE']) {
         channel = channel.on('postgres_changes', {
           event,
@@ -804,12 +807,13 @@ function setupDocsRealtime() {
       }
     }
 
-    // ncpt/note_specialistiche (SEZIONE 79) sono VISTE cifrate su ncpt_raw/
-    // note_specialistiche_raw, non tabelle: postgres_changes non riceve mai
-    // eventi su una vista (legge lo stream di replica della tabella fisica,
-    // non della vista). Stesso problema già risolto per chat_messages
-    // (SEZIONE 80) — qui: canale broadcast privato docs:<cartella_id>
-    // popolato da un trigger "Broadcast from Database" (SEZIONE 101).
+    // ncpt/note_specialistiche (SEZIONE 79) e schede_valutazione (SEZIONE 111)
+    // sono VISTE cifrate sulle rispettive tabelle _raw, non tabelle:
+    // postgres_changes non riceve mai eventi su una vista (legge lo stream di
+    // replica della tabella fisica, non della vista). Stesso problema già
+    // risolto per chat_messages (SEZIONE 80) — qui: canale broadcast privato
+    // docs:<cartella_id> popolato da un trigger "Broadcast from Database"
+    // (SEZIONE 101, esteso a schede_valutazione_raw in SEZIONE 111).
     const docsBcChannel = sb.channel(`docs:${cid}`, { config: { private: true } })
       .on('broadcast', { event: 'INSERT' }, () => scheduleDocsRefresh(false))
       .on('broadcast', { event: 'UPDATE' }, () => scheduleDocsRefresh(false))

@@ -8593,3 +8593,341 @@ END $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_109_dietitian_avatars_delete_policy_gap', 'Il bucket dietitian-avatars aveva solo policy INSERT/UPDATE/SELECT, NESSUNA policy DELETE — verificato interrogando l''intero set pg_policies per il bucket. profilo-pubblico.html carica l''avatar con path `${currentUser.id}/avatar.${ext}` e upsert:true: cambiando estensione il file vecchio non viene mai sovrascritto e restava orfano; il cleanup aggiunto in questo stesso giro sarebbe stato un no-op silenzioso senza questa policy, stessa classe di bug di SEZIONE 108. Aggiunta policy DELETE con la stessa condizione già usata per UPDATE/INSERT sullo stesso bucket. Trovato durante il 12° giro di scansione ciclica.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 110 — FIX SICUREZZA: search_path mutabile su payments_active() +
+-- revisione appointment_slots (SECURITY DEFINER view, ERROR da advisor)
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Trovato dall'audit di sicurezza del 2026-09-06 (Supabase security advisor,
+-- richiesto esplicitamente dall'utente: "risolvi tutti i debiti di sicurezza
+-- rimasti"). NON ANCORA ESEGUITA (accesso MCP read-only, come sempre — vedi
+-- SEZIONE 101), va lanciata a mano dal SQL Editor.
+--
+-- (1) payments_active() (SEZIONE 95) non aveva search_path fisso — stesso
+-- problema già corretto altrove (SEZIONE 59/82) ma non applicato a questa
+-- funzione, creata dopo. Corpo `SELECT false` costante, nessun riferimento a
+-- oggetti non qualificati: `search_path = public` è sicuro da applicare senza
+-- cambiare comportamento.
+--
+-- (2) appointment_slots (SEZIONE 83) resta segnalata come "Security Definer
+-- View" (unico ERROR di categoria sicurezza del progetto). Rivalutata oggi,
+-- NON convertita — è SECURITY DEFINER di proposito, non un bug residuo: la
+-- vista espone dietitian_id/appointment_date/duration_minutes/status di
+-- TUTTI gli appuntamenti (serve a calcolare gli slot liberi su una pagina di
+-- prenotazione pubblica) nascondendo deliberatamente patient_id. Le RLS di
+-- `appointments` filtrano per proprietario riga, quindi passare a
+-- security_invoker romperebbe la disponibilità pubblica degli slot (anon/
+-- authenticated vedrebbero solo i propri appuntamenti, non quelli altrui
+-- necessari per sapere quali orari sono occupati) — Postgres non ha RLS a
+-- livello di colonna, una vista SECURITY DEFINER a sola lettura resta
+-- l'approccio idiomatico per questo caso. Il vero rischio (scrittura
+-- pubblica) è già stato revocato in SEZIONE 83 e riverificato oggi via
+-- pg_get_viewdef/relacl: la vista seleziona solo le 4 colonne non sensibili,
+-- grant reali = solo SELECT per anon/authenticated. Rischio residuo accettato
+-- e documentato esplicitamente con COMMENT ON VIEW, così un audit futuro non
+-- la riproponga come bug da correggere alla cieca.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION public.payments_active()
+RETURNS boolean LANGUAGE sql IMMUTABLE SET search_path = public AS $$ SELECT false $$;
+
+COMMENT ON VIEW public.appointment_slots IS
+  'SECURITY DEFINER intenzionale (SEZIONE 83/110): espone slot di TUTTI i dietisti senza patient_id per calcolare la disponibilità su una pagina di prenotazione pubblica; le RLS di appointments filtrerebbero per proprietario e romperebbero questa funzione se si passasse a security_invoker. Scrittura pubblica già revocata (solo SELECT su anon/authenticated, SEZIONE 83) — rischio residuo accettato, non convertire senza prima ridisegnare la prenotazione pubblica.';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_110_security_fixes_payments_active_appointment_slots', 'Due finding dell''advisor di sicurezza del 2026-09-06: (1) search_path mutabile su payments_active() — fissato a ''public'', corpo costante SELECT false, nessun cambio di comportamento. (2) appointment_slots segnalata come Security Definer View (ERROR) — rivalutata: è intenzionale (nasconde patient_id per una pagina di prenotazione pubblica, le RLS di appointments romperebbero la disponibilità cross-dietista se si passasse a security_invoker), scrittura pubblica già revocata in SEZIONE 83, verificato di nuovo oggi via pg_get_viewdef/relacl. Non convertita, rischio documentato via COMMENT ON VIEW invece di un fix che romperebbe la funzionalità.')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 111 — CIFRATURA APPLICATIVA: estensione a schede_valutazione.note,
+-- esami_biochimici.note, percorsi_nutrizionali.note
+-- ═══════════════════════════════════════════════════════════════════════════
+--
+-- Stesso pattern "vista trasparente" di SEZIONE 40/79 (cartelle/note_
+-- specialistiche/ncpt). Trovato dall'analisi approfondita del 2026-09-06:
+-- 3 tabelle con testo libero clinicamente sensibile (valutazioni antropo-
+-- metriche, referti di laboratorio, percorsi nutrizionali) mai portate al
+-- pattern di cifratura applicata al resto dei dati clinici. Zero modifiche
+-- richieste al codice client per esami_biochimici/percorsi_nutrizionali
+-- (nessuna sottoscrizione realtime, nessun trigger, nessuna FK in entrata —
+-- verificato via information_schema/pg_publication_tables/pg_policies prima
+-- di scrivere questa sezione). schede_valutazione invece HA una sottoscri-
+-- zione realtime via postgres_changes (patient-portal.html, aggiunta in
+-- SEZIONE 105) — diventando una vista, postgres_changes smetterebbe di
+-- ricevere eventi (stesso problema di ncpt/note_specialistiche/chat_messages,
+-- vedi SEZIONE 79/80/101): risolto riusando la trigger function
+-- docs_broadcast() già esistente (SEZIONE 101, invariata) sulla nuova
+-- schede_valutazione_raw — il client (patient-portal.html) ascolta già il
+-- canale broadcast docs:<cartella_id> per ncpt/note_specialistiche con lo
+-- stesso identico effetto (scheduleDocsRefresh(false)), quindi nessun nuovo
+-- listener serve lato client: rimossa solo la voce ormai morta dal loop
+-- postgres_changes (stesso commit).
+--
+-- Verificate anche RLS/grant esistenti: seguono l'OID della tabella, restano
+-- automaticamente intatte dopo il RENAME (nessuna ricreazione necessaria).
+--
+-- CORREZIONE POST-ESECUZIONE (stesso giorno): il controllo pre-esecuzione via
+-- information_schema.triggers aveva dato FALSO NEGATIVO (il ruolo read-only
+-- usato da questa sessione non vede tutte le righe di quella vista di
+-- sistema). Verificato DOPO l'esecuzione via pg_trigger/pg_class (affidabile
+-- indipendentemente dal ruolo): schede_valutazione_raw ed esami_biochimici_raw
+-- HANNO il trigger di audit generico (trg_audit_*, funzione log_clinical_
+-- change()) — percorsi_nutrizionali_raw no. Letto il corpo della funzione:
+-- l'unico caso speciale hardcoded resta su TG_TABLE_NAME IN ('cartelle',
+-- 'cartelle_raw'); per ogni altra tabella (incluse queste 3) usa il ramo
+-- generico NULLIF(v_row->>'cartella_id','')::uuid — nessuna trappola, perché
+-- tutte e 3 hanno già una propria colonna cartella_id. Unico effetto (non un
+-- bug): il log d'ora in poi registra table_name='schede_valutazione_raw'/
+-- 'esami_biochimici_raw' invece del nome senza suffisso, stesso comportamento
+-- già accettato per cartelle_raw/ncpt_raw/note_specialistiche_raw. Lezione
+-- per il futuro: usare SEMPRE pg_trigger (non information_schema.triggers)
+-- per verificare trigger esistenti da una sessione con ruolo limitato.
+--
+-- IMPORTANTE — verificare dopo aver eseguito (stesso protocollo di SEZIONE
+-- 40/79): aprire una cartella paziente, leggere/scrivere una scheda di
+-- valutazione, un esame biochimico e un percorso nutrizionale esistenti,
+-- controllare che si leggano/salvino correttamente; verificare che il
+-- refresh realtime lato paziente funzioni ancora per le schede di
+-- valutazione appena pubblicate/modificate (patient-portal.html). Poi
+-- ispezionare direttamente schede_valutazione_raw.note_enc/
+-- esami_biochimici_raw.note_enc/percorsi_nutrizionali_raw.note_enc dal SQL
+-- Editor e confermare che sia bytea illeggibile, non testo in chiaro.
+-- Dopo conferma in produzione per qualche giorno, droppare le colonne
+-- *_plain_deprecated (irreversibile, NON incluso in questa sezione):
+--   ALTER TABLE schede_valutazione_raw DROP COLUMN note_plain_deprecated;
+--   ALTER TABLE esami_biochimici_raw DROP COLUMN note_plain_deprecated;
+--   ALTER TABLE percorsi_nutrizionali_raw DROP COLUMN note_plain_deprecated;
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- ── schede_valutazione ───────────────────────────────────────────────────
+ALTER TABLE schede_valutazione ADD COLUMN IF NOT EXISTS note_enc bytea;
+UPDATE schede_valutazione SET note_enc = extensions.encrypt_text(note) WHERE note IS NOT NULL AND note_enc IS NULL;
+
+ALTER TABLE schede_valutazione RENAME TO schede_valutazione_raw;
+ALTER TABLE schede_valutazione_raw RENAME COLUMN note TO note_plain_deprecated;
+
+CREATE VIEW public.schede_valutazione WITH (security_invoker = true) AS
+SELECT id, cartella_id, user_id, nome, cognome, ddn, eta, sesso, peso, altezza,
+       peso_ideale, peso_aggiustato, massa_grassa_pct, massa_magra, vita,
+       fianchi, braccio, plica, patologie, extensions.decrypt_text(note_enc) AS note,
+       macro_dist, tdee_calcolato, saved_at, created_at, visible_to_patient,
+       patient_id, dati_extra, print_image_url, print_image_url_compact,
+       print_image_url_simple, print_image_url_alldays, print_format
+FROM schede_valutazione_raw;
+
+CREATE OR REPLACE FUNCTION public.schede_valutazione_view_insert()
+RETURNS trigger LANGUAGE plpgsql SET search_path = '' AS $$
+DECLARE r public.schede_valutazione_raw;
+BEGIN
+  INSERT INTO public.schede_valutazione_raw
+    (id, cartella_id, user_id, nome, cognome, ddn, eta, sesso, peso, altezza,
+     peso_ideale, peso_aggiustato, massa_grassa_pct, massa_magra, vita,
+     fianchi, braccio, plica, patologie, note_enc, macro_dist, tdee_calcolato,
+     saved_at, created_at, visible_to_patient, patient_id, dati_extra,
+     print_image_url, print_image_url_compact, print_image_url_simple,
+     print_image_url_alldays, print_format)
+  VALUES
+    (COALESCE(NEW.id, gen_random_uuid()), NEW.cartella_id, NEW.user_id, NEW.nome,
+     NEW.cognome, NEW.ddn, NEW.eta, NEW.sesso, NEW.peso, NEW.altezza,
+     NEW.peso_ideale, NEW.peso_aggiustato, NEW.massa_grassa_pct, NEW.massa_magra,
+     NEW.vita, NEW.fianchi, NEW.braccio, NEW.plica, NEW.patologie,
+     extensions.encrypt_text(NEW.note), NEW.macro_dist, NEW.tdee_calcolato,
+     COALESCE(NEW.saved_at, now()), COALESCE(NEW.created_at, now()),
+     COALESCE(NEW.visible_to_patient, false), NEW.patient_id, NEW.dati_extra,
+     NEW.print_image_url, NEW.print_image_url_compact, NEW.print_image_url_simple,
+     NEW.print_image_url_alldays, NEW.print_format)
+  RETURNING * INTO r;
+  NEW.id := r.id;
+  NEW.saved_at := r.saved_at;
+  NEW.created_at := r.created_at;
+  NEW.visible_to_patient := r.visible_to_patient;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS schede_valutazione_view_insert_trg ON public.schede_valutazione;
+CREATE TRIGGER schede_valutazione_view_insert_trg INSTEAD OF INSERT ON public.schede_valutazione
+  FOR EACH ROW EXECUTE FUNCTION public.schede_valutazione_view_insert();
+
+CREATE OR REPLACE FUNCTION public.schede_valutazione_view_update()
+RETURNS trigger LANGUAGE plpgsql SET search_path = '' AS $$
+BEGIN
+  UPDATE public.schede_valutazione_raw SET
+    nome = NEW.nome, cognome = NEW.cognome, ddn = NEW.ddn, eta = NEW.eta,
+    sesso = NEW.sesso, peso = NEW.peso, altezza = NEW.altezza,
+    peso_ideale = NEW.peso_ideale, peso_aggiustato = NEW.peso_aggiustato,
+    massa_grassa_pct = NEW.massa_grassa_pct, massa_magra = NEW.massa_magra,
+    vita = NEW.vita, fianchi = NEW.fianchi, braccio = NEW.braccio, plica = NEW.plica,
+    patologie = NEW.patologie, note_enc = extensions.encrypt_text(NEW.note),
+    macro_dist = NEW.macro_dist, tdee_calcolato = NEW.tdee_calcolato,
+    saved_at = COALESCE(NEW.saved_at, now()),
+    visible_to_patient = NEW.visible_to_patient, patient_id = NEW.patient_id,
+    dati_extra = NEW.dati_extra, print_image_url = NEW.print_image_url,
+    print_image_url_compact = NEW.print_image_url_compact,
+    print_image_url_simple = NEW.print_image_url_simple,
+    print_image_url_alldays = NEW.print_image_url_alldays, print_format = NEW.print_format
+  WHERE id = OLD.id;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS schede_valutazione_view_update_trg ON public.schede_valutazione;
+CREATE TRIGGER schede_valutazione_view_update_trg INSTEAD OF UPDATE ON public.schede_valutazione
+  FOR EACH ROW EXECUTE FUNCTION public.schede_valutazione_view_update();
+
+CREATE OR REPLACE FUNCTION public.schede_valutazione_view_delete()
+RETURNS trigger LANGUAGE plpgsql SET search_path = '' AS $$
+BEGIN
+  DELETE FROM public.schede_valutazione_raw WHERE id = OLD.id;
+  RETURN OLD;
+END;
+$$;
+DROP TRIGGER IF EXISTS schede_valutazione_view_delete_trg ON public.schede_valutazione;
+CREATE TRIGGER schede_valutazione_view_delete_trg INSTEAD OF DELETE ON public.schede_valutazione
+  FOR EACH ROW EXECUTE FUNCTION public.schede_valutazione_view_delete();
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.schede_valutazione TO authenticated;
+
+-- Realtime: schede_valutazione_raw sostituisce la sottoscrizione postgres_changes
+-- morta (rimossa da patient-portal.html nello stesso commit) riusando il canale
+-- broadcast docs:<cartella_id> già esistente (docs_broadcast(), SEZIONE 101,
+-- funzione invariata — stesso topic già ascoltato dal client per ncpt/note_specialistiche).
+DROP TRIGGER IF EXISTS trg_schede_valutazione_docs_broadcast ON public.schede_valutazione_raw;
+CREATE TRIGGER trg_schede_valutazione_docs_broadcast
+  AFTER INSERT OR UPDATE OR DELETE ON public.schede_valutazione_raw
+  FOR EACH ROW EXECUTE FUNCTION public.docs_broadcast();
+
+-- ── esami_biochimici ─────────────────────────────────────────────────────
+ALTER TABLE esami_biochimici ADD COLUMN IF NOT EXISTS note_enc bytea;
+UPDATE esami_biochimici SET note_enc = extensions.encrypt_text(note) WHERE note IS NOT NULL AND note_enc IS NULL;
+
+ALTER TABLE esami_biochimici RENAME TO esami_biochimici_raw;
+ALTER TABLE esami_biochimici_raw RENAME COLUMN note TO note_plain_deprecated;
+
+CREATE VIEW public.esami_biochimici WITH (security_invoker = true) AS
+SELECT id, user_id, cartella_id, tipo, valore, unita, data_esame,
+       extensions.decrypt_text(note_enc) AS note, created_at
+FROM esami_biochimici_raw;
+
+CREATE OR REPLACE FUNCTION public.esami_biochimici_view_insert()
+RETURNS trigger LANGUAGE plpgsql SET search_path = '' AS $$
+DECLARE r public.esami_biochimici_raw;
+BEGIN
+  INSERT INTO public.esami_biochimici_raw
+    (id, user_id, cartella_id, tipo, valore, unita, data_esame, note_enc, created_at)
+  VALUES
+    (COALESCE(NEW.id, gen_random_uuid()), NEW.user_id, NEW.cartella_id, NEW.tipo,
+     NEW.valore, NEW.unita, NEW.data_esame, extensions.encrypt_text(NEW.note),
+     COALESCE(NEW.created_at, now()))
+  RETURNING * INTO r;
+  NEW.id := r.id;
+  NEW.created_at := r.created_at;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS esami_biochimici_view_insert_trg ON public.esami_biochimici;
+CREATE TRIGGER esami_biochimici_view_insert_trg INSTEAD OF INSERT ON public.esami_biochimici
+  FOR EACH ROW EXECUTE FUNCTION public.esami_biochimici_view_insert();
+
+CREATE OR REPLACE FUNCTION public.esami_biochimici_view_update()
+RETURNS trigger LANGUAGE plpgsql SET search_path = '' AS $$
+BEGIN
+  UPDATE public.esami_biochimici_raw SET
+    tipo = NEW.tipo, valore = NEW.valore, unita = NEW.unita,
+    data_esame = NEW.data_esame, note_enc = extensions.encrypt_text(NEW.note)
+  WHERE id = OLD.id;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS esami_biochimici_view_update_trg ON public.esami_biochimici;
+CREATE TRIGGER esami_biochimici_view_update_trg INSTEAD OF UPDATE ON public.esami_biochimici
+  FOR EACH ROW EXECUTE FUNCTION public.esami_biochimici_view_update();
+
+CREATE OR REPLACE FUNCTION public.esami_biochimici_view_delete()
+RETURNS trigger LANGUAGE plpgsql SET search_path = '' AS $$
+BEGIN
+  DELETE FROM public.esami_biochimici_raw WHERE id = OLD.id;
+  RETURN OLD;
+END;
+$$;
+DROP TRIGGER IF EXISTS esami_biochimici_view_delete_trg ON public.esami_biochimici;
+CREATE TRIGGER esami_biochimici_view_delete_trg INSTEAD OF DELETE ON public.esami_biochimici
+  FOR EACH ROW EXECUTE FUNCTION public.esami_biochimici_view_delete();
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.esami_biochimici TO authenticated;
+
+-- ── percorsi_nutrizionali ─────────────────────────────────────────────────
+ALTER TABLE percorsi_nutrizionali ADD COLUMN IF NOT EXISTS note_enc bytea;
+UPDATE percorsi_nutrizionali SET note_enc = extensions.encrypt_text(note) WHERE note IS NOT NULL AND note_enc IS NULL;
+
+ALTER TABLE percorsi_nutrizionali RENAME TO percorsi_nutrizionali_raw;
+ALTER TABLE percorsi_nutrizionali_raw RENAME COLUMN note TO note_plain_deprecated;
+
+CREATE VIEW public.percorsi_nutrizionali WITH (security_invoker = true) AS
+SELECT id, dietitian_id, cartella_id, patient_id, nome, data_inizio,
+       durata_settimane, checkin_ogni_giorni, stato, ultimo_checkin_reminder_at,
+       scadenza_notificata_at, extensions.decrypt_text(note_enc) AS note, created_at
+FROM percorsi_nutrizionali_raw;
+
+CREATE OR REPLACE FUNCTION public.percorsi_nutrizionali_view_insert()
+RETURNS trigger LANGUAGE plpgsql SET search_path = '' AS $$
+DECLARE r public.percorsi_nutrizionali_raw;
+BEGIN
+  INSERT INTO public.percorsi_nutrizionali_raw
+    (id, dietitian_id, cartella_id, patient_id, nome, data_inizio,
+     durata_settimane, checkin_ogni_giorni, stato, ultimo_checkin_reminder_at,
+     scadenza_notificata_at, note_enc, created_at)
+  VALUES
+    (COALESCE(NEW.id, gen_random_uuid()), NEW.dietitian_id, NEW.cartella_id,
+     NEW.patient_id, NEW.nome, COALESCE(NEW.data_inizio, CURRENT_DATE),
+     NEW.durata_settimane, COALESCE(NEW.checkin_ogni_giorni, 7),
+     COALESCE(NEW.stato, 'attivo'), NEW.ultimo_checkin_reminder_at,
+     NEW.scadenza_notificata_at, extensions.encrypt_text(NEW.note),
+     COALESCE(NEW.created_at, now()))
+  RETURNING * INTO r;
+  NEW.id := r.id;
+  NEW.data_inizio := r.data_inizio;
+  NEW.checkin_ogni_giorni := r.checkin_ogni_giorni;
+  NEW.stato := r.stato;
+  NEW.created_at := r.created_at;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS percorsi_nutrizionali_view_insert_trg ON public.percorsi_nutrizionali;
+CREATE TRIGGER percorsi_nutrizionali_view_insert_trg INSTEAD OF INSERT ON public.percorsi_nutrizionali
+  FOR EACH ROW EXECUTE FUNCTION public.percorsi_nutrizionali_view_insert();
+
+CREATE OR REPLACE FUNCTION public.percorsi_nutrizionali_view_update()
+RETURNS trigger LANGUAGE plpgsql SET search_path = '' AS $$
+BEGIN
+  UPDATE public.percorsi_nutrizionali_raw SET
+    nome = NEW.nome, data_inizio = NEW.data_inizio,
+    durata_settimane = NEW.durata_settimane, checkin_ogni_giorni = NEW.checkin_ogni_giorni,
+    stato = NEW.stato, ultimo_checkin_reminder_at = NEW.ultimo_checkin_reminder_at,
+    scadenza_notificata_at = NEW.scadenza_notificata_at,
+    note_enc = extensions.encrypt_text(NEW.note), patient_id = NEW.patient_id
+  WHERE id = OLD.id;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS percorsi_nutrizionali_view_update_trg ON public.percorsi_nutrizionali;
+CREATE TRIGGER percorsi_nutrizionali_view_update_trg INSTEAD OF UPDATE ON public.percorsi_nutrizionali
+  FOR EACH ROW EXECUTE FUNCTION public.percorsi_nutrizionali_view_update();
+
+CREATE OR REPLACE FUNCTION public.percorsi_nutrizionali_view_delete()
+RETURNS trigger LANGUAGE plpgsql SET search_path = '' AS $$
+BEGIN
+  DELETE FROM public.percorsi_nutrizionali_raw WHERE id = OLD.id;
+  RETURN OLD;
+END;
+$$;
+DROP TRIGGER IF EXISTS percorsi_nutrizionali_view_delete_trg ON public.percorsi_nutrizionali;
+CREATE TRIGGER percorsi_nutrizionali_view_delete_trg INSTEAD OF DELETE ON public.percorsi_nutrizionali
+  FOR EACH ROW EXECUTE FUNCTION public.percorsi_nutrizionali_view_delete();
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.percorsi_nutrizionali TO authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_111_field_encryption_schede_esami_percorsi', 'Estesa la cifratura applicativa (pattern vista trasparente di SEZIONE 40/79) a schede_valutazione.note, esami_biochimici.note, percorsi_nutrizionali.note — trovate dall''analisi approfondita del 2026-09-06 come uniche tabelle rimaste con testo libero clinico non cifrato. Tabelle rinominate *_raw, viste trasparenti con security_invoker=true (RLS del chiamante invariata, segue OID), trigger INSTEAD OF INSERT/UPDATE/DELETE con search_path='''' fissato da subito (non serve un fix successivo come SEZIONE 82). schede_valutazione era anche sottoscritta via postgres_changes (SEZIONE 105): riusato il trigger docs_broadcast() esistente (SEZIONE 101) su schede_valutazione_raw, nessun nuovo canale client necessario (patient-portal.html ascolta già docs:<cartella_id>); rimossa la voce ormai morta dal loop postgres_changes nello stesso commit. esami_biochimici/percorsi_nutrizionali non avevano realtime/trigger/FK in entrata, zero impatto lato client. Zero modifiche richieste al codice per selezioni/scritture esistenti (stesso nome vista, stesse colonne).')
+ON CONFLICT (id) DO NOTHING;

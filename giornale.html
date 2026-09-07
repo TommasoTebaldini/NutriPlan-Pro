@@ -26,20 +26,31 @@
 
 .gio-source-note{background:#F0FDF4;border:1px solid #86EFAC;border-radius:10px;padding:10px 16px;font-size:12px;color:#15803D;margin-bottom:20px;line-height:1.6}
 
-.gio-section-title{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--slate);margin:28px 0 14px;padding-bottom:10px;border-bottom:3px solid var(--slate);display:flex;align-items:center;gap:10px}
-.gio-section-title.altro{border-bottom-color:#4F46E5}
+.gio-page{background:#FFFDF9;border:1px solid var(--border);padding:8px 34px 34px}
+.gio-dateline{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:3px double var(--slate);font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--slate-l)}
 
-.gio-card{background:white;border-radius:12px;padding:18px 22px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:14px}
-.gio-card h3{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400;color:var(--slate);margin-bottom:8px;line-height:1.4}
-.gio-card-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.gio-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:8px;font-size:10.5px;font-weight:700}
-.gio-badge-journal{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
-.gio-badge-type{background:#F1F5F9;color:var(--slate-m);border:1px solid var(--border-d)}
-.gio-card p{font-size:13.5px;color:var(--slate-m);line-height:1.7;margin-bottom:8px}
-.gio-card .gio-rilevanza{font-size:12.5px;color:#0F766E;background:#F0FDFA;border-left:3px solid #0F766E;padding:8px 12px;border-radius:6px;margin-bottom:10px}
-.gio-card a.gio-link{font-size:12px;font-weight:700;color:#4F46E5;text-decoration:none}
-.gio-card a.gio-link:hover{text-decoration:underline}
-.gio-original-title{font-size:11px;color:var(--slate-l);font-style:italic;margin-bottom:10px}
+.gio-section-flag{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--slate);border-top:3px solid var(--slate);border-bottom:1px solid var(--slate);padding:7px 2px;margin:34px 0 4px}
+.gio-section-flag.altro{border-color:#3730A3;color:#3730A3}
+
+.gio-columns{column-gap:32px;column-count:1}
+@media(min-width:760px){.gio-columns{column-count:2}}
+@media(min-width:1180px){.gio-columns{column-count:3}}
+
+.gio-story{font-family:Georgia,Cambria,'Times New Roman',serif;break-inside:avoid;-webkit-column-break-inside:avoid;padding:18px 0;border-bottom:1px solid var(--border)}
+.gio-columns>.gio-story:last-child{border-bottom:none}
+.gio-kicker{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#4F46E5;margin-bottom:5px}
+.gio-section-flag.altro ~ .gio-story .gio-kicker,.gio-section-flag.altro ~ .gio-columns .gio-kicker{color:#3730A3}
+.gio-story h3{font-family:'DM Serif Display',serif;font-weight:400;line-height:1.28;color:var(--slate);margin-bottom:6px;font-size:16px}
+.gio-byline{font-size:11.5px;font-style:italic;color:var(--slate-l);margin-bottom:10px}
+.gio-story p{font-size:13px;line-height:1.68;color:#1E293B;margin-bottom:9px;text-align:justify;hyphens:auto}
+.gio-story .gio-rilevanza{font-style:italic;color:#0F766E;border-top:1px solid #CBD5E1;border-bottom:1px solid #CBD5E1;padding:7px 0;margin:9px 0;font-size:12.5px;line-height:1.6}
+.gio-story a.gio-link{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;color:#1D4ED8;text-decoration:none;letter-spacing:.2px}
+.gio-story a.gio-link:hover{text-decoration:underline}
+.gio-original-title{font-size:10.5px;color:var(--slate-l);font-style:italic;margin-bottom:8px}
+
+.gio-lead{break-inside:auto;border-bottom:2px solid var(--slate);padding:20px 0 24px;margin-bottom:6px}
+.gio-lead h3{font-size:25px;line-height:1.22}
+.gio-lead p:first-of-type::first-letter{float:left;font-family:'DM Serif Display',serif;font-size:46px;line-height:.78;padding:5px 7px 0 0;color:var(--slate)}
 
 .gio-admin-box{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1.5px solid #FCD34D;border-radius:14px;padding:18px 22px;margin-bottom:22px}
 .gio-admin-box h4{font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px;display:flex;align-items:center;gap:6px}
@@ -49,7 +60,9 @@
 @media print{
   #sidebar,#topbar,.no-print,#loading-overlay,#toast{display:none!important}
   #main{margin:0!important;padding:0!important}
-  .gio-card{page-break-inside:avoid;box-shadow:none!important;border:1px solid #CBD5E1!important}
+  .gio-page{border:none;padding:0}
+  .gio-columns{column-count:3!important}
+  .gio-story{page-break-inside:avoid}
 }
 </style>
 </head>
@@ -128,7 +141,7 @@
     <div class="gio-issue" id="gio-issue-title">—</div>
   </div>
 
-  <div class="gio-source-note">
+  <div class="gio-source-note no-print">
     <span data-only-lang="it">✅ Ogni voce è tratta da studi reali indicizzati su <b>PubMed/MEDLINE</b> (incluse le revisioni Cochrane) — l'intelligenza artificiale li riassume, non li inventa. Usa il link "Leggi lo studio originale" su ogni scheda per verificare la fonte.</span><span data-only-lang="en" style="display:none">✅ Every entry comes from real studies indexed on <b>PubMed/MEDLINE</b> (including Cochrane reviews) — AI summarises them, it does not invent them. Use the "Read the original study" link on each card to verify the source.</span>
   </div>
 
@@ -139,7 +152,13 @@
     <select id="gio-archive-select" class="gio-archive-select" onchange="loadIssue(this.value)"></select>
   </div>
 
-  <div id="gio-content"></div>
+  <div class="gio-page">
+    <div class="gio-dateline">
+      <span id="gio-dateline-left">DietPlan Pro</span>
+      <span id="gio-dateline-right">—</span>
+    </div>
+    <div id="gio-content"></div>
+  </div>
 
 </div></main>
 
@@ -162,31 +181,41 @@ function fmtMeseAnno(meseStr) {
   return `${MESI_IT[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
-function renderArticleCard(a) {
-  const badges = [];
-  if (a.rivista) badges.push(`<span class="gio-badge gio-badge-journal">📖 ${esc(a.rivista)}</span>`);
-  if (a.data_pubblicazione) badges.push(`<span class="gio-badge gio-badge-type">📅 ${esc(a.data_pubblicazione)}</span>`);
-  if (a.tipo_studio) badges.push(`<span class="gio-badge gio-badge-type">🔎 ${esc(a.tipo_studio)}</span>`);
+function renderStory(a, isLead) {
+  const dateline = [a.rivista, a.data_pubblicazione].filter(Boolean).join(', ');
   return `
-    <div class="gio-card">
+    <article class="gio-story${isLead ? ' gio-lead' : ''}">
+      ${a.tipo_studio ? `<div class="gio-kicker">${esc(a.tipo_studio)}</div>` : ''}
       <h3>${esc(a.titolo_it || a.titolo_originale || '(senza titolo)')}</h3>
+      ${dateline ? `<div class="gio-byline">— ${esc(dateline)}</div>` : ''}
       ${a.titolo_originale && a.titolo_originale !== a.titolo_it ? `<div class="gio-original-title">${esc(a.titolo_originale)}</div>` : ''}
-      <div class="gio-card-meta">${badges.join('')}</div>
       <p>${esc(a.riassunto || '')}</p>
-      ${a.rilevanza_clinica ? `<div class="gio-rilevanza">💡 ${esc(a.rilevanza_clinica)}</div>` : ''}
-      ${a.url ? `<a class="gio-link" href="${esc(a.url)}" target="_blank" rel="noopener">📄 ${_L('Leggi lo studio originale su PubMed','Read the original study on PubMed')} →</a>` : ''}
-    </div>`;
+      ${a.rilevanza_clinica ? `<p class="gio-rilevanza">${esc(a.rilevanza_clinica)}</p>` : ''}
+      ${a.url ? `<a class="gio-link" href="${esc(a.url)}" target="_blank" rel="noopener">${_L('Leggi lo studio originale su PubMed','Read the original study on PubMed')} →</a>` : ''}
+    </article>`;
+}
+
+function renderSection(items) {
+  if (!items.length) {
+    return `<div class="gio-empty" style="padding:24px"><span data-only-lang="it">Nessuno studio trovato per questo mese in questa sezione.</span><span data-only-lang="en" style="display:none">No studies found for this month in this section.</span></div>`;
+  }
+  const [lead, ...rest] = items;
+  let html = renderStory(lead, true);
+  if (rest.length) html += `<div class="gio-columns">${rest.map(a => renderStory(a, false)).join('')}</div>`;
+  return html;
 }
 
 function renderIssue(numero) {
-  document.getElementById('gio-issue-title').textContent = numero.titolo || fmtMeseAnno(numero.mese);
+  const titolo = numero.titolo || fmtMeseAnno(numero.mese);
+  document.getElementById('gio-issue-title').textContent = titolo;
+  document.getElementById('gio-dateline-right').textContent = titolo.toUpperCase();
   const dietetica = Array.isArray(numero.parte_dietetica) ? numero.parte_dietetica : [];
   const altro = Array.isArray(numero.parte_altro) ? numero.parte_altro : [];
   let html = '';
-  html += `<div class="gio-section-title">🥗 <span data-only-lang="it">Parte Dietetica</span><span data-only-lang="en" style="display:none">Diet &amp; Nutrition</span></div>`;
-  html += dietetica.length ? dietetica.map(renderArticleCard).join('') : `<div class="gio-empty" style="padding:24px"><span data-only-lang="it">Nessuno studio trovato per questo mese in questa sezione.</span><span data-only-lang="en" style="display:none">No studies found for this month in this section.</span></div>`;
-  html += `<div class="gio-section-title altro">🩺 <span data-only-lang="it">Altro — Medicina Generale</span><span data-only-lang="en" style="display:none">Other — General Medicine</span></div>`;
-  html += altro.length ? altro.map(renderArticleCard).join('') : `<div class="gio-empty" style="padding:24px"><span data-only-lang="it">Nessuno studio trovato per questo mese in questa sezione.</span><span data-only-lang="en" style="display:none">No studies found for this month in this section.</span></div>`;
+  html += `<div class="gio-section-flag">🥗 <span data-only-lang="it">Parte Dietetica</span><span data-only-lang="en" style="display:none">Diet &amp; Nutrition</span></div>`;
+  html += renderSection(dietetica);
+  html += `<div class="gio-section-flag altro">🩺 <span data-only-lang="it">Altro — Medicina Generale</span><span data-only-lang="en" style="display:none">Other — General Medicine</span></div>`;
+  html += renderSection(altro);
   document.getElementById('gio-content').innerHTML = html;
   if (typeof applyLang === 'function') applyLang();
 }

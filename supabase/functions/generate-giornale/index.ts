@@ -173,10 +173,10 @@ async function callGemini(prompt: string): Promise<string> {
   // vanno passate come header x-goog-api-key — le richieste con ?key= su una
   // auth key falliscono con un errore generico "Expected OAuth 2 access
   // token...". Le Standard key sono rifiutate del tutto da settembre 2026.
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent`
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent`
   const body = {
     contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.15, maxOutputTokens: 4096, responseMimeType: 'application/json' },
+    generationConfig: { maxOutputTokens: 4096, responseMimeType: 'application/json' },
   }
   const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body) })
   if (!res.ok) {

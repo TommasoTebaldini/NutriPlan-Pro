@@ -88,12 +88,16 @@ Tutti i valori nutrizionali sono per 100g di alimento, usa i valori del database
 async function callGemini(imageBase64: string, mediaType: string) {
   const key = Deno.env.get('GEMINI_API_KEY')
   if (!key) throw new Error('GEMINI_API_KEY non configurata nel server Supabase')
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${key}`
+  // Google ha sostituito le vecchie chiavi "AIza" (Standard key, ?key= in
+  // query string) con le nuove "auth key" (prefisso "AQ."), passate come
+  // header x-goog-api-key — le Standard key sono rifiutate del tutto da
+  // settembre 2026. Vedi generate-giornale/index.ts per il dettaglio.
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent`
   const body = {
     contents: [{ parts: [{ text: PROMPT }, { inlineData: { mimeType: mediaType, data: imageBase64 } }] }],
     generationConfig: { temperature: 0.2, maxOutputTokens: 2048, responseMimeType: 'application/json' },
   }
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body) })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
     throw new Error((err as { error?: { message?: string } })?.error?.message || `Gemini error ${res.status}`)

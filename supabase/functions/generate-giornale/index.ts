@@ -168,12 +168,17 @@ function buildSummaryPrompt(articles: PubMedArticle[]): string {
 async function callGemini(prompt: string): Promise<string> {
   const key = Deno.env.get('GEMINI_API_KEY')
   if (!key) throw new Error('GEMINI_API_KEY non configurata')
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${key}`
+  // Google ha sostituito le vecchie chiavi "AIza" (Standard key, passate via
+  // ?key= in query string) con le nuove "auth key" (prefisso "AQ."), che
+  // vanno passate come header x-goog-api-key — le richieste con ?key= su una
+  // auth key falliscono con un errore generico "Expected OAuth 2 access
+  // token...". Le Standard key sono rifiutate del tutto da settembre 2026.
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent`
   const body = {
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: { temperature: 0.15, maxOutputTokens: 4096, responseMimeType: 'application/json' },
   }
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body) })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
     throw new Error((err as { error?: { message?: string } })?.error?.message || `Gemini error ${res.status}`)

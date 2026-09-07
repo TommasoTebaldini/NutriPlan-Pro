@@ -48,9 +48,27 @@ interface PubMedArticle {
   abstract: string
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+// NCBI limita a 3 richieste/secondo senza API key — le due sezioni (dietetica
+// e altro), ciascuna con esearch + [efetch,esummary in parallelo] (+ un
+// eventuale retry esearch se la query stretta rende <3 risultati), possono
+// facilmente sforare quel limite nella stessa manciata di secondi. Ritenta
+// con backoff crescente sui soli 429 (rate limit), non su altri errori.
+async function fetchPubMed(url: string): Promise<Response> {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await fetch(url)
+    if (res.status !== 429) return res
+    await sleep(500 * (attempt + 1))
+  }
+  return fetch(url)
+}
+
 async function esearch(term: string, mindate: string, maxdate: string, retmax: number): Promise<string[]> {
   const url = `${EUTILS}/esearch.fcgi?db=pubmed&retmode=json&sort=relevance&datetype=pdat&mindate=${mindate}&maxdate=${maxdate}&retmax=${retmax}&term=${encodeURIComponent(term)}`
-  const res = await fetch(url)
+  const res = await fetchPubMed(url)
   if (!res.ok) throw new Error(`PubMed esearch error ${res.status}`)
   const data = await res.json() as { esearchresult?: { idlist?: string[] } }
   return data.esearchresult?.idlist ?? []
@@ -64,7 +82,7 @@ async function efetchAbstracts(pmids: string[]): Promise<Map<string, { titolo: s
   const out = new Map<string, { titolo: string; abstract: string; tipo_studio: string }>()
   if (!pmids.length) return out
   const url = `${EUTILS}/efetch.fcgi?db=pubmed&rettype=abstract&retmode=xml&id=${pmids.join(',')}`
-  const res = await fetch(url)
+  const res = await fetchPubMed(url)
   if (!res.ok) throw new Error(`PubMed efetch error ${res.status}`)
   const xml = await res.text()
   const blocks = xml.split('<PubmedArticle>').slice(1)
@@ -87,7 +105,7 @@ async function esummary(pmids: string[]): Promise<Map<string, { rivista: string;
   const out = new Map<string, { rivista: string; data_pubblicazione: string }>()
   if (!pmids.length) return out
   const url = `${EUTILS}/esummary.fcgi?db=pubmed&retmode=json&id=${pmids.join(',')}`
-  const res = await fetch(url)
+  const res = await fetchPubMed(url)
   if (!res.ok) throw new Error(`PubMed esummary error ${res.status}`)
   const data = await res.json() as { result?: Record<string, { fulljournalname?: string; pubdate?: string }> }
   for (const pmid of pmids) {

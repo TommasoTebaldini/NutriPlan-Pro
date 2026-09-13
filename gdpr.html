@@ -835,6 +835,18 @@ async function eseguiOblio() {
         }
       }
     } catch (_) { /* best-effort, non blocca la cancellazione dati DB */ }
+    // chat_messages è agganciata al paziente via patient_id (auth.users.id,
+    // non cartella_id): va risolta PRIMA di cancellare patient_dietitian qui
+    // sotto, che è l'unica tabella che tiene quel collegamento. Senza questo,
+    // la cancellazione "totale" lasciava intatta l'intera cronologia chat del
+    // paziente (FK patient_id -> auth.users ON DELETE CASCADE, che scatta solo
+    // se l'account auth viene eliminato, cosa che questa funzione non fa) pur
+    // dichiarando "tutti i dati eliminati" nel toast finale.
+    let patientAuthId = null;
+    try {
+      const { data: pd } = await sb.from('patient_dietitian').select('patient_id').eq('cartella_id', id).maybeSingle();
+      patientAuthId = pd?.patient_id || null;
+    } catch (_) { /* nessuna riga (paziente senza account app) -> niente chat da cancellare */ }
     // Elimina dati correlati — ogni delete è verificato: se una qualsiasi
     // fallisce (RLS/vincolo/rete), ci si ferma SUBITO invece di continuare e
     // dichiarare "tutti i dati eliminati" con dati clinici ancora presenti
@@ -851,6 +863,11 @@ async function eseguiOblio() {
       ['bia_records',          () => sb.from('bia_records').delete().eq('cartella_id', id)],
       ['ncpt',                 () => sb.from('ncpt').delete().eq('cartella_id', id)],
       ['piani',                () => sb.from('piani').delete().eq('cartella_id', id)],
+      // whatsapp_messages.cartella_id è ON DELETE SET NULL (non CASCADE): senza
+      // questo step restava orfana ma intatta — numero di telefono e testo dei
+      // messaggi compresi — dopo la cancellazione di "cartelle" più sotto.
+      ['whatsapp_messages',    () => sb.from('whatsapp_messages').delete().eq('cartella_id', id)],
+      ...(patientAuthId ? [['chat_messages', () => sb.from('chat_messages').delete().eq('patient_id', patientAuthId)]] : []),
       ['patient_dietitian',    () => sb.from('patient_dietitian').delete().eq('cartella_id', id)],
       ['cartelle',             () => sb.from('cartelle').delete().eq('id', id)],
     ];

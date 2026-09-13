@@ -300,6 +300,41 @@ function _L(it, en) {
   try { const l = typeof getLang === 'function' ? getLang() : (localStorage.getItem('nlang') || 'it'); return l === 'en' ? en : it; } catch(e) { return it; }
 }
 
+// Sanitizza consent_text prima di iniettarlo con innerHTML (vedi uso più
+// sotto). Questa pagina è il lato PAZIENTE: consent_text viene scritto dal
+// dietista in un <div contenteditable> in chat.html, quindi senza questa
+// pulizia anche solo un account dietista compromesso (o un incolla
+// incauto da una pagina web) potrebbe far eseguire script nel browser del
+// paziente proprio mentre sta firmando un consenso. Copia locale della
+// stessa funzione in js/utils.js: questa pagina non può caricare utils.js
+// (vedi commento sopra su _L), quindi resta duplicata qui apposta.
+const SANITIZE_ALLOWED_TAGS = new Set([
+  'P','BR','B','STRONG','I','EM','U','UL','OL','LI','SPAN','DIV',
+  'H1','H2','H3','H4','H5','H6','BLOCKQUOTE',
+]);
+function sanitizeConsentHtml(html) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = String(html || '');
+  const walk = (node) => {
+    for (const child of Array.from(node.childNodes)) {
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        walk(child);
+        if (child.tagName === 'SCRIPT' || child.tagName === 'STYLE') {
+          child.remove();
+        } else if (!SANITIZE_ALLOWED_TAGS.has(child.tagName)) {
+          child.replaceWith(...child.childNodes);
+        } else {
+          while (child.attributes.length) child.removeAttribute(child.attributes[0].name);
+        }
+      } else if (child.nodeType !== Node.TEXT_NODE) {
+        child.remove();
+      }
+    }
+  };
+  walk(tpl.content);
+  return tpl.innerHTML;
+}
+
 let currentUser = null;
 let currentProfile = null;
 let linkedCartelle = [];
@@ -1245,7 +1280,7 @@ async function loadConsents() {
         </div>
         ${badgeHtml}
       </div>
-      <div class="pc-consent-text">${c.consent_text || ''}</div>
+      <div class="pc-consent-text">${sanitizeConsentHtml(c.consent_text || '')}</div>
       ${signAreaHtml}
     </div>`;
   }

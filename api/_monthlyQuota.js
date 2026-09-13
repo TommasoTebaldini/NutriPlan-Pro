@@ -22,7 +22,14 @@ const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hvdwqowkhutfsdpiubxe.s
  */
 export async function checkMonthlyQuota(userToken, userId, scope, max) {
   const anonKey = process.env.SUPABASE_ANON_KEY;
-  if (!anonKey) return true; // non configurato: non bloccare (vedi nota fail-open sopra)
+  if (!anonKey) {
+    // Fail-open silenzioso qui = nessuna quota applicata MAI finché qualcuno
+    // non nota il log: prima non c'era nessuna traccia dell'evento, quindi
+    // un tetto di spesa AI "sempre disattivato" per config mancante poteva
+    // passare inosservato indefinitamente.
+    console.warn(`[monthlyQuota] SUPABASE_ANON_KEY non configurata: quota "${scope}" non applicata (fail-open) per user ${userId}`);
+    return true;
+  }
   const period = new Date().toISOString().slice(0, 7); // 'YYYY-MM', UTC
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_usage_and_check`, {
@@ -34,9 +41,13 @@ export async function checkMonthlyQuota(userToken, userId, scope, max) {
       },
       body: JSON.stringify({ p_user_id: userId, p_scope: scope, p_period: period, p_max: max }),
     });
-    if (!res.ok) return true; // RPC non ancora deployata (SEZIONE 38 non eseguita) o errore infra: fail-open
+    if (!res.ok) {
+      console.warn(`[monthlyQuota] RPC increment_usage_and_check HTTP ${res.status} per scope="${scope}" user=${userId}: quota non applicata (fail-open)`);
+      return true; // RPC non ancora deployata (SEZIONE 38 non eseguita) o errore infra: fail-open
+    }
     return await res.json();
-  } catch {
+  } catch (err) {
+    console.warn(`[monthlyQuota] errore di rete verso increment_usage_and_check per scope="${scope}" user=${userId}: quota non applicata (fail-open) —`, err.message);
     return true;
   }
 }

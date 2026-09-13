@@ -90,6 +90,7 @@ file di migrazione separati.
 | `20260722160000__patient_audit_log.sql` | Crea `patient_audit_log` (mai creata, scrittura silenziosamente ingoiata da sempre) | _(da applicare)_ | |
 | `20260722160500__consigli_custom.sql` | Crea `consigli_custom` (mai creata, consigli.html dava sempre errore 42P01) | _(da applicare)_ | |
 | `20260724120000__diario_alimentare_foto.sql` | Crea `diario_alimentare_foto` (foto diario alimentare del paziente + analisi AI macro/micro, nuova sezione in pazienti.html) | _(da applicare)_ | |
+| `20260913163000__cascade_diet_meals.sql` | Aggiunge `ON DELETE CASCADE` su `diet_meals.diet_id` e `meal_completions.diet_meal_id`, per evitare diete "fantasma" attive con zero pasti quando il dietista cancella una dieta | _(da applicare)_ | |
 
 > Ogni volta che applichi una nuova migrazione, aggiungi una riga qui con la
 > data e chi l'ha eseguita, poi committa.

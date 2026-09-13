@@ -370,13 +370,19 @@ async function doLogout() {
       if (studioOwnerId) sessionStorage.removeItem('dpp_cartelle_' + studioOwnerId);
     }
     // Dati non scoped per utente in localStorage (identità professionale del
-    // dietista e bozze di form non ancora salvate, che possono contenere dati
-    // paziente): su un computer di studio condiviso tra più dietisti, senza
-    // questa pulizia il dietista successivo che effettua il login li
-    // ritroverebbe ancora popolati con i dati del dietista precedente.
-    localStorage.removeItem('nutriplan_profilo_operatore');
-    ['nutriplan_draft_agenda','nutriplan_draft_database','nutriplan_draft_gravidanza',
-     'nutriplan_draft_pazsano','nutriplan_draft_ricetta'].forEach(k => localStorage.removeItem(k));
+    // dietista, bozze/autosave di form non ancora salvate, token calendario —
+    // tutto può contenere dati paziente): su un computer di studio condiviso
+    // tra più dietisti, senza questa pulizia il dietista successivo che
+    // effettua il login li ritroverebbe ancora popolati con i dati del
+    // dietista precedente. La whitelist fissa di poche chiavi lasciava fuori
+    // gli autosave `nutriplan_autosave_*` di bia/chetogenica/diabete/disfagia/
+    // dna/ncpt/obesita/pancreas.html, le bozze `nutriplan_nc_draft`/
+    // `nutriplan_esame_draft` di pazienti.html e i token `gcal_token*`: si
+    // spazzano via per prefisso, non per nome esatto, così restano coperte
+    // anche le chiavi future con lo stesso prefisso.
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith('nutriplan_') || key.startsWith('gcal_')) localStorage.removeItem(key);
+    }
   } catch(e) {}
   await sb.auth.signOut();
   window.location.href = 'index.html';
@@ -559,6 +565,47 @@ function fmtV(v, dec = 1) {
 }
 function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function escJS(s) { return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+// Sanitizza HTML "ricco" scritto a mano in un <div contenteditable> (es. il
+// testo del consenso informato in chat.html) prima di salvarlo o di
+// re-inserirlo con innerHTML. Senza questo, il testo salvato in
+// patient_consents.consent_text finisce raw in innerHTML sia lato dietista
+// (chat.html) sia lato paziente (patient-portal.html): chiunque scriva/incolli
+// nel box (o comprometta l'account del dietista) può salvare <script>/
+// onerror=... che si esegue nel browser del PAZIENTE quando apre il consenso
+// da firmare — XSS stored attraverso il confine di fiducia più sensibile
+// dell'app. Whitelist minimale: solo i tag di formattazione base servono
+// davvero a un testo di consenso, tutto il resto viene "srotolato" (si tiene
+// il testo/i figli, si butta il tag) — SCRIPT/STYLE vengono invece rimossi
+// per intero, testo compreso. Nessun attributo è mai mantenuto (elimina in un
+// colpo solo onclick/onerror/style/href="javascript:"/ecc.).
+const SANITIZE_ALLOWED_TAGS = new Set([
+  'P','BR','B','STRONG','I','EM','U','UL','OL','LI','SPAN','DIV',
+  'H1','H2','H3','H4','H5','H6','BLOCKQUOTE',
+]);
+function sanitizeConsentHtml(html) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = String(html || '');
+  const walk = (node) => {
+    // Copia statica dei figli: modifichiamo l'albero mentre lo attraversiamo.
+    for (const child of Array.from(node.childNodes)) {
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        walk(child); // prima i figli, poi decidiamo del tag stesso
+        if (child.tagName === 'SCRIPT' || child.tagName === 'STYLE') {
+          child.remove();
+        } else if (!SANITIZE_ALLOWED_TAGS.has(child.tagName)) {
+          child.replaceWith(...child.childNodes); // "srotola": tiene testo/figli, butta il tag
+        } else {
+          while (child.attributes.length) child.removeAttribute(child.attributes[0].name);
+        }
+      } else if (child.nodeType !== Node.TEXT_NODE) {
+        child.remove(); // commenti e altri tipi di nodo: nessun motivo di tenerli
+      }
+    }
+  };
+  walk(tpl.content);
+  return tpl.innerHTML;
+}
 function todayISO() {
   // Data locale, non UTC: new Date().toISOString() usa UTC e restituisce la
   // data di ieri per un dietista in Italia nella finestra tra mezzanotte

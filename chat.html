@@ -2108,7 +2108,7 @@ async function loadPrivacy() {
         <span class="priv-status-badge" style="${statusStyle}">${statusLabel}</span>
         <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-ghost btn-sm no-print" onclick="printPrivacy()">${t('priv.print')}</button>
-          ${!consent ? `<button class="btn btn-primary btn-sm no-print" onclick="createConsent('${p.cartellaId}','${esc(p.name)}','${esc(dietEmail)}')">${t('priv.create')}</button>` : ''}
+          ${!consent ? `<button class="btn btn-primary btn-sm no-print" onclick="createConsent('${escJS(p.cartellaId)}','${escJS(p.name)}','${escJS(dietEmail)}')">${t('priv.create')}</button>` : ''}
           ${consent && !isSigned ? `<button class="btn btn-ghost btn-sm no-print" style="color:#DC2626" onclick="revokeConsent('${consentId}')">${t('priv.revoke')}</button>` : ''}
         </div>
       </div>
@@ -2120,7 +2120,7 @@ async function loadPrivacy() {
         ${!isSigned ? `<button class="btn btn-ghost btn-sm no-print" id="priv-edit-btn" onclick="toggleConsentEdit('${consentId||''}')">${t('priv.edit')}</button>` : ''}
       </div>
       <div class="priv-card-body">
-        <div class="priv-consent-view" id="consent-view">${consentText}</div>
+        <div class="priv-consent-view" id="consent-view">${sanitizeConsentHtml(consentText)}</div>
         <div id="consent-edit-wrap" style="display:none">
           <div class="priv-edit-area" id="consent-editor" contenteditable="true"></div>
           <div class="priv-edit-actions">
@@ -2146,7 +2146,7 @@ async function loadPrivacy() {
               <span style="font-size:10px;text-transform:uppercase;color:var(--slate-l);background:#F1F5F9;padding:2px 8px;border-radius:10px">${esc(d.type||'')}</span>
               <span style="margin-left:auto;font-size:11px;font-weight:700;${d.signed_at ? 'color:#16A34A' : 'color:#D97706'}">${d.signed_at ? '✅ Firmato ' + new Date(d.signed_at).toLocaleString('it-IT') : '⏳ In attesa di firma'}</span>
             </div>
-            ${!d.signed_at ? `<div style="margin-top:8px"><button class="btn btn-ghost btn-sm no-print" onclick="openFirmaDocumento('${esc(d.id)}')" style="gap:6px">✍️ Firma in studio</button></div>` : ''}
+            ${!d.signed_at ? `<div style="margin-top:8px"><button class="btn btn-ghost btn-sm no-print" onclick="openFirmaDocumento('${escJS(d.id)}')" style="gap:6px">✍️ Firma in studio</button></div>` : ''}
           </div>
         `).join('')}
       </div>
@@ -2250,7 +2250,7 @@ function toggleConsentEdit(consentId) {
 async function saveConsentForPatient(consentId) {
   const editor = document.getElementById('consent-editor');
   if (!editor || !consentId) return;
-  const newText = editor.innerHTML;
+  const newText = sanitizeConsentHtml(editor.innerHTML);
   const {error} = await sb.from('patient_consents').update({consent_text: newText}).eq('id', consentId);
   if (error) { toast(_L('❌ Errore: ','❌ Error: ') + error.message, 'err'); return; }
   toast(_L('✅ Testo aggiornato per questo paziente','✅ Text updated for this patient'), 'ok');
@@ -2260,7 +2260,7 @@ async function saveConsentForPatient(consentId) {
 async function saveConsentAsTemplate() {
   const editor = document.getElementById('consent-editor');
   if (!editor) return;
-  const newText = editor.innerHTML;
+  const newText = sanitizeConsentHtml(editor.innerHTML);
   // Il template è a livello di studio (letto sempre da studioOwnerId in
   // getConsentTemplate() e i consensi sono creati con dietitian_id=studioOwnerId
   // in createConsent()): un collaboratore deve scrivere sullo stesso id, non sul

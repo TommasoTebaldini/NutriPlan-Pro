@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import fs from 'fs';
+import { startCronScheduler } from './cron-scheduler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -76,19 +77,57 @@ app.all('/api/:name', async (req, res) => {
   }
 });
 
-app.use(
-  express.static(__dirname, {
-    extensions: ['html'],
-    setHeaders: (res, filePath) => {
-      if (process.env.NODE_ENV !== 'production') {
-        res.setHeader('Cache-Control', 'no-store');
-      }
-    },
-  })
-);
+// `express.static(__dirname)` serviva l'intera cartella del progetto, non solo
+// le pagine pubbliche: chiunque poteva scaricare supabase_setup.sql (schema DB
+// completo), package.json, SECURITY.md, SETUP-STRIPE.md e ogni altro file
+// sorgente semplicemente indovinando l'URL. Ora si serve in modo esplicito:
+// solo le sottocartelle di asset pubblici e, a livello radice, solo pagine
+// .html (comprese le richieste senza estensione, risolte su file .html) più
+// una lista chiusa di file statici realmente necessari al frontend. Tutto il
+// resto (supabase/, scripts/, node_modules/, api/, attached_assets/ — mai
+// referenziata da nessuna pagina — e i file di config/build a livello radice)
+// risponde 404 come se non esistesse.
+const staticHeaders = {
+  setHeaders: (res) => {
+    if (process.env.NODE_ENV !== 'production') {
+      res.setHeader('Cache-Control', 'no-store');
+    }
+  },
+};
+
+const PUBLIC_DIR_NAMES = ['css', 'js', 'icons', 'vendor', 'legal'];
+for (const dirName of PUBLIC_DIR_NAMES) {
+  app.use(`/${dirName}`, express.static(path.join(__dirname, dirName), staticHeaders));
+}
+
+// File statici a livello radice diversi da *.html che il frontend richiede
+// davvero (verificato via grep sui riferimenti nelle pagine): icona, PWA
+// manifest, robots, foglio di stile legacy, service worker, template CSV
+// scaricabile dal pulsante in pazienti.html.
+const PUBLIC_ROOT_FILES = new Set([
+  'favicon.svg',
+  'manifest.webmanifest',
+  'robots.txt',
+  'style.css',
+  'sw.js',
+  'template_pazienti.csv',
+]);
+
+const rootStatic = express.static(__dirname, { extensions: ['html'], ...staticHeaders });
+
+app.use((req, res, next) => {
+  const urlPath = decodeURIComponent(req.path);
+  const seg = urlPath.replace(/^\/+/, '');
+  if (seg === '') return next(); // radice -> gestita sotto da app.get('/')
+  if (seg.includes('/')) return next(); // percorso annidato non coperto dai mount sopra: non pubblico
+  const allowed = PUBLIC_ROOT_FILES.has(seg) || seg.endsWith('.html') || !seg.includes('.');
+  if (!allowed) return next(); // es. supabase_setup.sql, package.json, SECURITY.md, vite.config.js...
+  return rootStatic(req, res, next);
+});
 
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
 
 app.listen(PORT, HOST, () => {
   console.log(`NutriPlan Pro running on http://${HOST}:${PORT}`);
+  startCronScheduler();
 });

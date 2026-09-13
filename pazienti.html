@@ -1073,7 +1073,13 @@ function _renderTagItems(items) {
   if (!dd) return;
   if (!items.length) { dd.style.display = 'none'; return; }
   dd.innerHTML = items.map(t =>
-    '<div onmousedown="event.preventDefault()" onclick="selectTagFilter(\'' + t.replace(/'/g,"\\'") + '\')" style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #F1F5F9;transition:background .1s" onmouseover="this.style.background=\'#F0FDFA\'" onmouseout="this.style.background=\'\'">' +
+    // t è un tag libero scritto dal dietista: escJS() serve qui perché il valore
+    // finisce sia dentro un attributo HTML (onclick="...", delimitato da doppi
+    // apici) sia dentro una stringa JS a apice singolo al suo interno — un
+    // semplice replace del solo apice singolo (come prima) lasciava passare un
+    // doppio apice non escapato, che chiudeva l'attributo onclick e permetteva
+    // di iniettare markup arbitrario (es. un tag con onerror=...).
+    '<div onmousedown="event.preventDefault()" onclick="selectTagFilter(\'' + escJS(t) + '\')" style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #F1F5F9;transition:background .1s" onmouseover="this.style.background=\'#F0FDFA\'" onmouseout="this.style.background=\'\'">' +
     '<span style="font-size:14px;margin-right:6px">🏷️</span>' + esc(t) + '</div>'
   ).join('');
   dd.style.display = 'block';
@@ -2512,7 +2518,10 @@ function renderNcTagChips() {
   container.innerHTML = allTags.map(t => {
     const c = tagColor(t);
     const sel = ncSelectedTags.includes(t);
-    return `<span class="nc-tag-chip ${sel?'selected':''}" style="background:${c.bg};color:${c.col}" onclick="toggleNcTag('${t.replace(/'/g,"\\'")}')">${sel?'✓ ':''}${esc(t)}</span>`;
+    // escJS() (non un semplice replace del solo apice) perché t entra sia in un
+    // attributo HTML a doppi apici (onclick) sia nella stringa JS a apice
+    // singolo al suo interno — vedi commento analogo in _renderTagItems() sopra.
+    return `<span class="nc-tag-chip ${sel?'selected':''}" style="background:${c.bg};color:${c.col}" onclick="toggleNcTag('${escJS(t)}')">${sel?'✓ ':''}${esc(t)}</span>`;
   }).join('');
 }
 

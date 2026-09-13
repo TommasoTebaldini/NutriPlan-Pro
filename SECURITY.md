@@ -1,21 +1,33 @@
 # Security Policy
 
-## Supported Versions
+NutriPlan Pro gestisce dati clinici di pazienti (cartelle, valutazioni, esami
+biochimici) e dati di pagamento dei professionisti che lo usano. Prendiamo
+sul serio qualunque segnalazione di vulnerabilità.
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+## Versioni supportate
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+Non pubblichiamo versioni numerate: il progetto è deployato in continuo
+dal branch `main`. Le patch di sicurezza vengono applicate direttamente in
+produzione appena verificate, non retroportate su versioni precedenti.
 
-## Reporting a Vulnerability
+## Segnalare una vulnerabilità
 
-Use this section to tell people how to report a vulnerability.
+Se scopri una vulnerabilità di sicurezza (accesso non autorizzato a dati di
+un altro utente/paziente, bypass di autenticazione, XSS, SQL injection,
+esposizione di credenziali o simili):
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+1. **Non aprire una issue pubblica su GitHub.** Una vulnerabilità nei dati
+   clinici resa pubblica prima di essere corretta espone i pazienti reali.
+2. Scrivi a **security@nutriplanpro.it** descrivendo: cosa hai trovato, come
+   riprodurlo, e l'impatto stimato (es. quali dati sono esposti).
+3. Riceverai una conferma di ricezione entro **3 giorni lavorativi**.
+4. Ti terremo aggiornato sullo stato della correzione; per vulnerabilità che
+   coinvolgono dati clinici puntiamo a una mitigazione entro **7 giorni**
+   dalla conferma.
+5. Ti chiediamo di non divulgare pubblicamente i dettagli finché la
+   correzione non è in produzione e i dati eventualmente esposti non sono
+   stati messi in sicurezza.
+
+Segnalazioni relative a dipendenze di terze parti (`npm audit`) sono
+benvenute ma a priorità più bassa se non sfruttabili direttamente contro
+questa applicazione.

@@ -1739,6 +1739,13 @@ async function checkScheduledMessages() {
 // Start scheduler
 setInterval(checkScheduledMessages, 60000);
 
+// Il canale realtime (chat:<patientId>) è sottoscritto solo alla conversazione
+// aperta: se un ALTRO paziente scrive mentre il dietista ha una chat diversa
+// aperta, badge non letti e anteprima in sidebar restavano fermi finché non
+// si ricaricava la pagina. loadChatPatients() re-interroga tutto e chiama
+// renderPatientList() — non tocca la conversazione aperta, solo la sidebar.
+setInterval(() => { loadChatPatients().catch(() => {}); }, 25000);
+
 // ─── Videoconsulto (Jitsi) ──────────────────────────────────────────────────
 // Stesso algoritmo di src/lib/videoCall.js dell'app paziente (ids ordinati,
 // prefisso nutriplan-call-): le due app arrivano SEMPRE alla stessa stanza

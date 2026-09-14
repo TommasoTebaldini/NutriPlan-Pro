@@ -9432,3 +9432,97 @@ END $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_119_water_fasting_constraints', 'CHECK su water_logs.amount_ml (0-10000ml) e fasting_logs.ended_at>started_at - nessun vincolo esisteva prima, solo validazione lato client')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 120 — FIX ALTO: promemoria farmaci non funzionano se l'app è
+-- chiusa/in background
+--
+-- scheduleMedicationReminders() (Diet-Plan-Pro-app-claude/src/lib/
+-- notifications.js) programma i promemoria interamente con setTimeout lato
+-- client — nessun meccanismo server-side esisteva, a differenza di chat/
+-- piano dieta (notify-on-event + webhook DB). Su mobile un tab/PWA in
+-- background sospende i timer entro pochi minuti: il promemoria non partiva
+-- mai, nonostante la UI lo prometta.
+--
+-- Fix: pg_cron ogni minuto (stesso pattern di dispatch_scheduled_messages,
+-- SEZIONE 103) invoca via pg_net la nuova Edge Function
+-- send-medication-reminders (Diet-Plan-Pro-app-claude/supabase/functions/),
+-- che invia una vera push notification. Fuso orario fisso Europe/Rome
+-- (nessuna colonna timezone su profiles — semplificazione deliberata,
+-- stesso presupposto già usato altrove nel progetto).
+--
+-- medication_reminder_log evita il doppio invio: un UNIQUE su (reminder_id,
+-- time_slot, sent_date) fa da mutex ottimistico anche contro esecuzioni
+-- concorrenti del cron.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS medication_reminder_log (
+  id          BIGSERIAL   PRIMARY KEY,
+  reminder_id UUID        NOT NULL REFERENCES medication_reminders(id) ON DELETE CASCADE,
+  time_slot   TEXT        NOT NULL,
+  sent_date   DATE        NOT NULL,
+  sent_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (reminder_id, time_slot, sent_date)
+);
+
+ALTER TABLE medication_reminder_log ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "medication_reminder_log_own_read" ON medication_reminder_log;
+CREATE POLICY "medication_reminder_log_own_read" ON medication_reminder_log
+  FOR SELECT USING (EXISTS (
+    SELECT 1 FROM medication_reminders mr
+    WHERE mr.id = medication_reminder_log.reminder_id AND mr.user_id = auth.uid()
+  ));
+-- Nessuna policy INSERT/UPDATE/DELETE per authenticated/anon: solo la Edge
+-- Function (service_role) scrive qui.
+
+CREATE INDEX IF NOT EXISTS idx_medication_reminder_log_lookup ON medication_reminder_log(reminder_id, time_slot, sent_date);
+
+-- Secret dedicato in Vault per autenticare pg_cron -> Edge Function, stesso
+-- pattern di giornale_cron_secret (SEZIONE 112): mai la service_role key in
+-- chiaro nel comando del cron job.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM vault.secrets WHERE name = 'medication_reminders_cron_secret') THEN
+    PERFORM vault.create_secret(
+      encode(extensions.gen_random_bytes(32), 'hex'),
+      'medication_reminders_cron_secret',
+      'Segreto condiviso tra il cron ogni-minuto e la Edge Function send-medication-reminders. Va impostato come secret MEDICATION_REMINDERS_CRON_SECRET della funzione dopo l''esecuzione di SEZIONE 120.'
+    );
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'send-medication-reminders') THEN
+    PERFORM cron.unschedule('send-medication-reminders');
+  END IF;
+END $$;
+
+SELECT cron.schedule(
+  'send-medication-reminders',
+  '* * * * *',
+  $cron$
+  DO $do$
+  DECLARE
+    v_secret text;
+  BEGIN
+    SELECT decrypted_secret INTO v_secret FROM vault.decrypted_secrets WHERE name = 'medication_reminders_cron_secret';
+    IF v_secret IS NOT NULL THEN
+      PERFORM net.http_post(
+        url := 'https://hvdwqowkhutfsdpiubxe.supabase.co/functions/v1/send-medication-reminders',
+        headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || v_secret),
+        body := '{}'::jsonb,
+        timeout_milliseconds := 20000
+      );
+    END IF;
+  END;
+  $do$;
+  $cron$
+);
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_120_medication_reminders_server_push', 'Promemoria farmaci server-side: medication_reminder_log (dedup/mutex) + pg_cron ogni minuto (Europe/Rome fisso) che invoca via pg_net la nuova Edge Function send-medication-reminders - prima i promemoria erano solo setTimeout lato client, non funzionavano ad app chiusa/in background')
+ON CONFLICT (id) DO NOTHING;

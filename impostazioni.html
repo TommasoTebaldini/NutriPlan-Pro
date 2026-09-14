@@ -185,6 +185,7 @@
   <a class="nav-item " href="ricette.html"><span class="ni">🍳</span><span data-only-lang="it">Ricette</span><span data-only-lang="en" style="display:none">Recipes</span></a>
   <a class="nav-item active" href="impostazioni.html"><span class="ni">⚙️</span><span data-only-lang="it">Impostazioni</span><span data-only-lang="en" style="display:none">Settings</span></a>
   <a class="nav-item " href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="notifiche.html"><span class="ni">🔔</span><span data-only-lang="it">Notifiche</span><span data-only-lang="en" style="display:none">Notifications</span><span id="notif-nav-badge" style="display:none;background:#DC2626;color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;margin-left:6px;vertical-align:middle"></span></a>
   <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span><span data-only-lang="it">Admin Utenti</span><span data-only-lang="en" style="display:none">Admin Users</span></a>
   <div id="sb-subscription"></div>
   <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span><span data-only-lang="it">Abbonamento</span><span data-only-lang="en" style="display:none">Subscription</span></a>
@@ -705,6 +706,21 @@
       <input type="number" id="input-inactivity-days" min="1" max="30" value="5"
         style="width:64px;padding:8px 10px;border:1.5px solid var(--border-d);border-radius:10px;font-size:14px;font-family:inherit;font-weight:700;text-align:center;color:var(--slate);outline:none"
         onchange="_saveInactivityDays(this.value)" oninput="_saveInactivityDays(this.value)">
+    </div>
+  </div>
+
+  <!-- BACKUP DATI STUDIO -->
+  <div class="lang-section" id="section-backup">
+    <h3><span data-only-lang="it">💾 Backup Dati Studio</span><span data-only-lang="en" style="display:none">💾 Studio Data Backup</span></h3>
+    <p data-only-lang="it" style="font-size:13px;color:var(--slate-l);margin-bottom:20px;margin-top:-8px">Scarica un'istantanea completa di tutti i dati del tuo studio — diverso dall'export GDPR (pagina "GDPR"), che è per un singolo paziente su sua richiesta. Questo è per te: una copia di sicurezza di tutte le cartelle, piani, fatture e comunicazioni.</p>
+    <p data-only-lang="en" style="display:none;font-size:13px;color:var(--slate-l);margin-bottom:20px;margin-top:-8px">Download a complete snapshot of all your practice's data — different from the GDPR export (the "GDPR" page), which is per single patient on their request. This one is for you: a backup copy of every patient file, plan, invoice and communication.</p>
+    <div style="background:white;border:1.5px solid var(--border);border-radius:14px;padding:18px 20px">
+      <div style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:3px" data-only-lang="it">📦 Backup completo (JSON)</div>
+      <div style="font-size:14px;font-weight:700;color:var(--slate);margin-bottom:3px;display:none" data-only-lang="en">📦 Full backup (JSON)</div>
+      <div style="font-size:12px;color:var(--slate-l);line-height:1.5;margin-bottom:12px" data-only-lang="it">Include tutte le cartelle pazienti, piani alimentari, NCPt, schede di valutazione, BIA, esami biochimici, note specialistiche, documenti, firme/consensi, fatture, appuntamenti, messaggi chat, promemoria farmaci, check-in, diario fotografico, template piani e consigli personalizzati. Per uno studio con molti pazienti il file può essere grande — l'operazione richiede qualche secondo.</div>
+      <div style="font-size:12px;color:var(--slate-l);line-height:1.5;margin-bottom:12px;display:none" data-only-lang="en">Includes every patient file, meal plan, NCPt, assessment sheet, BIA, biochemical test, specialist note, document, signature/consent, invoice, appointment, chat message, medication reminder, check-in, food diary photo, plan template and custom advice. For a practice with many patients the file can be large — this takes a few seconds.</div>
+      <button class="btn btn-sm" id="backup-studio-btn" style="background:#0F766E;color:white" onclick="esportaBackupStudio()">⬇️ <span data-only-lang="it">Scarica backup completo</span><span data-only-lang="en" style="display:none">Download full backup</span></button>
+      <div id="backup-studio-status" style="margin-top:10px;font-size:12.5px"></div>
     </div>
   </div>
 
@@ -1291,6 +1307,115 @@ function _saveAlertsToggle(on) {
 function _saveInactivityDays(val) {
   const n = Math.max(1, Math.min(30, parseInt(val)||5));
   localStorage.setItem('dp_inactivity_days', String(n));
+}
+
+// ═══════════════════════════════════════════════════
+// BACKUP DATI STUDIO — istantanea completa per il dietista (diverso
+// dall'export GDPR per-paziente in gdpr.html). Query in batch su tutte le
+// cartelle dello studio (non una per paziente come in gdpr.html, per non
+// fare N+1 su uno studio con centinaia di pazienti) — RLS già scopes tutto
+// alla propria relazione di studio, funziona anche per un collaboratore.
+// ═══════════════════════════════════════════════════
+async function esportaBackupStudio() {
+  const btn = document.getElementById('backup-studio-btn');
+  const statusEl = document.getElementById('backup-studio-status');
+  btn.disabled = true;
+  statusEl.textContent = _L('⏳ Raccolta dati in corso...', '⏳ Collecting data...');
+  try {
+    const ownerId = studioOwnerId || currentUser.id;
+
+    const { data: cartelle, error: cartelleErr } = await sb.from('cartelle').select('*').eq('user_id', ownerId);
+    if (cartelleErr) throw cartelleErr;
+    const cartellaIds = (cartelle || []).map(c => c.id);
+
+    const { data: links } = await sb.from('patient_dietitian').select('patient_id').eq('dietitian_id', ownerId);
+    const patientIds = [...new Set((links || []).map(l => l.patient_id).filter(Boolean))];
+
+    // In batch da 200 id per query, per restare sotto i limiti di lunghezza URL
+    // di un filtro PostgREST "in.(...)" con studi molto grandi.
+    async function fetchInBatches(table, column, ids, select = '*') {
+      if (!ids.length) return [];
+      const out = [];
+      for (let i = 0; i < ids.length; i += 200) {
+        const batch = ids.slice(i, i + 200);
+        const { data, error } = await sb.from(table).select(select).in(column, batch);
+        if (error) { console.warn('[backup] ' + table + ':', error.message); continue; }
+        out.push(...(data || []));
+      }
+      return out;
+    }
+
+    statusEl.textContent = _L('⏳ Scaricamento cartelle cliniche...', '⏳ Downloading clinical records...');
+    const [piani, ncpt, schedeValutazione, biaRecords, esamiBiochimici, noteSpecialistiche, patientDocuments, diarioFoto] = await Promise.all([
+      fetchInBatches('piani', 'cartella_id', cartellaIds),
+      fetchInBatches('ncpt', 'cartella_id', cartellaIds),
+      fetchInBatches('schede_valutazione', 'cartella_id', cartellaIds),
+      fetchInBatches('bia_records', 'cartella_id', cartellaIds),
+      fetchInBatches('esami_biochimici', 'cartella_id', cartellaIds),
+      fetchInBatches('note_specialistiche', 'cartella_id', cartellaIds),
+      fetchInBatches('patient_documents', 'cartella_id', cartellaIds),
+      fetchInBatches('diario_alimentare_foto', 'cartella_id', cartellaIds),
+    ]);
+
+    statusEl.textContent = _L('⏳ Scaricamento fatture e comunicazioni...', '⏳ Downloading invoices and communications...');
+    const [fatture, appointments, chatMessages, patientSignatures, medicationReminders, weeklyCheckins] = await Promise.all([
+      fetchInBatches('fatture', 'patient_id', patientIds),
+      fetchInBatches('appointments', 'patient_id', patientIds),
+      fetchInBatches('chat_messages', 'patient_id', patientIds),
+      fetchInBatches('patient_signatures', 'patient_id', patientIds),
+      fetchInBatches('medication_reminders', 'user_id', patientIds),
+      fetchInBatches('weekly_checkins', 'user_id', patientIds),
+    ]);
+
+    statusEl.textContent = _L('⏳ Scaricamento template e strumenti dello studio...', '⏳ Downloading practice templates and tools...');
+    const [{ data: pianiTemplate }, { data: consigliCustom }, { data: dietitianCredentials }] = await Promise.all([
+      sb.from('piani_template').select('*').eq('user_id', ownerId),
+      sb.from('consigli_custom').select('*').eq('user_id', ownerId),
+      sb.from('dietitian_credentials').select('*').eq('id', ownerId).maybeSingle(),
+    ]);
+
+    const backup = {
+      _meta: {
+        esportato_il: new Date().toISOString(),
+        formato: 'NutriPlan-Pro Studio Backup v1',
+        dietista_id: ownerId,
+        numero_pazienti: cartelle.length,
+      },
+      cartelle: cartelle || [],
+      piani_alimentari: piani,
+      schede_ncpt: ncpt,
+      schede_valutazione: schedeValutazione,
+      bia_records: biaRecords,
+      esami_biochimici: esamiBiochimici,
+      note_specialistiche: noteSpecialistiche,
+      documenti: patientDocuments,
+      diario_alimentare_foto: diarioFoto,
+      fatture: fatture,
+      appuntamenti: appointments,
+      messaggi_chat: chatMessages,
+      firme_consensi: patientSignatures,
+      promemoria_farmaci: medicationReminders,
+      checkin_settimanali: weeklyCheckins,
+      template_piani: pianiTemplate || [],
+      consigli_personalizzati: consigliCustom || [],
+      dati_fiscali_studio: dietitianCredentials || null,
+    };
+
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'backup_studio_' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    statusEl.innerHTML = '<span style="color:#0F766E;font-weight:600">✅ ' + _L('Backup completato: ', 'Backup complete: ') + cartelle.length + ' ' + _L('pazienti, file scaricato.', 'patients, file downloaded.') + '</span>';
+  } catch (e) {
+    console.error('[backup-studio]', e);
+    statusEl.innerHTML = '<span style="color:#DC2626;font-weight:600">❌ ' + _L('Errore: ', 'Error: ') + (e.message || e) + '</span>';
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 // ═══════════════════════════════════════════════════

@@ -9558,3 +9558,171 @@ CREATE POLICY "coach_ai_messages_select" ON coach_ai_messages
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_121_fix_coach_ai_messages_collaborator_gap', 'coach_ai_messages_select richiedeva solo la relazione di studio, non is_dietitian_level_collaborator() - un collaboratore "segretario" poteva leggere le conversazioni Coach AI di qualunque paziente dello studio, stesso gap già chiuso per patient_photos/patient_files/note_specialistiche')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 122 — NUOVA FEATURE: storico/versioning dei piani alimentari
+--
+-- piani.meals viene sovrascritto ad ogni salvataggio (UPDATE in place,
+-- app.html:salvaPiano) — nessuna versione precedente sopravvive. A
+-- differenza di altre 13 tabelle cliniche, piani non era coperta dal
+-- trigger generico log_clinical_change() (quella tabella logga SOLO
+-- l'evento, non un confronto leggibile tra versioni; qui serve invece poter
+-- mostrare "cosa è cambiato rispetto alla versione precedente").
+--
+-- piani_history: uno snapshot completo della riga PRIMA di ogni UPDATE che
+-- modifica davvero meals (non ad ogni tocco su visible_to_patient/
+-- display_mode, che non sono contenuto del piano). Trigger SECURITY DEFINER,
+-- il client non scrive mai direttamente qui.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS piani_history (
+  id           BIGSERIAL   PRIMARY KEY,
+  piano_id     UUID        NOT NULL REFERENCES piani(id) ON DELETE CASCADE,
+  cartella_id  UUID,
+  user_id      UUID        NOT NULL,
+  nome         TEXT,
+  data_piano   TEXT,
+  meals        TEXT,
+  saved_at     TIMESTAMPTZ,
+  archived_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE piani_history ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "piani_history_dietitian_read" ON piani_history;
+CREATE POLICY "piani_history_dietitian_read" ON piani_history
+  FOR SELECT USING (
+    (select auth.uid()) = user_id
+    OR (
+      user_id = get_studio_owner((select auth.uid()))
+      AND is_dietitian_level_collaborator((select auth.uid()))
+    )
+  );
+-- Nessuna policy INSERT/UPDATE/DELETE per authenticated/anon: solo il
+-- trigger sotto scrive qui.
+
+CREATE INDEX IF NOT EXISTS idx_piani_history_piano ON piani_history(piano_id, archived_at DESC);
+
+CREATE OR REPLACE FUNCTION snapshot_piano_before_update()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+BEGIN
+  IF NEW.meals IS DISTINCT FROM OLD.meals THEN
+    INSERT INTO piani_history (piano_id, cartella_id, user_id, nome, data_piano, meals, saved_at)
+    VALUES (OLD.id, OLD.cartella_id, OLD.user_id, OLD.nome, OLD.data_piano, OLD.meals, OLD.saved_at);
+  END IF;
+  RETURN NEW;
+EXCEPTION WHEN OTHERS THEN
+  RAISE WARNING 'snapshot_piano_before_update fallito su piano %: %', OLD.id, SQLERRM;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_snapshot_piano_before_update ON piani;
+CREATE TRIGGER trg_snapshot_piano_before_update
+BEFORE UPDATE ON piani
+FOR EACH ROW
+EXECUTE FUNCTION snapshot_piano_before_update();
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_122_piani_history', 'Tabella piani_history + trigger BEFORE UPDATE su piani (solo quando meals cambia): conserva ogni versione precedente di un piano alimentare per una vista "confronta con la versione precedente" in app.html — piani non era coperta dall''audit trail generico, ogni salvataggio sovrascriveva la versione precedente senza lasciare traccia leggibile')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 123 — NUOVA FEATURE: centro notifiche in-app
+--
+-- Oggi ogni evento (nuovo messaggio, promemoria farmaco, promemoria
+-- appuntamento, paziente inattivo, pagamento scaduto...) genera SOLO una
+-- push notification — se il dispositivo è spento, il permesso non è mai
+-- stato concesso, o l'utente la ignora/la perde, non resta alcuna traccia
+-- recuperabile nell'app. Questa tabella affianca (non sostituisce) il canale
+-- push: ogni volta che il codice server-side tenta un invio push, scrive
+-- anche qui — indipendentemente dal fatto che la push riesca o meno, così
+-- l'utente la trova comunque aprendo l'app.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id         BIGSERIAL   PRIMARY KEY,
+  user_id    UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title      TEXT        NOT NULL,
+  body       TEXT,
+  url        TEXT,
+  type       TEXT,
+  read_at    TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "notifications_own_select" ON notifications;
+CREATE POLICY "notifications_own_select" ON notifications
+  FOR SELECT USING ((select auth.uid()) = user_id);
+
+-- Solo per segnare come letta (read_at) — nessuna policy INSERT/DELETE per
+-- authenticated/anon: solo il codice server-side (service_role) scrive nuove
+-- righe.
+DROP POLICY IF EXISTS "notifications_own_update" ON notifications;
+CREATE POLICY "notifications_own_update" ON notifications
+  FOR UPDATE USING ((select auth.uid()) = user_id) WITH CHECK ((select auth.uid()) = user_id);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON notifications(user_id, created_at DESC) WHERE read_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_notifications_user_all ON notifications(user_id, created_at DESC);
+
+-- Retention: le notifiche più vecchie di 6 mesi vengono ripulite (stesso
+-- principio di limitazione della conservazione già applicato altrove nel
+-- progetto, qui senza rilevanza clinica/probatoria che giustifichi 10 anni
+-- come per l'audit trail).
+CREATE OR REPLACE FUNCTION purge_old_notifications()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+BEGIN
+  DELETE FROM notifications WHERE created_at < now() - interval '6 months';
+END;
+$$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'purge_old_notifications') THEN
+    PERFORM cron.unschedule('purge_old_notifications');
+  END IF;
+END $$;
+
+SELECT cron.schedule('purge_old_notifications', '0 4 1 * *', $$SELECT public.purge_old_notifications();$$);
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_123_notifications_center', 'Tabella notifications (centro notifiche in-app) + retention 6 mesi via pg_cron - scritta lato server ovunque venga tentato un invio push (notify-on-event, send-medication-reminders, api/cron.js), indipendentemente dal successo della push, così un evento non si perde se il dispositivo era spento o il permesso non concesso')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 124 — FIX: notifications mancante dalla pubblicazione
+-- supabase_realtime
+--
+-- NotificationContext.jsx (Diet-Plan-Pro-app-claude) sottoscrive
+-- postgres_changes INSERT su notifications per aggiornare il badge in
+-- tempo reale — senza essere nella pubblicazione, quella sottoscrizione non
+-- riceve mai nulla (stesso identico gap già visto per altre 10 tabelle in
+-- SEZIONE 105/106, qui prevenuto invece di scoperto dopo).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables WHERE pubname = 'supabase_realtime' AND tablename = 'notifications'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE notifications;
+  END IF;
+END $$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_124_notifications_realtime_publication', 'Aggiunge notifications alla pubblicazione supabase_realtime - senza, la sottoscrizione postgres_changes in NotificationContext.jsx (badge live) non riceverebbe mai eventi, stesso gap già visto 10 volte per altre tabelle in SEZIONE 105/106')
+ON CONFLICT (id) DO NOTHING;

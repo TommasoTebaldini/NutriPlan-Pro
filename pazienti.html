@@ -126,6 +126,7 @@ async function ensureChartJs() {
   <a class="nav-item " href="ricette.html"><span class="ni">🍳</span><span data-only-lang="it">Ricette</span><span data-only-lang="en" style="display:none">Recipes</span></a>
   <a class="nav-item " href="impostazioni.html"><span class="ni">⚙️</span><span data-only-lang="it">Impostazioni</span><span data-only-lang="en" style="display:none">Settings</span></a>
   <a class="nav-item " href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="notifiche.html"><span class="ni">🔔</span><span data-only-lang="it">Notifiche</span><span data-only-lang="en" style="display:none">Notifications</span><span id="notif-nav-badge" style="display:none;background:#DC2626;color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;margin-left:6px;vertical-align:middle"></span></a>
   <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span><span data-only-lang="it">Admin Utenti</span><span data-only-lang="en" style="display:none">User Admin</span></a>
   <div id="sb-subscription"></div>
   <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span><span data-only-lang="it">Abbonamento</span><span data-only-lang="en" style="display:none">Subscription</span></a>
@@ -844,7 +845,7 @@ async function loadCartelle(skipCache = false) {
     filterBar.style.display = 'flex';
     const searchEl = document.getElementById('paz-search');
     const sessoEl = document.getElementById('paz-filter-sesso');
-    if (searchEl) searchEl.oninput = applyFiltri;
+    if (searchEl) searchEl.oninput = applyFiltriConRicercaTesto;
     if (sessoEl) sessoEl.onchange = applyFiltri;
   }
 
@@ -858,6 +859,11 @@ function applyFiltri() {
   const sesso = document.getElementById('paz-filter-sesso')?.value || '';
   const tag = document.getElementById('paz-filter-tag')?.value || '';
   const altroObj = allCartelleData.find(c => c.id === _altroCartellaId);
+  // Risultati della ricerca full-text server-side (note cliniche/NCPt, vedi
+  // applyFiltriConRicercaTesto) — validi solo se ancora relativi alla query
+  // corrente, altrimenti una risposta arrivata in ritardo per una ricerca
+  // precedente farebbe comparire pazienti sbagliati.
+  const fulltextActive = q.length >= 3 && _fulltextQuery === q;
 
   const filtered = allCartelleData.filter(c => {
     if (c.id === _altroCartellaId) return false; // handle separately
@@ -866,7 +872,11 @@ function applyFiltri() {
     } else {
       if (c.archived) return false;
     }
-    if (q && !((c.nome || '').toLowerCase().includes(q) || (c.cognome || '').toLowerCase().includes(q))) return false;
+    if (q) {
+      const nameMatch = (c.nome || '').toLowerCase().includes(q) || (c.cognome || '').toLowerCase().includes(q);
+      const textMatch = fulltextActive && _fulltextMatchIds.has(c.id);
+      if (!nameMatch && !textMatch) return false;
+    }
     if (sesso && c.sesso !== sesso) return false;
     if (tag && !(Array.isArray(c.tags) && c.tags.some(t => t.toLowerCase().includes(tag.toLowerCase())))) return false;
     return true;
@@ -875,6 +885,57 @@ function applyFiltri() {
   // Append "Altro" only when showing active (non-archived) with no active filters
   const showAltro = !mostraArchiviati && !q && !sesso && !tag && altroObj;
   renderCartelleGrid(showAltro ? [...filtered, altroObj] : filtered);
+}
+
+// ── Ricerca full-text nelle note cliniche/NCPt (oltre a nome/tag) ──
+// La ricerca esistente era solo sui campi già caricati in allCartelleData
+// (nome/cognome/tag) — il contenuto di note_specialistiche/ncpt è cifrato
+// (SEZIONE 40/79/111) e non viene mai precaricato per tutti i pazienti (per
+// performance e per non tenere in memoria dati clinici sensibili non
+// richiesti). Qui si interroga direttamente la VIEW decifrata
+// (security_invoker=true, RLS della tabella base si applica comunque), mai
+// la tabella _raw. Debounced e con soglia minima di 3 caratteri per non
+// interrogare il server ad ogni tasto su query troppo generiche.
+let _fulltextTimer = null;
+let _fulltextMatchIds = new Set();
+let _fulltextQuery = ''; // lowercase, vuoto = nessuna ricerca full-text attiva
+
+async function searchNoteContent(q) {
+  const like = '%' + q.replace(/[%_]/g, c => '\\' + c) + '%';
+  // 5 query .ilike() separate invece di un unico .or(...): il filtro
+  // .or() di PostgREST usa la virgola come separatore tra condizioni — una
+  // ricerca contenente una virgola (es. "cardio, diabete") avrebbe rotto la
+  // stringa del filtro. Nessun rischio di questo tipo con .ilike() diretto.
+  const [noteRes, valRes, diagRes, intRes, monRes] = await Promise.all([
+    sb.from('note_specialistiche').select('cartella_id').ilike('nota', like).limit(200),
+    sb.from('ncpt').select('cartella_id').ilike('valutazione', like).limit(200),
+    sb.from('ncpt').select('cartella_id').ilike('diagnosi', like).limit(200),
+    sb.from('ncpt').select('cartella_id').ilike('intervento', like).limit(200),
+    sb.from('ncpt').select('cartella_id').ilike('monitoraggio', like).limit(200),
+  ]);
+  const ids = new Set();
+  [noteRes, valRes, diagRes, intRes, monRes].forEach(res => {
+    (res.data || []).forEach(r => r.cartella_id && ids.add(r.cartella_id));
+  });
+  return ids;
+}
+
+function applyFiltriConRicercaTesto() {
+  applyFiltri(); // filtro locale immediato su nome/tag — nessuna regressione di reattività
+  const q = (document.getElementById('paz-search')?.value || '').toLowerCase().trim();
+  clearTimeout(_fulltextTimer);
+  if (q.length < 3) { _fulltextQuery = ''; _fulltextMatchIds = new Set(); return; }
+  _fulltextTimer = setTimeout(async () => {
+    try {
+      _fulltextMatchIds = await searchNoteContent(q);
+      _fulltextQuery = q;
+    } catch (e) {
+      console.warn('[searchNoteContent] fallita:', e.message);
+      _fulltextMatchIds = new Set(); _fulltextQuery = '';
+    }
+    // Rilancia il filtro solo se l'utente non ha già digitato altro nel frattempo
+    if ((document.getElementById('paz-search')?.value || '').toLowerCase().trim() === q) applyFiltri();
+  }, 400);
 }
 
 function toggleMostraArchiviati() {
@@ -1153,6 +1214,30 @@ function renderCartelleGrid(data) {
   ].join('');
 
   if (!normalCartelle.length && !altroObj) {
+    // Un dietista alla primissima registrazione (mai avuto NESSUNA cartella,
+    // non solo "zero risultati per questo filtro") si trovava davanti allo
+    // stesso messaggio terse "nessun risultato" di chi ha semplicemente
+    // filtrato troppo — nessuna guida su cosa fare per iniziare, a
+    // differenza dell'onboarding dedicato che esiste lato paziente
+    // (OnboardingFlow.jsx in Diet-Plan-Pro-app-claude).
+    const q0 = (document.getElementById('paz-search')?.value || '').trim();
+    const sesso0 = document.getElementById('paz-filter-sesso')?.value || '';
+    const tag0 = document.getElementById('paz-filter-tag')?.value || '';
+    const isTrulyEmpty = !allCartelleData.length && !mostraArchiviati && !q0 && !sesso0 && !tag0;
+    if (isTrulyEmpty) {
+      wrap.innerHTML = `<div style="max-width:560px;margin:24px auto;background:white;border:1.5px solid var(--border);border-radius:16px;padding:28px 26px;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.05)">
+        <div style="font-size:44px;margin-bottom:10px">👋</div>
+        <h3 style="font-size:18px;margin-bottom:6px">${_L('Benvenuto/a su DietPlan Pro!','Welcome to DietPlan Pro!')}</h3>
+        <p style="font-size:13px;color:var(--slate-m);line-height:1.6;margin-bottom:20px">${_L('Ecco i primi passi per iniziare a usare la piattaforma con i tuoi pazienti:','Here are the first steps to start using the platform with your patients:')}</p>
+        <div style="display:flex;flex-direction:column;gap:10px;text-align:left">
+          <button class="btn btn-primary btn-sm" style="justify-content:flex-start;padding:12px 16px" onclick="openNewCartella()">📁 <span data-only-lang="it">1. Aggiungi il tuo primo paziente</span><span data-only-lang="en" style="display:none">1. Add your first patient</span></button>
+          <a class="btn btn-ghost btn-sm" style="justify-content:flex-start;padding:12px 16px;text-decoration:none" href="profilo-pubblico.html">👤 <span data-only-lang="it">2. Completa il tuo profilo pubblico</span><span data-only-lang="en" style="display:none">2. Complete your public profile</span></a>
+          <a class="btn btn-ghost btn-sm" style="justify-content:flex-start;padding:12px 16px;text-decoration:none" href="impostazioni.html">⚙️ <span data-only-lang="it">3. Configura dati fiscali e collaboratori</span><span data-only-lang="en" style="display:none">3. Set up tax details and collaborators</span></a>
+          <a class="btn btn-ghost btn-sm" style="justify-content:flex-start;padding:12px 16px;text-decoration:none" href="app.html">📋 <span data-only-lang="it">4. Esplora il costruttore di piani alimentari</span><span data-only-lang="en" style="display:none">4. Explore the meal plan builder</span></a>
+        </div>
+      </div>`;
+      return;
+    }
     wrap.innerHTML = mostraArchiviati
       ? `<div style="padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">${_L('Nessuna cartella archiviata.','No archived folders.')}</div>`
       : `<div style="padding:12px 16px;background:#F8FAFC;border-radius:10px;border:1px solid var(--border);font-size:12.5px;color:var(--slate-m)">${_L('Nessun risultato per i filtri applicati.','No results for the applied filters.')}</div>`;

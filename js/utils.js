@@ -123,6 +123,21 @@ function _writeProfileCache(uid, data) {
   try { sessionStorage.setItem('dpp_profile_' + uid, JSON.stringify({ data, ts: Date.now() })); } catch(e) {}
 }
 
+// Centro notifiche in-app (SEZIONE 123) — aggiorna il pallino contatore sul
+// link "Notifiche" nella sidebar, condiviso su tutte le pagine. Chiamata da
+// loadProfile() (quindi ad ogni caricamento pagina) e da notifiche.html
+// stessa dopo aver segnato qualcosa come letto.
+async function _updateNotifBadge() {
+  if (!currentUser) return;
+  try {
+    const { count } = await sb.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', currentUser.id).is('read_at', null);
+    const badge = document.getElementById('notif-nav-badge');
+    if (!badge) return;
+    if (count > 0) { badge.textContent = count > 99 ? '99+' : String(count); badge.style.display = 'inline-block'; }
+    else badge.style.display = 'none';
+  } catch (e) { /* best-effort, mai bloccare il caricamento della pagina */ }
+}
+
 async function loadProfile() {
   if (!currentUser) return;
   loadProfileError = null;
@@ -155,6 +170,7 @@ async function loadProfile() {
   if (el) el.textContent = data?.username || currentUser.email;
   const adminNav = document.getElementById('nav-admin');
   if (adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
+  _updateNotifBadge();
 
   // ── Access control ──────────────────────────────────────────────────────────
   // All approved dietitians get full access to every section.

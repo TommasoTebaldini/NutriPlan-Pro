@@ -197,6 +197,7 @@ window._buildDashCardsHtml = function () {
   <a class="nav-item " href="ricette.html"><span class="ni">🍳</span><span data-only-lang="it">Ricette</span><span data-only-lang="en" style="display:none">Recipes</span></a>
   <a class="nav-item " href="impostazioni.html"><span class="ni">⚙️</span><span data-only-lang="it">Impostazioni</span><span data-only-lang="en" style="display:none">Settings</span></a>
   <a class="nav-item " href="gdpr.html"><span class="ni">🔒</span>GDPR</a>
+  <a class="nav-item" href="notifiche.html"><span class="ni">🔔</span><span data-only-lang="it">Notifiche</span><span data-only-lang="en" style="display:none">Notifications</span><span id="notif-nav-badge" style="display:none;background:#DC2626;color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;margin-left:6px;vertical-align:middle"></span></a>
   <a class="nav-item" href="admin.html" id="nav-admin" style="display:none"><span class="ni">⚙️</span><span data-only-lang="it">Admin Utenti</span><span data-only-lang="en" style="display:none">Admin Users</span></a>
   <div id="sb-subscription"></div>
   <a class="nav-item" href="abbonamento.html"><span class="ni">💳</span><span data-only-lang="it">Abbonamento</span><span data-only-lang="en" style="display:none">Subscription</span></a>
@@ -278,6 +279,7 @@ window._buildDashCardsHtml = function () {
       <div style="display:flex;flex-direction:column;gap:5px;align-self:center">
         <button onclick="salvaPiano()" data-i18n-tooltip="app.save_db" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.25);color:white;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.38)'" onmouseout="this.style.background='rgba(255,255,255,.25)'">💾 <span data-only-lang="it">Salva</span><span data-only-lang="en">Save</span></button>
         <button onclick="nuovoPiano()" data-i18n-tooltip="app.new_plan" style="padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">🔄 <span data-only-lang="it">Nuovo</span><span data-only-lang="en">New</span></button>
+        <button onclick="apriStoricoPiano()" id="btn-storico-piano" style="display:none;padding:6px 14px;border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">🕓 <span data-only-lang="it">Storico</span><span data-only-lang="en">History</span></button>
       </div>
     </div>
     <span id="cartella-selected" style="font-size:11px;color:white;font-weight:600;margin-top:4px;display:block"></span>
@@ -484,6 +486,20 @@ window._buildDashCardsHtml = function () {
     <div class="mfoot">
       <button class="btn btn-ghost btn-sm" onclick="_confirmCancel()">Annulla</button>
       <button class="btn btn-sm" id="modal-confirm-ok" onclick="_confirmOk()">Continua</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: STORICO VERSIONI PIANO -->
+<div class="modal-bg" id="modal-storico-piano">
+  <div class="modal" style="max-width:640px">
+    <div class="mhdr">
+      <h2>🕓 <span data-only-lang="it">Storico versioni del piano</span><span data-only-lang="en" style="display:none">Plan version history</span></h2>
+      <button class="mclose" onclick="closeM('modal-storico-piano')">✕</button>
+    </div>
+    <div class="mbody" style="padding:16px 22px;max-height:70vh;overflow-y:auto">
+      <div id="storico-piano-list"></div>
+      <div id="storico-piano-diff" style="margin-top:16px"></div>
     </div>
   </div>
 </div>
@@ -1990,9 +2006,112 @@ function _eseguiNuovoPiano() {
   const cs = document.getElementById('cartella-search'); if (cs) cs.value = '';
   const csel = document.getElementById('cartella-selected'); if (csel) csel.textContent = '';
   dirty = false; currentPianoId = null; undoStack = []; hideUndoBar();
+  const btnSt0 = document.getElementById('btn-storico-piano'); if (btnSt0) btnSt0.style.display = 'none';
   const objBox = document.getElementById('obj-val-box'); if (objBox) objBox.style.display = 'none';
   renderGiornoTabs(); renderPiano();
   toast(_L('🔄 Nuovo piano','🔄 New plan'), 'info');
+}
+
+// ═══════════════════════════════════════════════════
+// STORICO VERSIONI PIANO — confronta la versione corrente (l'ultima
+// salvata su piani, non lo stato non salvato dell'editor) con una
+// versione precedente conservata in piani_history da
+// snapshot_piano_before_update() (SEZIONE 122).
+// ═══════════════════════════════════════════════════
+async function apriStoricoPiano() {
+  if (!currentPianoId) return;
+  const listEl = document.getElementById('storico-piano-list');
+  const diffEl = document.getElementById('storico-piano-diff');
+  diffEl.innerHTML = '';
+  listEl.innerHTML = '<p style="color:var(--slate-l);font-size:13px">' + _L('Caricamento...','Loading...') + '</p>';
+  openM('modal-storico-piano');
+
+  const { data: history, error } = await sb.from('piani_history')
+    .select('id,saved_at,archived_at,meals')
+    .eq('piano_id', currentPianoId)
+    .order('archived_at', { ascending: false });
+
+  if (error) { listEl.innerHTML = '<p style="color:#DC2626;font-size:13px">' + _L('Errore: ','Error: ') + error.message + '</p>'; return; }
+  if (!history || !history.length) {
+    listEl.innerHTML = '<p style="color:var(--slate-l);font-size:13px">' + _L('Nessuna versione precedente conservata per questo piano: viene registrata una nuova versione ad ogni modifica salvata da qui in avanti.','No previous version stored for this plan: a new version is recorded on every save from now on.') + '</p>';
+    return;
+  }
+
+  window._storicoPianoHistory = history;
+  listEl.innerHTML = '<p style="font-size:12.5px;color:var(--slate-l);margin-bottom:10px">' + _L('Seleziona una versione precedente per vedere cosa è cambiato rispetto a quella attuale (l\'ultima salvata).','Pick a previous version to see what changed compared to the current one (the last saved).') + '</p>' +
+    history.map((h, i) => {
+      const d = new Date(h.saved_at || h.archived_at);
+      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;margin-bottom:6px">' +
+        '<span style="font-size:13px;color:var(--slate)">' + (i === 0 ? '🕓 ' : '　') + d.toLocaleDateString(_L('it','en')) + ' ' + d.toLocaleTimeString(_L('it','en'), { hour: '2-digit', minute: '2-digit' }) + '</span>' +
+        '<button class="btn btn-ghost btn-xs" onclick="_confrontaVersionePiano(' + i + ')">🔍 ' + _L('Confronta','Compare') + '</button>' +
+        '</div>';
+    }).join('');
+}
+
+async function _confrontaVersionePiano(idx) {
+  const diffEl = document.getElementById('storico-piano-diff');
+  const hist = window._storicoPianoHistory[idx];
+  diffEl.innerHTML = '<p style="color:var(--slate-l);font-size:13px">' + _L('Confronto in corso...','Comparing...') + '</p>';
+
+  const { data: current, error } = await sb.from('piani').select('meals,saved_at').eq('id', currentPianoId).single();
+  if (error || !current) { diffEl.innerHTML = '<p style="color:#DC2626;font-size:13px">' + _L('Impossibile leggere la versione attuale.','Could not read the current version.') + '</p>'; return; }
+
+  diffEl.innerHTML = _renderDiffPianoHtml(hist.meals, current.meals);
+}
+
+// Confronto pragmatico, non un diff strutturale generico: per ogni giorno
+// (abbinato per nome, es. "Giorno 1") e per ogni pasto al suo interno
+// (abbinato per id slot, es. "colazione") confronta gli alimenti per nome —
+// aggiunti/rimossi/quantità cambiata. Non rileva riordini di alimenti
+// all'interno dello stesso pasto (non rilevante: l'ordine non ha significato
+// clinico), né sostituzioni alternative (altPrint).
+function _renderDiffPianoHtml(oldMealsJson, newMealsJson) {
+  let oldGiorni, newGiorni;
+  try { oldGiorni = JSON.parse(oldMealsJson || '[]'); } catch { oldGiorni = []; }
+  try { newGiorni = JSON.parse(newMealsJson || '[]'); } catch { newGiorni = []; }
+  if (oldGiorni.length && oldGiorni[0].meals === undefined) oldGiorni = [{ nome: 'Giorno 1', meals: oldGiorni }];
+  if (newGiorni.length && newGiorni[0].meals === undefined) newGiorni = [{ nome: 'Giorno 1', meals: newGiorni }];
+
+  const oldByNome = new Map(oldGiorni.map(g => [g.nome, g]));
+  const newByNome = new Map(newGiorni.map(g => [g.nome, g]));
+  const allDayNames = [...new Set([...oldByNome.keys(), ...newByNome.keys()])];
+
+  let html = '';
+  let hasAnyChange = false;
+
+  allDayNames.forEach(dayName => {
+    const oldDay = oldByNome.get(dayName);
+    const newDay = newByNome.get(dayName);
+    if (!oldDay) { html += '<div style="margin-bottom:10px"><b style="color:#16A34A">+ ' + esc(dayName) + '</b> <span style="font-size:11.5px;color:var(--slate-l)">(' + _L('nuovo giorno','new day') + ')</span></div>'; hasAnyChange = true; return; }
+    if (!newDay) { html += '<div style="margin-bottom:10px"><b style="color:#DC2626;text-decoration:line-through">- ' + esc(dayName) + '</b> <span style="font-size:11.5px;color:var(--slate-l)">(' + _L('giorno rimosso','day removed') + ')</span></div>'; hasAnyChange = true; return; }
+
+    const oldMealsByPasto = new Map((oldDay.meals || []).map(m => [m.id, m]));
+    const newMealsByPasto = new Map((newDay.meals || []).map(m => [m.id, m]));
+    const allPastoIds = [...new Set([...oldMealsByPasto.keys(), ...newMealsByPasto.keys()])];
+    let dayHtml = '';
+
+    allPastoIds.forEach(pastoId => {
+      const oldPasto = oldMealsByPasto.get(pastoId);
+      const newPasto = newMealsByPasto.get(pastoId);
+      const pastoNome = (newPasto || oldPasto)?.nome || pastoId;
+      const oldItems = new Map((oldPasto?.items || []).filter(it => it.nome).map(it => [it.nome, String(it.qt ?? '')]));
+      const newItems = new Map((newPasto?.items || []).filter(it => it.nome).map(it => [it.nome, String(it.qt ?? '')]));
+      const allNomi = [...new Set([...oldItems.keys(), ...newItems.keys()])];
+      const rows = [];
+      allNomi.forEach(nome => {
+        const oldQt = oldItems.get(nome), newQt = newItems.get(nome);
+        if (oldQt === undefined) rows.push('<div style="color:#16A34A">+ ' + esc(nome) + (newQt ? ' (' + esc(newQt) + 'g)' : '') + '</div>');
+        else if (newQt === undefined) rows.push('<div style="color:#DC2626;text-decoration:line-through">- ' + esc(nome) + ' (' + esc(oldQt) + 'g)</div>');
+        else if (oldQt !== newQt) rows.push('<div style="color:#B45309">~ ' + esc(nome) + ': ' + esc(oldQt) + 'g → ' + esc(newQt) + 'g</div>');
+      });
+      if (rows.length) { dayHtml += '<div style="margin:6px 0 6px 14px"><span style="font-size:12px;font-weight:600;color:var(--slate)">' + esc(pastoNome) + '</span><div style="font-size:12px;margin-left:10px">' + rows.join('') + '</div></div>'; hasAnyChange = true; }
+    });
+
+    if (dayHtml) html += '<div style="margin-bottom:10px"><b style="font-size:13px;color:var(--slate)">' + esc(dayName) + '</b>' + dayHtml + '</div>';
+  });
+
+  if (!hasAnyChange) return '<p style="color:var(--slate-l);font-size:13px">' + _L('Nessuna differenza rilevata negli alimenti tra le due versioni.','No difference detected in the foods between the two versions.') + '</p>';
+  return '<div style="border-top:1.5px solid var(--border);padding-top:12px">' + html + '</div>';
 }
 
 // Contenitore leggero fuori schermo per la cattura PNG silenziosa ad ogni
@@ -2125,6 +2244,7 @@ async function salvaPiano() {
   dirty = false;
   localStorage.removeItem('draftPiano');
   toast(`💾 "${nome}" ` + _L('salvato!','saved!'), 'ok');
+  const btnSt2 = document.getElementById('btn-storico-piano'); if (btnSt2) btnSt2.style.display = currentPianoId ? '' : 'none';
   if (window.capturePrintAndSave && savedPianoId) {
     const _capContainer = buildPianoAutoCaptureContainer();
     capturePrintAndSave({
@@ -3996,6 +4116,7 @@ async function caricaPianoById(id) {
   giornoCorrente = 0;
   currentPianoId = id;
   dirty = false;
+  const btnSt1 = document.getElementById('btn-storico-piano'); if (btnSt1) btnSt1.style.display = '';
   if (data.cartella_id) {
     const sel = document.getElementById('inp-cartella');
     if (sel) {

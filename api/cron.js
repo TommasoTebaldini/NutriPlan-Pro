@@ -48,6 +48,22 @@ function ensureVapid(serviceKey, vapidPublic, vapidPrivate) {
   webpush.setVapidDetails(process.env.VAPID_SUBJECT || 'mailto:gestione@app.dietplan-pro.com', vapidPublic, vapidPrivate);
 }
 
+// Centro notifiche in-app (SEZIONE 123): scritta SEMPRE che si tenti un
+// invio push, indipendentemente dal successo — un dispositivo spento o un
+// permesso mai concesso non deve far perdere l'evento, l'utente lo trova
+// comunque aprendo l'app. Best-effort: un fallimento qui non deve mai far
+// fallire il job che sta notificando.
+async function logNotification(serviceKey, userId, title, body, url, type) {
+  try {
+    await sbFetch('notifications', serviceKey, {
+      method: 'POST',
+      body: JSON.stringify({ user_id: userId, title, body, url, type }),
+    });
+  } catch (e) {
+    console.warn('[logNotification] fallito per', userId, ':', e.message);
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // JOB: inactive-patients — rileva pazienti senza log nel diario alimentare da
 // INACTIVE_DAYS giorni e invia un'email riepilogativa al dietista (una per
@@ -154,6 +170,8 @@ async function runWeeklyReport(serviceKey) {
       }
     }
     if (delivered) sent++;
+    const parsedPayload = JSON.parse(payload);
+    await logNotification(serviceKey, dietitianId, parsedPayload.title, parsedPayload.body, parsedPayload.url, 'weekly_report');
   }
 
   return { dietitians: subsByDietitian.size, sent };
@@ -259,6 +277,12 @@ function formatGiornoOra(dateIso) {
   return new Date(dateIso).toLocaleString('it-IT', { timeZone: 'Europe/Rome', weekday: 'long', hour: '2-digit', minute: '2-digit' });
 }
 async function sendPatientPush(patientId, title, body, serviceKey) {
+  // Registrato nel centro notifiche PRIMA del tentativo push, non dopo: se
+  // la push fallisce (o il paziente non ha mai concesso il permesso) questa
+  // funzione lancia sotto (throw), e i 3 chiamanti la gestiscono già come
+  // best-effort (catch silenzioso) — loggare solo in caso di successo
+  // avrebbe perso l'evento proprio nel caso in cui serve di più.
+  await logNotification(serviceKey, patientId, title, body, '/appuntamenti', 'patient_push');
   const res = await fetch(`${PATIENT_APP_URL}/api/send-push`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${serviceKey}` },
@@ -360,16 +384,18 @@ async function jobAppointmentReminders() {
   let dietitiansNotified = 0;
   for (const [dietitianId, list] of byDietitian) {
     const subs = await sbFetch(`dietitian_push_subscriptions?select=id,endpoint,p256dh,auth&user_id=eq.${dietitianId}`, serviceKey);
-    if (!subs || !subs.length) continue;
 
     const body = list.length === 1
       ? `${displayName(list[0].patient_id)} alle ${formatOra(list[0].appointment_date)}`
       : `${list.length} appuntamenti nelle prossime ore, il primo alle ${formatOra(list[0].appointment_date)}`;
-    const payload = JSON.stringify({
-      title: list.length === 1 ? '📅 Promemoria appuntamento' : `📅 ${list.length} appuntamenti in arrivo`,
-      body,
-      url: '/agenda.html',
-    });
+    const title = list.length === 1 ? '📅 Promemoria appuntamento' : `📅 ${list.length} appuntamenti in arrivo`;
+    const payload = JSON.stringify({ title, body, url: '/agenda.html' });
+    // Registrato nel centro notifiche indipendentemente dalla push — un
+    // dietista senza sottoscrizione push attiva (o con dispositivo spento)
+    // lo trova comunque aprendo l'app.
+    await logNotification(serviceKey, dietitianId, title, body, '/agenda.html', 'appointment_reminder');
+
+    if (!subs || !subs.length) continue;
 
     let sentToAtLeastOneDevice = false;
     for (const sub of subs) {
@@ -482,17 +508,16 @@ async function jobOverduePayments() {
   const sentFatturaIds = [];
   for (const [dietitianId, list] of byDietitian) {
     const subs = await sbFetch(`dietitian_push_subscriptions?select=id,endpoint,p256dh,auth&user_id=eq.${dietitianId}`, serviceKey);
-    if (!subs || !subs.length) continue;
 
     const totale = list.reduce((s, f) => s + (f.importo || 0), 0);
     const body = list.length === 1
       ? `${list[0].patient_name || 'Un paziente'} — ${euro(list[0].importo)}, scaduta il ${new Date(list[0].scadenza).toLocaleDateString('it-IT')}`
       : `${list.length} fatture scadute per un totale di ${euro(totale)}`;
-    const payload = JSON.stringify({
-      title: list.length === 1 ? '💶 Pagamento scaduto' : `💶 ${list.length} pagamenti scaduti`,
-      body,
-      url: '/pagamenti.html',
-    });
+    const title = list.length === 1 ? '💶 Pagamento scaduto' : `💶 ${list.length} pagamenti scaduti`;
+    const payload = JSON.stringify({ title, body, url: '/pagamenti.html' });
+    await logNotification(serviceKey, dietitianId, title, body, '/pagamenti.html', 'overdue_payment');
+
+    if (!subs || !subs.length) continue;
 
     let sentToAtLeastOneDevice = false;
     for (const sub of subs) {

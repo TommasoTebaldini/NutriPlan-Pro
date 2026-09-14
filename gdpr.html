@@ -662,16 +662,32 @@ async function esportaDatiPaziente() {
   const cart = _allCartelle.find(c => c.id === cartellaId);
   showLoading(true);
   try {
-    const [pianiRes, ncptRes, schedeRes, biaRes, esamiRes, noteRes] = await Promise.all([
+    // cartelle.user_id è il dietista/titolare studio, non il paziente — serve
+    // lo user id reale del paziente (patient_dietitian.patient_id) per
+    // filtrare le tabelle che non hanno una colonna cartella_id diretta
+    // (appointments, chat_messages, fatture, patient_signatures,
+    // medication_reminders, weekly_checkins).
+    const { data: linkRow } = await sb.from('patient_dietitian').select('patient_id').eq('cartella_id', cartellaId).maybeSingle();
+    const patientUserId = linkRow?.patient_id || null;
+
+    const [pianiRes, ncptRes, schedeRes, biaRes, esamiRes, noteRes, apptRes, chatRes, fattureRes, docsRes, firmeRes, farmaciRes, checkinRes, diarioFotoRes] = await Promise.all([
       sb.from('piani').select('*').eq('cartella_id', cartellaId),
       sb.from('ncpt').select('*').eq('cartella_id', cartellaId),
       sb.from('schede_valutazione').select('*').eq('cartella_id', cartellaId),
       sb.from('bia_records').select('*').eq('cartella_id', cartellaId),
       sb.from('esami_biochimici').select('*').eq('cartella_id', cartellaId).catch(() => ({ data: [] })),
       sb.from('note_specialistiche').select('*').eq('cartella_id', cartellaId),
+      patientUserId ? sb.from('appointments').select('*').eq('patient_id', patientUserId) : Promise.resolve({ data: [] }),
+      patientUserId ? sb.from('chat_messages').select('*').eq('patient_id', patientUserId) : Promise.resolve({ data: [] }),
+      patientUserId ? sb.from('fatture').select('*').eq('patient_id', patientUserId) : Promise.resolve({ data: [] }),
+      sb.from('patient_documents').select('*').eq('cartella_id', cartellaId),
+      patientUserId ? sb.from('patient_signatures').select('*').eq('patient_id', patientUserId) : Promise.resolve({ data: [] }),
+      patientUserId ? sb.from('medication_reminders').select('*').eq('user_id', patientUserId) : Promise.resolve({ data: [] }),
+      patientUserId ? sb.from('weekly_checkins').select('*').eq('user_id', patientUserId) : Promise.resolve({ data: [] }),
+      sb.from('diario_alimentare_foto').select('*').eq('cartella_id', cartellaId),
     ]);
     const exportData = {
-      _meta: { esportato_il: new Date().toISOString(), formato: 'NutriPlan-Pro GDPR Export v1', gdpr_art: '20' },
+      _meta: { esportato_il: new Date().toISOString(), formato: 'NutriPlan-Pro GDPR Export v2', gdpr_art: '20' },
       paziente: { nome: cart.nome, codice_fiscale: cart.codice_fiscale || null, cartella_creata: cart.created_at, gdpr_consenso: !!cart.gdpr_consenso, gdpr_consenso_at: cart.gdpr_consenso_at || null },
       piani_alimentari: pianiRes.data || [],
       schede_ncpt: ncptRes.data || [],
@@ -679,6 +695,14 @@ async function esportaDatiPaziente() {
       bia_records: biaRes.data || [],
       esami_biochimici: esamiRes.data || [],
       note_specialistiche: noteRes.data || [],
+      appuntamenti: apptRes.data || [],
+      messaggi_chat: chatRes.data || [],
+      fatture: fattureRes.data || [],
+      documenti: docsRes.data || [],
+      firme_consensi: firmeRes.data || [],
+      promemoria_farmaci: farmaciRes.data || [],
+      checkin_settimanali: checkinRes.data || [],
+      diario_alimentare_foto: diarioFotoRes.data || [],
     };
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);

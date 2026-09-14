@@ -9104,3 +9104,63 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_114_release_fattura_checkout', 'RPC release_fattura_checkout() per liberare il mutex claim_fattura_checkout() (SEZIONE 97) quando la chiamata Stripe fallisce dopo l''acquisizione, invece di lasciarlo bloccato fino all''autoliberazione a 30 minuti')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 115 — FIX ALTO: bucket patient-signatures leggibile/scrivibile da
+-- QUALUNQUE utente autenticato
+--
+-- Le policy storage.objects per 'patient-signatures' (introdotte insieme
+-- alla tabella patient_signatures) controllavano solo
+-- "bucket_id = 'patient-signatures' AND auth.uid() IS NOT NULL" — nessuno
+-- scoping su proprietà o relazione paziente-dietista. La tabella
+-- patient_signatures ha RLS corretta (dietitian_id/patient_id), ma il file
+-- PNG della firma nello storage no: qualunque utente autenticato della
+-- piattaforma poteva chiamare .list() sul bucket (il nome file è
+-- "firma_<patientId>_<timestamp>.png", quindi elenca anche gli UUID paziente
+-- in chiaro) e poi .download() la firma/consenso di QUALUNQUE paziente,
+-- oppure caricare un file a un nome arbitrario nello stesso bucket.
+--
+-- js/firma.js (unico punto di scrittura, mai lato paziente — verificato via
+-- grep) usa sempre il pattern "firma_<patientId>_<timestamp>.png", quindi lo
+-- UUID del paziente si può estrarre direttamente dal nome file ed essere
+-- verificato contro patient_dietitian, stesso pattern già usato per
+-- document-prints (SEZIONE 63) ma qui senza una folder — serve una regex
+-- ancorata al formato UUID esatto (non una classe di caratteri generica) per
+-- evitare che un nome non conforme faccia fallire il cast ::uuid con un
+-- errore invece di negare l'accesso in modo pulito.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "patient_signatures_storage_write" ON storage.objects;
+CREATE POLICY "patient_signatures_storage_write" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'patient-signatures'
+    AND auth.uid() IS NOT NULL
+    AND is_dietitian_level_collaborator(auth.uid())
+    AND EXISTS (
+      SELECT 1 FROM patient_dietitian pd
+      WHERE pd.patient_id = (substring(name from '^firma_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})_'))::uuid
+        AND pd.dietitian_id = get_studio_owner(auth.uid())
+    )
+  );
+
+DROP POLICY IF EXISTS "patient_signatures_storage_read" ON storage.objects;
+CREATE POLICY "patient_signatures_storage_read" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'patient-signatures'
+    AND auth.uid() IS NOT NULL
+    AND (
+      (substring(name from '^firma_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})_'))::uuid = auth.uid()
+      OR (
+        is_dietitian_level_collaborator(auth.uid())
+        AND EXISTS (
+          SELECT 1 FROM patient_dietitian pd
+          WHERE pd.patient_id = (substring(name from '^firma_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})_'))::uuid
+            AND pd.dietitian_id = get_studio_owner(auth.uid())
+        )
+      )
+    )
+  );
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_115_fix_patient_signatures_storage_rls', 'Policy storage.objects per patient-signatures erano prive di scoping (qualunque utente autenticato poteva elencare/leggere/scrivere le firme di consenso di QUALUNQUE paziente) — ora derivano lo UUID paziente dal nome file (pattern firma_<uuid>_...) e verificano la relazione con patient_dietitian, stesso principio di document-prints (SEZIONE 63)')
+ON CONFLICT (id) DO NOTHING;

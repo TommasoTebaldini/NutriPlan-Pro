@@ -2594,6 +2594,10 @@ CREATE INDEX IF NOT EXISTS idx_fatture_scadenza_da_pagare
   ON fatture (scadenza)
   WHERE stato = 'da_pagare' AND scadenza IS NOT NULL;
 
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_34_promemoria_pagamenti_scaduti', 'Colonne fatture.scadenza/overdue_reminder_sent_at per il job api/cron.js?job=overdue-payments — scritta molto prima della convenzione di tracciamento schema_migrations, aggiunta qui in retrospettiva alla prima esecuzione reale')
+ON CONFLICT (id) DO NOTHING;
+
 -- ═══════════════════════════════════════════════════════════════════════════
 -- SEZIONE 35 — SISTEMA TESSERA SANITARIA (STS), feature #1
 --
@@ -3838,8 +3842,14 @@ ON CONFLICT (id) DO NOTHING;
 -- ricostruisce comunque l'intero Bundle aggiornato ad ogni invio, non un
 -- delta incrementale.
 
+-- NOTA: cartelle e esami_biochimici sono diventate VISTE (cifratura SEZIONE
+-- 40/111, security_invoker=true) — una FK non può puntare a una vista e un
+-- trigger AFTER non può essere creato su una vista, quindi qui sotto si usa
+-- sempre la tabella base *_raw, mai il nome pubblico. Corretto prima
+-- dell'esecuzione (mai eseguita fino a questo punto), stesso pattern già
+-- documentato per la migrazione MFA.
 CREATE TABLE IF NOT EXISTS fhir_export_queue (
-  cartella_id uuid PRIMARY KEY REFERENCES cartelle(id) ON DELETE CASCADE,
+  cartella_id uuid PRIMARY KEY REFERENCES cartelle_raw(id) ON DELETE CASCADE,
   status text NOT NULL DEFAULT 'pending', -- 'pending' | 'sent' | 'failed'
   queued_at timestamptz NOT NULL DEFAULT now(),
   sent_at timestamptz,
@@ -3867,7 +3877,7 @@ AS $$
 DECLARE
   v_cartella_id uuid;
 BEGIN
-  IF TG_TABLE_NAME = 'cartelle' THEN
+  IF TG_TABLE_NAME IN ('cartelle', 'cartelle_raw') THEN
     v_cartella_id := COALESCE(NEW.id, OLD.id);
   ELSE
     v_cartella_id := COALESCE(NEW.cartella_id, OLD.cartella_id);
@@ -3891,7 +3901,7 @@ DO $$
 DECLARE
   tbl TEXT;
 BEGIN
-  FOREACH tbl IN ARRAY ARRAY['cartelle','esami_biochimici','bia_records','piani']
+  FOREACH tbl IN ARRAY ARRAY['cartelle_raw','esami_biochimici_raw','bia_records','piani']
   LOOP
     EXECUTE format('DROP TRIGGER IF EXISTS trg_enqueue_fhir_export ON %I', tbl);
     EXECUTE format(

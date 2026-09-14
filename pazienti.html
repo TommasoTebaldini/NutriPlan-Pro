@@ -3537,7 +3537,7 @@ async function esportaPDFCartella() {
   // Nome paziente
   doc.setTextColor(30, 41, 59);
   doc.setFontSize(15); doc.setFont('helvetica', 'bold');
-  doc.text(cart.nome || '', lm, y);
+  doc.text((cart.nome || '').replace(/[^\x00-\xFF]/g, ''), lm, y);
   y += 8;
 
   // Info anagrafiche
@@ -3550,14 +3550,20 @@ async function esportaPDFCartella() {
   ].filter(Boolean).join('   |   ');
   doc.text(infoLine, lm, y); y += 6;
 
+  // .replace(/[^\x00-\xFF]/g, '') come già fatto per nomePiano/rowVals più
+  // sotto e nell'export riepilogo multi-paziente (jsPDF/helvetica non
+  // supporta Unicode > U+00FF, es. emoji) — qui mancava: una nota clinica o
+  // un tag con un'emoji veniva troncato/reso male nel PDF senza alcun
+  // avviso, perdendo silenziosamente informazione clinica nel documento
+  // stampato mentre a schermo restava visibile normalmente.
   if (Array.isArray(cart.tags) && cart.tags.length) {
     doc.setFontSize(8);
-    const tagLine = doc.splitTextToSize(_L('Patologie/Tag: ','Conditions/Tags: ') + cart.tags.join(', '), w);
+    const tagLine = doc.splitTextToSize(_L('Patologie/Tag: ','Conditions/Tags: ') + cart.tags.join(', ').replace(/[^\x00-\xFF]/g, ''), w);
     doc.text(tagLine, lm, y); y += tagLine.length * 4 + 2;
   }
   if (cart.note && cart.note !== '__altro__') {
     doc.setFontSize(8);
-    const noteLines = doc.splitTextToSize(_L('Note cliniche: ','Clinical notes: ') + cart.note, w);
+    const noteLines = doc.splitTextToSize(_L('Note cliniche: ','Clinical notes: ') + cart.note.replace(/[^\x00-\xFF]/g, ''), w);
     doc.text(noteLines, lm, y); y += noteLines.length * 4 + 2;
   }
 
@@ -3584,7 +3590,7 @@ async function esportaPDFCartella() {
       if (y > 262) { doc.addPage(); y = 18; }
       const bdg = getEsameBadge(e.tipo, e.valore);
       const val = r1(e.valore, 2).replace(/\.?0+$/, ''); // rimuove zeri trailing
-      const line = (e.tipo || '') + ': ' + val + (e.unita ? ' ' + e.unita : '') +
+      const line = (e.tipo || '').replace(/[^\x00-\xFF]/g, '') + ': ' + val + (e.unita ? ' ' + e.unita.replace(/[^\x00-\xFF]/g, '') : '') +
         '  [' + bdg.label + ']' +
         (e.data_esame ? '  (' + new Date(e.data_esame).toLocaleDateString(_L('it','en')) + ')' : '');
       doc.text('-  ' + line, lm + 2, y); y += 5;

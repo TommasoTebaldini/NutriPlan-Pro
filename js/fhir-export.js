@@ -105,7 +105,13 @@
       code: { coding: [{ system: 'http://loinc.org', code: map.code, display: map.display }] },
       subject: { reference: patientFullUrl },
       effectiveDateTime: isoDateTime(esame.data_esame),
-      valueQuantity: { value: Number(esame.valore), unit: esame.unita || map.unit, system: 'http://unitsofmeasure.org', code: esame.unita || map.unit },
+      // unit: può venire dal campo libero esame.unita (solo display, non
+      // validato) — code invece è SEMPRE map.unit, il codice UCUM verificato
+      // associato al LOINC: esame.unita è un input di testo libero editabile
+      // dal dietista (pazienti.html), un typo o un'unità non standard lì
+      // produrrebbe un codice UCUM non valido/scorretto sotto
+      // system:unitsofmeasure.org in una risorsa clinica FHIR.
+      valueQuantity: { value: Number(esame.valore), unit: esame.unita || map.unit, system: 'http://unitsofmeasure.org', code: map.unit },
       note: esame.note ? [{ text: esame.note }] : undefined,
     };
     return { fullUrl, resource };
@@ -210,9 +216,15 @@
     });
 
     (data.bia || []).forEach(bia => {
+      // bia_records non ha una colonna bmi — bia['bmi'] è sempre undefined,
+      // l'Observation BMI (LOINC 39156-5) non veniva mai generata, senza
+      // alcun errore/avviso. Derivato da peso/altezza, stesso fallback già
+      // usato per l'export CDA manuale in js/fse.js.
+      const bmiValue = bia.peso && bia.altezza ? bia.peso / Math.pow(bia.altezza / 100, 2) : null;
       ['peso', 'altezza', 'bmi', 'massa_grassa_pct', 'massa_magra', 'angolo_fase'].forEach(key => {
         const valueKey = { peso: 'peso', altezza: 'altezza', bmi: 'bmi', massa_grassa_pct: 'bf_pct', massa_magra: 'ffm_kg', angolo_fase: 'angolo_fase' }[key];
-        const r = buildVitalObservation(key, bia[valueKey], bia.data_misura, patientUrl);
+        const value = key === 'bmi' ? bmiValue : bia[valueKey];
+        const r = buildVitalObservation(key, value, bia.data_misura, patientUrl);
         if (r) entries.push({ fullUrl: r.fullUrl, resource: r.resource, request: { method: 'POST', url: 'Observation' } });
       });
     });

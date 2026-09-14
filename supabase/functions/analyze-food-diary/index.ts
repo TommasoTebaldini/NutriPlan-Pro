@@ -55,6 +55,27 @@ function createRateLimiter(maxRequests: number, windowMs: number) {
 }
 const rateLimiter = createRateLimiter(10, 60_000)
 
+// Tetto mensile duraturo per utente — stesso meccanismo di analyze-meal
+// (Diet-Plan-Pro-app-claude/supabase/functions/_shared/monthlyQuota.ts,
+// tabella usage_counters + RPC increment_usage_and_check), duplicato qui per
+// lo stesso motivo del rate limiter sopra. Mancava: senza questo, un
+// account dietista poteva generare fino a 14.400 chiamate AI vision/giorno
+// indefinitamente (il solo rate limiter di 10/min non ha un tetto totale),
+// stesso provider a pagamento usato altrove con tetti mensili.
+// deno-lint-ignore no-explicit-any
+async function checkMonthlyQuota(supabase: any, userId: string, scope: string, max: number): Promise<boolean> {
+  const period = new Date().toISOString().slice(0, 7) // 'YYYY-MM', UTC
+  try {
+    const { data, error } = await supabase.rpc('increment_usage_and_check', {
+      p_user_id: userId, p_scope: scope, p_period: period, p_max: max,
+    })
+    if (error) return true // RPC non ancora deployata o errore infra: fail-open
+    return Boolean(data)
+  } catch {
+    return true
+  }
+}
+
 const PROMPT = `Sei un dietista clinico italiano. Analizza la foto del diario alimentare (può essere una pagina scritta a mano con i pasti del giorno, oppure una foto di un pasto) e identifica tutti gli alimenti descritti o visibili, con le relative quantità.
 Rispondi SOLO con un JSON valido (nessun testo prima o dopo) nel formato:
 {
@@ -207,6 +228,9 @@ Deno.serve(async (req: Request) => {
   rateLimiter.prune()
   if (!rateLimiter.allow(user.id)) {
     return json({ error: 'Troppe richieste, riprova tra un minuto.' }, 429)
+  }
+  if (!(await checkMonthlyQuota(supabase, user.id, 'ai_calls_food_diary', 150))) {
+    return json({ error: 'Hai raggiunto il limite di analisi diario alimentare incluse per questo mese. Il conteggio si azzera a inizio mese.' }, 429)
   }
 
   let body: { image?: string; mediaType?: string }

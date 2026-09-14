@@ -9526,3 +9526,35 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_120_medication_reminders_server_push', 'Promemoria farmaci server-side: medication_reminder_log (dedup/mutex) + pg_cron ogni minuto (Europe/Rome fisso) che invoca via pg_net la nuova Edge Function send-medication-reminders - prima i promemoria erano solo setTimeout lato client, non funzionavano ad app chiusa/in background')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 121 — FIX MEDIO-ALTO: log Coach AI leggibili da collaboratori
+-- "segretario"
+--
+-- coach_ai_messages_select permette la lettura a chiunque sia collegato
+-- (via patient_dietitian) allo stesso studio del paziente, SENZA il
+-- controllo is_dietitian_level_collaborator() che protegge dati clinici
+-- equivalenti altrove (patient_photos/patient_files SEZIONE 63,
+-- note_specialistiche SEZIONE 60/61) — stesso identico gap già chiuso 3
+-- volte per altre tabelle, mai applicato a questa. Un collaboratore di
+-- livello "segretario" (accesso solo amministrativo) poteva leggere le
+-- conversazioni Coach AI di qualunque paziente dello studio.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "coach_ai_messages_select" ON coach_ai_messages;
+CREATE POLICY "coach_ai_messages_select" ON coach_ai_messages
+  FOR SELECT USING (
+    (select auth.uid()) = patient_id
+    OR (
+      EXISTS (
+        SELECT 1 FROM patient_dietitian pd
+        WHERE pd.patient_id = coach_ai_messages.patient_id
+          AND get_studio_owner(pd.dietitian_id) = get_studio_owner((select auth.uid()))
+      )
+      AND is_dietitian_level_collaborator((select auth.uid()))
+    )
+  );
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_121_fix_coach_ai_messages_collaborator_gap', 'coach_ai_messages_select richiedeva solo la relazione di studio, non is_dietitian_level_collaborator() - un collaboratore "segretario" poteva leggere le conversazioni Coach AI di qualunque paziente dello studio, stesso gap già chiuso per patient_photos/patient_files/note_specialistiche')
+ON CONFLICT (id) DO NOTHING;

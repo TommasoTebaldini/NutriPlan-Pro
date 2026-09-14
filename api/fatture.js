@@ -76,110 +76,161 @@ async function ficFetch(ficToken, path, options = {}) {
   return { ok: res.ok, status: res.status, body };
 }
 
+const sbHeadersService = { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` };
+
+// Mutex applicativo (SEZIONE 116) contro invii SDI/STS duplicati — stesso
+// principio di claim_fattura_checkout (SEZIONE 97/114) per Stripe. Ritorna
+// false se un invio per questa fattura è già in corso o già andato a buon
+// fine: il chiamante deve rispondere 409, mai procedere.
+async function claimFatturaInvio(rpcName, fatturaId, ownerId) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${rpcName}`, {
+    method: 'POST',
+    headers: { ...sbHeadersService, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_fattura_id: fatturaId, p_dietitian_id: ownerId }),
+  });
+  if (!res.ok) return false;
+  return (await res.json()) === true;
+}
+async function releaseFatturaInvio(rpcName, fatturaId, ownerId) {
+  await fetch(`${SUPABASE_URL}/rest/v1/rpc/${rpcName}`, {
+    method: 'POST',
+    headers: { ...sbHeadersService, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_fattura_id: fatturaId, p_dietitian_id: ownerId }),
+  }).catch(() => {});
+}
+
 async function handleSdi(req, res, ownerId) {
   const f = req.body?.fattura;
-  if (!f || !f.data_fattura || !(parseFloat(f.importo) > 0) || !f.patient_name) {
+  if (!f || !f.id || !UUID_RE.test(f.id) || !f.data_fattura || !(parseFloat(f.importo) > 0) || !f.patient_name) {
     return res.status(400).json({ error: 'Dati fattura incompleti' });
   }
-  // Il codice fiscale e l'indirizzo del paziente sono segnati "facoltativi"
-  // nel modale di pagamenti.html, ma sono in realtà obbligatori per una
-  // fattura elettronica FPR12 valida (stesso requisito imposto da
-  // validaDatiFatturaPA in js/fatturapa.js per l'XML locale) — senza questo
-  // controllo l'invio arrivava fino a Fatture in Cloud/SDI e falliva lì con
-  // un errore meno chiaro, o veniva accettato con dati anagrafici incompleti.
-  if (!f.codice_fiscale_paziente || !f.indirizzo_paziente || !f.cap_paziente || !f.comune_paziente || !f.provincia_paziente) {
-    return res.status(400).json({ error: 'Codice fiscale e indirizzo completo del paziente sono obbligatori per la fattura elettronica' });
+
+  // Nessun controllo qui prima d'ora: due richieste concorrenti (doppio
+  // click, due tab) per la stessa fattura passavano entrambe fino a FIC/SDI,
+  // creando due fatture elettroniche reali per la stessa prestazione.
+  if (!(await claimFatturaInvio('claim_fattura_sdi', f.id, ownerId))) {
+    return res.status(409).json({ error: 'Un invio SDI per questa fattura è già in corso o è già stata inviata.' });
   }
 
-  const profRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${ownerId}&select=fiscal_regime,fic_api_token,fic_company_id`,
-    { headers: { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` } }
-  );
-  const profiles = profRes.ok ? await profRes.json() : [];
-  const prof = profiles[0];
-  if (!prof?.fic_api_token || !prof?.fic_company_id) {
-    return res.status(400).json({ error: 'Collega Fatture in Cloud in Impostazioni → Dati fiscali (API token e Company ID)' });
-  }
-  const cid = encodeURIComponent(String(prof.fic_company_id).trim());
-  const ficToken = String(prof.fic_api_token).trim();
-  const regime = prof.fiscal_regime === 'RF01' ? 'RF01' : 'RF19';
-
-  const vt = await ficFetch(ficToken, `/c/${cid}/info/vat_types`);
-  if (!vt.ok) {
-    return res.status(vt.status === 401 ? 400 : 502).json({
-      error: vt.status === 401
-        ? 'Token Fatture in Cloud non valido o scaduto'
-        : 'Errore Fatture in Cloud (vat_types): ' + (vt.body?.error?.message || vt.status),
-    });
-  }
-  const vatTypes = vt.body?.data || [];
-  let vat;
-  if (regime === 'RF01') {
-    // Rispetta l'aliquota effettiva della fattura (f.aliquota_iva) invece di
-    // assumere sempre il 22% — prima di questo fix un'eventuale aliquota
-    // ridotta salvata sulla fattura veniva ignorata e sostituita col 22%
-    // sul documento inviato allo SDI.
-    const aliquotaTarget = f.aliquota_iva != null && f.aliquota_iva !== '' ? Number(f.aliquota_iva) : 22;
-    vat = vatTypes.find(v => Number(v.value) === aliquotaTarget && !v.is_disabled) || vatTypes.find(v => Number(v.value) === aliquotaTarget);
-    if (!vat) {
-      return res.status(400).json({ error: `Nessuna aliquota IVA ${aliquotaTarget}% trovata sul tuo account FIC` });
+  // Da qui in poi il mutex è acquisito: qualunque uscita che non sia il
+  // successo finale deve rilasciarlo (finally sotto), altrimenti la fattura
+  // resta bloccata fino ai 5 minuti di autoliberazione pur non essendo mai
+  // stata inviata davvero.
+  let success = false;
+  try {
+    // Il codice fiscale e l'indirizzo del paziente sono segnati "facoltativi"
+    // nel modale di pagamenti.html, ma sono in realtà obbligatori per una
+    // fattura elettronica FPR12 valida (stesso requisito imposto da
+    // validaDatiFatturaPA in js/fatturapa.js per l'XML locale) — senza questo
+    // controllo l'invio arrivava fino a Fatture in Cloud/SDI e falliva lì con
+    // un errore meno chiaro, o veniva accettato con dati anagrafici incompleti.
+    if (!f.codice_fiscale_paziente || !f.indirizzo_paziente || !f.cap_paziente || !f.comune_paziente || !f.provincia_paziente) {
+      return res.status(400).json({ error: 'Codice fiscale e indirizzo completo del paziente sono obbligatori per la fattura elettronica' });
     }
-  } else {
-    const zero = vatTypes.filter(v => Number(v.value) === 0);
-    vat = zero.find(v => /N2\.2/i.test(`${v.ei_type || ''} ${v.ei_description || ''} ${v.description || ''} ${v.notes || ''}`)) || zero[0];
-    if (!vat) {
-      return res.status(400).json({ error: 'Nessuna aliquota 0% (natura N2.2) trovata sul tuo account FIC: creala in Impostazioni FIC → Aliquote IVA' });
+
+    const profRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/dietitian_credentials?id=eq.${ownerId}&select=fiscal_regime,fic_api_token,fic_company_id`,
+      { headers: { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` } }
+    );
+    const profiles = profRes.ok ? await profRes.json() : [];
+    const prof = profiles[0];
+    if (!prof?.fic_api_token || !prof?.fic_company_id) {
+      return res.status(400).json({ error: 'Collega Fatture in Cloud in Impostazioni → Dati fiscali (API token e Company ID)' });
     }
-  }
+    const cid = encodeURIComponent(String(prof.fic_company_id).trim());
+    const ficToken = String(prof.fic_api_token).trim();
+    const regime = prof.fiscal_regime === 'RF01' ? 'RF01' : 'RF19';
 
-  const importo = Math.round(parseFloat(f.importo) * 100) / 100;
-  const docData = {
-    type: 'invoice',
-    entity: {
-      name: String(f.patient_name).slice(0, 120),
-      tax_code: f.codice_fiscale_paziente || undefined,
-      address_street: f.indirizzo_paziente || undefined,
-      address_postal_code: f.cap_paziente || undefined,
-      address_city: f.comune_paziente || undefined,
-      address_province: f.provincia_paziente || undefined,
-      country: 'Italia',
-    },
-    date: f.data_fattura,
-    subject: `Rif. interno ${f.numero_fattura || ''}`.trim(),
-    use_gross_prices: true,
-    items_list: [{
-      name: f.tipo_visita || 'Prestazione dietistica',
-      qty: 1,
-      gross_price: importo,
-      vat: { id: vat.id },
-    }],
-    e_invoice: true,
-    ei_data: { payment_method: 'MP05' },
-  };
-  if (regime === 'RF19' && importo > 77.47) docData.stamp_duty = 2;
+    const vt = await ficFetch(ficToken, `/c/${cid}/info/vat_types`);
+    if (!vt.ok) {
+      return res.status(vt.status === 401 ? 400 : 502).json({
+        error: vt.status === 401
+          ? 'Token Fatture in Cloud non valido o scaduto'
+          : 'Errore Fatture in Cloud (vat_types): ' + (vt.body?.error?.message || vt.status),
+      });
+    }
+    const vatTypes = vt.body?.data || [];
+    let vat;
+    if (regime === 'RF01') {
+      // Rispetta l'aliquota effettiva della fattura (f.aliquota_iva) invece di
+      // assumere sempre il 22% — prima di questo fix un'eventuale aliquota
+      // ridotta salvata sulla fattura veniva ignorata e sostituita col 22%
+      // sul documento inviato allo SDI.
+      const aliquotaTarget = f.aliquota_iva != null && f.aliquota_iva !== '' ? Number(f.aliquota_iva) : 22;
+      vat = vatTypes.find(v => Number(v.value) === aliquotaTarget && !v.is_disabled) || vatTypes.find(v => Number(v.value) === aliquotaTarget);
+      if (!vat) {
+        return res.status(400).json({ error: `Nessuna aliquota IVA ${aliquotaTarget}% trovata sul tuo account FIC` });
+      }
+    } else {
+      const zero = vatTypes.filter(v => Number(v.value) === 0);
+      vat = zero.find(v => /N2\.2/i.test(`${v.ei_type || ''} ${v.ei_description || ''} ${v.description || ''} ${v.notes || ''}`)) || zero[0];
+      if (!vat) {
+        return res.status(400).json({ error: 'Nessuna aliquota 0% (natura N2.2) trovata sul tuo account FIC: creala in Impostazioni FIC → Aliquote IVA' });
+      }
+    }
 
-  const created = await ficFetch(ficToken, `/c/${cid}/issued_documents`, {
-    method: 'POST',
-    body: JSON.stringify({ data: docData }),
-  });
-  if (!created.ok) {
-    return res.status(502).json({ error: 'Creazione documento su FIC fallita: ' + (created.body?.error?.message || JSON.stringify(created.body?.error?.validation_result || created.status)) });
-  }
-  const docId = created.body?.data?.id;
-  if (!docId) return res.status(502).json({ error: 'FIC non ha restituito l\'id del documento' });
+    const importo = Math.round(parseFloat(f.importo) * 100) / 100;
+    const docData = {
+      type: 'invoice',
+      entity: {
+        name: String(f.patient_name).slice(0, 120),
+        tax_code: f.codice_fiscale_paziente || undefined,
+        address_street: f.indirizzo_paziente || undefined,
+        address_postal_code: f.cap_paziente || undefined,
+        address_city: f.comune_paziente || undefined,
+        address_province: f.provincia_paziente || undefined,
+        country: 'Italia',
+      },
+      date: f.data_fattura,
+      subject: `Rif. interno ${f.numero_fattura || ''}`.trim(),
+      use_gross_prices: true,
+      items_list: [{
+        name: f.tipo_visita || 'Prestazione dietistica',
+        qty: 1,
+        gross_price: importo,
+        vat: { id: vat.id },
+      }],
+      e_invoice: true,
+      ei_data: { payment_method: 'MP05' },
+    };
+    if (regime === 'RF19' && importo > 77.47) docData.stamp_duty = 2;
 
-  const sent = await ficFetch(ficToken, `/c/${cid}/issued_documents/${docId}/e_invoice/send`, {
-    method: 'POST',
-    body: JSON.stringify({ data: {} }),
-  });
-  if (!sent.ok) {
-    return res.status(502).json({
-      error: 'Documento creato su Fatture in Cloud (id ' + docId + ') ma invio SDI fallito: ' + (sent.body?.error?.message || sent.status) + '. Completa l\'invio dal portale FIC.',
-      fic_document_id: docId,
+    const created = await ficFetch(ficToken, `/c/${cid}/issued_documents`, {
+      method: 'POST',
+      body: JSON.stringify({ data: docData }),
     });
-  }
+    if (!created.ok) {
+      return res.status(502).json({ error: 'Creazione documento su FIC fallita: ' + (created.body?.error?.message || JSON.stringify(created.body?.error?.validation_result || created.status)) });
+    }
+    const docId = created.body?.data?.id;
+    if (!docId) return res.status(502).json({ error: 'FIC non ha restituito l\'id del documento' });
 
-  return res.status(200).json({ ok: true, fic_document_id: docId, ei_status: sent.body?.data || null });
+    const sent = await ficFetch(ficToken, `/c/${cid}/issued_documents/${docId}/e_invoice/send`, {
+      method: 'POST',
+      body: JSON.stringify({ data: {} }),
+    });
+    if (!sent.ok) {
+      return res.status(502).json({
+        error: 'Documento creato su Fatture in Cloud (id ' + docId + ') ma invio SDI fallito: ' + (sent.body?.error?.message || sent.status) + '. Completa l\'invio dal portale FIC.',
+        fic_document_id: docId,
+      });
+    }
+
+    // Scrittura server-side, atomica col successo dell'invio — prima veniva
+    // fatta solo dal client DOPO questa risposta: se quella chiamata falliva
+    // (rete, tab chiusa, crash) sdi_inviato_at restava null, il pulsante
+    // "invia" ricompariva e un secondo click duplicava l'invio reale.
+    await fetch(`${SUPABASE_URL}/rest/v1/fatture?id=eq.${f.id}`, {
+      method: 'PATCH',
+      headers: { ...sbHeadersService, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ sdi_inviato_at: new Date().toISOString(), fic_document_id: String(docId), sdi_invio_pending_at: null }),
+    });
+
+    success = true;
+    return res.status(200).json({ ok: true, fic_document_id: docId, ei_status: sent.body?.data || null });
+  } finally {
+    if (!success) await releaseFatturaInvio('release_fattura_sdi', f.id, ownerId);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -220,60 +271,81 @@ async function handleSts(req, res, ownerId) {
     return res.status(400).json({ error: 'Dati fattura incompleti (numero, data o importo)' });
   }
 
-  const basicAuth = Buffer.from(`${prof.sts_api_username}:${prof.sts_api_password}`).toString('base64');
-  const importo = Math.round(parseFloat(f.importo) * 100) / 100;
-  const voceSpesa = { tipoSpesa: 'SP', importo };
-  // f.natura_iva/f.aliquota_iva non sono valorizzati da nessun campo del
-  // modale fattura in pagamenti.html — senza un fallback qui, ogni invio
-  // STS riportava aliquotaIVA:0 indipendentemente dal regime/aliquota reale.
-  // Come in js/fatturapa.js: regime forfettario → natura N2.2 (operazione
-  // esente), regime ordinario → aliquota 22% di default se non specificata.
-  const regimeSts = prof.fiscal_regime === 'RF01' ? 'RF01' : 'RF19';
-  if (f.natura_iva) voceSpesa.naturaIVA = f.natura_iva;
-  else if (f.aliquota_iva != null && f.aliquota_iva !== '') voceSpesa.aliquotaIVA = Number(f.aliquota_iva) || 0;
-  else if (regimeSts === 'RF19') voceSpesa.naturaIVA = 'N2.2';
-  else voceSpesa.aliquotaIVA = 22;
-
-  const body = {
-    operazione: 'INS',
-    partitaIvaErogatore: String(prof.fiscal_partita_iva || '').replace(/\D/g, ''),
-    tipoDocumento: 'F',
-    numeroDocumento: String(f.numero_fattura),
-    dataDocumento: f.data_fattura,
-    codiceFiscaleCittadino: String(f.codice_fiscale_paziente).toUpperCase(),
-    vociSpesa: [voceSpesa],
-  };
-
-  const stsRes = await fetch(`${STS_API_BASE}/documenti-spesa`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Basic ${basicAuth}` },
-    body: JSON.stringify(body),
-  });
-  let stsBody = null;
-  try { stsBody = await stsRes.json(); } catch { /* risposta non JSON */ }
-
-  if (!stsRes.ok) {
-    if (stsRes.status === 401) return res.status(400).json({ error: 'Credenziali intermediario Sistema TS non valide.' });
-    return res.status(502).json({ error: 'Invio Sistema TS fallito: ' + (stsBody?.message || stsBody?.error || stsRes.status) });
+  // Nessun controllo qui prima d'ora: f.sts_stato veniva riletto ma mai
+  // verificato prima di procedere — due richieste concorrenti (doppio click,
+  // due tab) passavano entrambe la validazione e venivano entrambe inviate
+  // come operazione 'INS' al Sistema TS (spesa comunicata due volte).
+  if (!(await claimFatturaInvio('claim_fattura_sts', fatturaId, ownerId))) {
+    return res.status(409).json({ error: 'Un invio al Sistema TS per questa fattura è già in corso o è già stato completato.' });
   }
 
-  const stato = stsBody?.statoSts || 'ERRO';
-  await fetch(`${SUPABASE_URL}/rest/v1/fatture?id=eq.${fatturaId}`, {
-    method: 'PATCH',
-    headers: { ...sbHeaders, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-    body: JSON.stringify({
-      sts_stato: stato,
-      sts_protocollo: stsBody?.protocolloSts || null,
-      sts_messaggio: stsBody?.messaggioSts || null,
-      sts_inviato_at: new Date().toISOString(),
-    }),
-  });
+  let success = false;
+  try {
+    const basicAuth = Buffer.from(`${prof.sts_api_username}:${prof.sts_api_password}`).toString('base64');
+    const importo = Math.round(parseFloat(f.importo) * 100) / 100;
+    const voceSpesa = { tipoSpesa: 'SP', importo };
+    // f.natura_iva/f.aliquota_iva non sono valorizzati da nessun campo del
+    // modale fattura in pagamenti.html — senza un fallback qui, ogni invio
+    // STS riportava aliquotaIVA:0 indipendentemente dal regime/aliquota reale.
+    // Come in js/fatturapa.js: regime forfettario → natura N2.2 (operazione
+    // esente), regime ordinario → aliquota 22% di default se non specificata.
+    const regimeSts = prof.fiscal_regime === 'RF01' ? 'RF01' : 'RF19';
+    if (f.natura_iva) voceSpesa.naturaIVA = f.natura_iva;
+    else if (f.aliquota_iva != null && f.aliquota_iva !== '') voceSpesa.aliquotaIVA = Number(f.aliquota_iva) || 0;
+    else if (regimeSts === 'RF19') voceSpesa.naturaIVA = 'N2.2';
+    else voceSpesa.aliquotaIVA = 22;
 
-  if (stato === 'ERRO') {
-    return res.status(502).json({ error: 'Sistema TS ha rifiutato l\'invio: ' + (stsBody?.messaggioSts || 'errore non specificato') });
+    const body = {
+      operazione: 'INS',
+      partitaIvaErogatore: String(prof.fiscal_partita_iva || '').replace(/\D/g, ''),
+      tipoDocumento: 'F',
+      numeroDocumento: String(f.numero_fattura),
+      dataDocumento: f.data_fattura,
+      codiceFiscaleCittadino: String(f.codice_fiscale_paziente).toUpperCase(),
+      vociSpesa: [voceSpesa],
+    };
+
+    const stsRes = await fetch(`${STS_API_BASE}/documenti-spesa`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Basic ${basicAuth}` },
+      body: JSON.stringify(body),
+    });
+    let stsBody = null;
+    try { stsBody = await stsRes.json(); } catch { /* risposta non JSON */ }
+
+    if (!stsRes.ok) {
+      if (stsRes.status === 401) return res.status(400).json({ error: 'Credenziali intermediario Sistema TS non valide.' });
+      return res.status(502).json({ error: 'Invio Sistema TS fallito: ' + (stsBody?.message || stsBody?.error || stsRes.status) });
+    }
+
+    const stato = stsBody?.statoSts || 'ERRO';
+    // success=true anche quando stato è 'ERRO': l'invio E' stato processato
+    // dal Sistema TS (rifiutato, non perso), la scrittura va comunque a buon
+    // fine e claim_fattura_sts permette già il retry su sts_stato='ERRO' —
+    // rilasciare qui il pending sarebbe ridondante ma innocuo, lo facciamo
+    // nella stessa PATCH per non lasciarlo a metà se questa fosse l'ultima
+    // scrittura prima di un errore imprevisto più sotto.
+    success = true;
+    await fetch(`${SUPABASE_URL}/rest/v1/fatture?id=eq.${fatturaId}`, {
+      method: 'PATCH',
+      headers: { ...sbHeaders, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({
+        sts_stato: stato,
+        sts_protocollo: stsBody?.protocolloSts || null,
+        sts_messaggio: stsBody?.messaggioSts || null,
+        sts_inviato_at: new Date().toISOString(),
+        sts_invio_pending_at: null,
+      }),
+    });
+
+    if (stato === 'ERRO') {
+      return res.status(502).json({ error: 'Sistema TS ha rifiutato l\'invio: ' + (stsBody?.messaggioSts || 'errore non specificato') });
+    }
+
+    return res.status(200).json({ ok: true, stato, protocollo: stsBody?.protocolloSts || null });
+  } finally {
+    if (!success) await releaseFatturaInvio('release_fattura_sts', fatturaId, ownerId);
   }
-
-  return res.status(200).json({ ok: true, stato, protocollo: stsBody?.protocolloSts || null });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

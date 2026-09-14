@@ -9164,3 +9164,96 @@ CREATE POLICY "patient_signatures_storage_read" ON storage.objects
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_115_fix_patient_signatures_storage_rls', 'Policy storage.objects per patient-signatures erano prive di scoping (qualunque utente autenticato poteva elencare/leggere/scrivere le firme di consenso di QUALUNQUE paziente) — ora derivano lo UUID paziente dal nome file (pattern firma_<uuid>_...) e verificano la relazione con patient_dietitian, stesso principio di document-prints (SEZIONE 63)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 116 — FIX ALTO: invii SDI/STS duplicati verso Agenzia Entrate,
+-- nessun mutex server-side (a differenza di claim_fattura_checkout, SEZIONE
+-- 97/114, che protegge solo il pagamento Stripe)
+--
+-- handleSdi (api/fatture.js) non verificava mai se una fattura fosse già
+-- stata inviata allo SDI PRIMA di procedere — nessun controllo su
+-- fic_document_id/sdi_inviato_at nel corpo della funzione. La scrittura di
+-- quei due campi avveniva solo lato CLIENT (pagamenti.html), DOPO la
+-- risposta dell'API: se quella scrittura falliva (rete, tab chiusa, crash)
+-- il pulsante "invia" ricompariva e un secondo click creava una SECONDA
+-- fattura elettronica reale per la stessa prestazione.
+--
+-- handleSts rileggeva la fattura dal DB ma non controllava mai f.sts_stato
+-- prima di inviare — due richieste concorrenti (doppio click, due tab)
+-- passavano entrambe la validazione e venivano entrambe inviate come
+-- operazione 'INS' al Sistema TS.
+--
+-- Stesso pattern mutex già usato per il pagamento (claim_fattura_checkout/
+-- release_fattura_checkout), applicato qui a due nuove colonne dedicate.
+-- Finestra di 5 minuti (non 30 come per Stripe): qui non c'è un utente che
+-- può abbandonare un checkout a metà, solo una chiamata HTTP server-side che
+-- in condizioni normali impiega pochi secondi.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sdi_invio_pending_at TIMESTAMPTZ;
+ALTER TABLE fatture ADD COLUMN IF NOT EXISTS sts_invio_pending_at TIMESTAMPTZ;
+
+CREATE OR REPLACE FUNCTION public.claim_fattura_sdi(p_fattura_id UUID, p_dietitian_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $$
+DECLARE
+  v_claimed BOOLEAN := false;
+BEGIN
+  UPDATE fatture
+  SET sdi_invio_pending_at = now()
+  WHERE id = p_fattura_id
+    AND dietitian_id = p_dietitian_id
+    AND fic_document_id IS NULL
+    AND sdi_inviato_at IS NULL
+    AND (sdi_invio_pending_at IS NULL OR sdi_invio_pending_at < now() - interval '5 minutes')
+  RETURNING true INTO v_claimed;
+  RETURN COALESCE(v_claimed, false);
+END;
+$$;
+REVOKE ALL ON FUNCTION public.claim_fattura_sdi(UUID, UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.claim_fattura_sdi(UUID, UUID) TO service_role;
+
+CREATE OR REPLACE FUNCTION public.release_fattura_sdi(p_fattura_id UUID, p_dietitian_id UUID)
+RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $$
+BEGIN
+  UPDATE fatture SET sdi_invio_pending_at = NULL WHERE id = p_fattura_id AND dietitian_id = p_dietitian_id;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.release_fattura_sdi(UUID, UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.release_fattura_sdi(UUID, UUID) TO service_role;
+
+CREATE OR REPLACE FUNCTION public.claim_fattura_sts(p_fattura_id UUID, p_dietitian_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $$
+DECLARE
+  v_claimed BOOLEAN := false;
+BEGIN
+  UPDATE fatture
+  SET sts_invio_pending_at = now()
+  WHERE id = p_fattura_id
+    AND dietitian_id = p_dietitian_id
+    AND (sts_stato IS NULL OR sts_stato = 'ERRO')
+    AND (sts_invio_pending_at IS NULL OR sts_invio_pending_at < now() - interval '5 minutes')
+  RETURNING true INTO v_claimed;
+  RETURN COALESCE(v_claimed, false);
+END;
+$$;
+REVOKE ALL ON FUNCTION public.claim_fattura_sts(UUID, UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.claim_fattura_sts(UUID, UUID) TO service_role;
+
+CREATE OR REPLACE FUNCTION public.release_fattura_sts(p_fattura_id UUID, p_dietitian_id UUID)
+RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $$
+BEGIN
+  UPDATE fatture SET sts_invio_pending_at = NULL WHERE id = p_fattura_id AND dietitian_id = p_dietitian_id;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.release_fattura_sts(UUID, UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.release_fattura_sts(UUID, UUID) TO service_role;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_116_mutex_sdi_sts', 'Mutex applicativo (claim/release_fattura_sdi, claim/release_fattura_sts) contro invii duplicati allo SDI (fattura elettronica) e al Sistema TS - nessuno dei due aveva un controllo atomico prima, a differenza del pagamento Stripe (SEZIONE 97/114)')
+ON CONFLICT (id) DO NOTHING;

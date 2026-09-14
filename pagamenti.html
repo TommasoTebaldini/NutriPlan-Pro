@@ -647,11 +647,11 @@ async function inviaFatturaSDI(id) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+    // sdi_inviato_at/fic_document_id sono ora scritti server-side (SEZIONE
+    // 116), atomicamente con l'invio riuscito — qui solo aggiornamento dello
+    // stato locale, niente più scrittura duplicata dal client.
     const nowIso = new Date().toISOString();
-    // Colonne sdi_inviato_at/fic_document_id: SEZIONE 32 — se mancano, l'invio
-    // è comunque andato a buon fine, si perde solo il "già inviata" in UI.
-    await sb.from('fatture').update({ sdi_inviato_at: nowIso, fic_document_id: String(data.fic_document_id || '') }).eq('id', id);
-    fatture = fatture.map(x => x.id === id ? { ...x, sdi_inviato_at: nowIso } : x);
+    fatture = fatture.map(x => x.id === id ? { ...x, sdi_inviato_at: nowIso, fic_document_id: String(data.fic_document_id || '') } : x);
     renderFatture();
     toast(_L('📤 Fattura inviata allo SDI via Fatture in Cloud (doc. ', '📤 Invoice sent to SDI via Fatture in Cloud (doc. ') + data.fic_document_id + ')', 'ok');
   } catch (e) {

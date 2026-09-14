@@ -9320,3 +9320,100 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_117_admin_audit_log', 'Tabella admin_audit_log + trigger su profiles (is_admin/approved) - traccia chi ha reso admin/revocato/approvato/bloccato chi e quando, gap trovato durante audit generale (le azioni admin non avevano nessuna traccia, a differenza dei dati clinici)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 118 — FIX MEDIO: accettazione termini mai verificata lato server
+--
+-- create_profile_for_new_user()/create_patient_profile() (SEZIONE 52/58)
+-- accettano terms_accepted come semplice parametro: se false (o omesso, o
+-- una chiamata diretta alla RPC che bypassa la UI), l'account veniva
+-- comunque creato normalmente, solo con terms_accepted_at=NULL — il client
+-- normale invia sempre true dopo la checkbox, ma nulla lo impone lato
+-- server, rendendo la colonna puramente decorativa.
+--
+-- Ora la creazione fallisce esplicitamente se terms_accepted non è true, A
+-- MENO che il profilo esista già con terms_accepted_at valorizzato (chiamata
+-- ripetuta/idempotente dopo un'accettazione già registrata in precedenza,
+-- non deve fallire). Il controllo è fuori dal blocco che assorbe gli errori
+-- dell'INSERT (quello resta per non far crashare la UI di signup su un
+-- errore transitorio dell'insert stesso), altrimenti l'EXCEPTION WHEN OTHERS
+-- esistente avrebbe silenziosamente inghiottito anche questo controllo.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION create_profile_for_new_user(uid UUID, user_email TEXT, terms_accepted BOOLEAN DEFAULT false)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF NOT terms_accepted AND NOT EXISTS (
+    SELECT 1 FROM public.profiles WHERE id = uid AND terms_accepted_at IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'Accettazione dei termini di servizio obbligatoria.';
+  END IF;
+
+  BEGIN
+    INSERT INTO public.profiles (id, email, approved, is_admin, terms_accepted_at)
+    VALUES (uid, user_email, false, false, NOW())
+    ON CONFLICT (id) DO UPDATE SET
+      terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+  EXCEPTION WHEN OTHERS THEN
+    NULL;
+  END;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION create_profile_for_new_user(UUID, TEXT, BOOLEAN) TO anon, authenticated;
+
+CREATE OR REPLACE FUNCTION create_patient_profile(
+  uid UUID, user_email TEXT, p_full_name TEXT, p_first_name TEXT, p_last_name TEXT,
+  terms_accepted BOOLEAN DEFAULT false
+)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF NOT terms_accepted AND NOT EXISTS (
+    SELECT 1 FROM public.profiles WHERE id = uid AND terms_accepted_at IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'Accettazione dei termini di servizio obbligatoria.';
+  END IF;
+
+  BEGIN
+    INSERT INTO public.profiles (id, email, full_name, first_name, last_name, role, terms_accepted_at)
+    VALUES (uid, user_email, p_full_name, p_first_name, p_last_name, 'patient', NOW())
+    ON CONFLICT (id) DO UPDATE SET
+      full_name  = COALESCE(EXCLUDED.full_name,  profiles.full_name),
+      first_name = COALESCE(EXCLUDED.first_name, profiles.first_name),
+      last_name  = COALESCE(EXCLUDED.last_name,  profiles.last_name),
+      terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+  EXCEPTION WHEN OTHERS THEN
+    NULL;
+  END;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION create_patient_profile(UUID, TEXT, TEXT, TEXT, TEXT, BOOLEAN) TO anon, authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_118_enforce_terms_accepted', 'create_profile_for_new_user()/create_patient_profile() ora rifiutano la creazione se terms_accepted non è true (a meno che il profilo esista già con terms_accepted_at valorizzato) - prima il parametro era puramente decorativo, un account poteva essere creato senza aver accettato i termini')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 119 — FIX BASSO: nessun vincolo DB su water_logs.amount_ml e
+-- fasting_logs.started_at/ended_at
+--
+-- A differenza di daily_wellness (sleep_hours/energy/quality con CHECK) e
+-- activity_logs (duration_minutes > 0), queste due tabelle non avevano
+-- nessun vincolo. Il flusso UI normale previene valori assurdi, ma una
+-- chiamata diretta all'API poteva scrivere amount_ml negativo, o un digiuno
+-- con ended_at prima di started_at — corrompendo dashboard e i calcoli di
+-- achievement (checkWaterAchievements somma amount_ml senza clamp).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE water_logs
+  ADD CONSTRAINT water_logs_amount_ml_check CHECK (amount_ml > 0 AND amount_ml <= 10000) NOT VALID;
+ALTER TABLE water_logs VALIDATE CONSTRAINT water_logs_amount_ml_check;
+
+ALTER TABLE fasting_logs
+  ADD CONSTRAINT fasting_logs_ended_after_started_check CHECK (ended_at IS NULL OR ended_at > started_at) NOT VALID;
+ALTER TABLE fasting_logs VALIDATE CONSTRAINT fasting_logs_ended_after_started_check;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_119_water_fasting_constraints', 'CHECK su water_logs.amount_ml (0-10000ml) e fasting_logs.ended_at>started_at - nessun vincolo esisteva prima, solo validazione lato client')
+ON CONFLICT (id) DO NOTHING;

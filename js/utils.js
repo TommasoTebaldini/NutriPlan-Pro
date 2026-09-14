@@ -725,12 +725,75 @@ function showLoading(v) {
 // ═══════════════════════════════════════════════════
 // MODAL
 // ═══════════════════════════════════════════════════
-function openM(id) { const el = document.getElementById(id); if (el) el.classList.add('open'); }
-function closeM(id) { const el = document.getElementById(id); if (el) el.classList.remove('open'); }
+// Accessibilità dei modali (SEZIONE debito tecnico 2026-09-15): openM/closeM
+// sono condivise da .modal-bg su tutte le 43+ pagine (stesso markup
+// .modal-bg > .modal > .mhdr h2 + .mclose, .mbody ovunque) — fix fatto qui
+// una volta sola vale per ogni modale del sito, invece di editare ogni
+// pagina singolarmente. Aggiunge: role/aria-modal/aria-labelledby, sposta il
+// focus dentro al modale all'apertura, lo intrappola con Tab (altrimenti un
+// utente da tastiera esce dal modale finendo sulla pagina sotto, invisibile),
+// Escape per chiudere, e ripristina il focus sull'elemento che aveva aperto
+// il modale alla chiusura (altrimenti il focus "sparisce" in cima al body).
+let _modalLastFocus = null;
+function _modalFocusables(modal) {
+  return Array.from(modal.querySelectorAll('input, select, textarea, button, [href], [tabindex]:not([tabindex="-1"])'))
+    .filter(el => !el.disabled && el.offsetParent !== null);
+}
+function _modalKeyHandler(e) {
+  const openBg = document.querySelector('.modal-bg.open');
+  if (!openBg) return;
+  if (e.key === 'Escape') { closeM(openBg.id); return; }
+  if (e.key !== 'Tab') return;
+  const modal = openBg.querySelector('.modal') || openBg;
+  const focusables = _modalFocusables(modal);
+  if (!focusables.length) return;
+  const first = focusables[0], last = focusables[focusables.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+}
+function openM(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const modal = el.querySelector('.modal') || el;
+  const heading = modal.querySelector('.mhdr h2, h2, h3');
+  if (heading) {
+    if (!heading.id) heading.id = id + '-title';
+    modal.setAttribute('aria-labelledby', heading.id);
+  }
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  if (!modal.hasAttribute('tabindex')) modal.setAttribute('tabindex', '-1');
+  el.querySelectorAll('.mclose').forEach(btn => {
+    if (!btn.hasAttribute('aria-label')) btn.setAttribute('aria-label', typeof _L === 'function' ? _L('Chiudi', 'Close') : 'Chiudi');
+  });
+  el.classList.add('open');
+  _modalLastFocus = document.activeElement;
+  const focusables = _modalFocusables(modal);
+  (focusables[0] || modal).focus({ preventScroll: true });
+  document.addEventListener('keydown', _modalKeyHandler);
+}
+function closeM(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('open');
+  document.removeEventListener('keydown', _modalKeyHandler);
+  if (_modalLastFocus && typeof _modalLastFocus.focus === 'function') _modalLastFocus.focus({ preventScroll: true });
+  _modalLastFocus = null;
+}
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.modal-bg').forEach(mb => {
-    mb.addEventListener('click', e => { if (e.target === mb) mb.classList.remove('open'); });
+    mb.addEventListener('click', e => { if (e.target === mb) closeM(mb.id); });
   });
+
+  // Landmark + posizione corrente sulla sidebar — stesso markup copiato su
+  // ogni pagina (<nav id="sidebar">...<a class="nav-item active">...),
+  // fix centralizzato qui invece che in 43 file.
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar && !sidebar.hasAttribute('aria-label')) {
+    sidebar.setAttribute('aria-label', typeof _L === 'function' ? _L('Menu principale', 'Main menu') : 'Menu principale');
+  }
+  const activeNav = document.querySelector('#sidebar .nav-item.active');
+  if (activeNav) activeNav.setAttribute('aria-current', 'page');
 });
 
 // Global copyright footer on all DietPlan Pro pages using utils.js

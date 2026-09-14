@@ -793,7 +793,7 @@ html { scroll-behavior: smooth; }
         </div>
         <label style="display:flex;align-items:center;cursor:pointer;flex-shrink:0">
           <input type="checkbox" id="toggle-dashboard" style="display:none" onchange="_saveDashboardToggle(this.checked)">
-          <span id="toggle-dashboard-ui" onclick="_clickToggle('toggle-dashboard')" style="display:inline-block;width:46px;height:26px;border-radius:13px;background:#CBD5E1;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0">
+          <span id="toggle-dashboard-ui" role="switch" aria-checked="false" aria-label="Dashboard di Benvenuto" tabindex="0" onclick="_clickToggle('toggle-dashboard')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();_clickToggle('toggle-dashboard')}" style="display:inline-block;width:46px;height:26px;border-radius:13px;background:#CBD5E1;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0">
             <span style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:white;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)" id="toggle-dashboard-knob"></span>
           </span>
         </label>
@@ -809,7 +809,7 @@ html { scroll-behavior: smooth; }
       </div>
       <label style="display:flex;align-items:center;cursor:pointer;flex-shrink:0">
         <input type="checkbox" id="toggle-alerts" style="display:none" onchange="_saveAlertsToggle(this.checked)">
-        <span id="toggle-alerts-ui" onclick="_clickToggle('toggle-alerts')" style="display:inline-block;width:46px;height:26px;border-radius:13px;background:#CBD5E1;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0">
+        <span id="toggle-alerts-ui" role="switch" aria-checked="false" aria-label="Alert Pazienti Inattivi" tabindex="0" onclick="_clickToggle('toggle-alerts')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();_clickToggle('toggle-alerts')}" style="display:inline-block;width:46px;height:26px;border-radius:13px;background:#CBD5E1;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0">
           <span style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:white;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)" id="toggle-alerts-knob"></span>
         </span>
       </label>
@@ -1416,7 +1416,7 @@ function _initToggle(id, on) {
 function _renderToggleUi(id, on) {
   const ui = document.getElementById(id+'-ui');
   const knob = document.getElementById(id+'-knob');
-  if (ui) ui.style.background = on ? '#0F766E' : '#CBD5E1';
+  if (ui) { ui.style.background = on ? '#0F766E' : '#CBD5E1'; ui.setAttribute('aria-checked', on ? 'true' : 'false'); }
   if (knob) knob.style.left = on ? '23px' : '3px';
 }
 

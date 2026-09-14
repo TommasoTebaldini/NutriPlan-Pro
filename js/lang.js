@@ -592,7 +592,13 @@ function applyLang() {
     el.placeholder = t(el.dataset.i18nPlaceholder);
   });
   document.querySelectorAll('[data-i18n-tooltip]').forEach(el => {
-    el.title = t(el.dataset.i18nTooltip);
+    const label = t(el.dataset.i18nTooltip);
+    el.title = label;
+    // title alone is unreliable for screen readers (not announced on most
+    // mobile AT, inconsistent on desktop); data-i18n-tooltip is used almost
+    // exclusively on icon-only buttons (☰, ✕...) with no visible text of
+    // their own, so doubling it as the accessible name is safe here.
+    el.setAttribute('aria-label', label);
   });
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
     document.title = t(el.dataset.i18nTitle);

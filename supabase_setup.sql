@@ -9406,13 +9406,28 @@ ON CONFLICT (id) DO NOTHING;
 -- achievement (checkWaterAchievements somma amount_ml senza clamp).
 -- ═══════════════════════════════════════════════════════════════════════════
 
-ALTER TABLE water_logs
-  ADD CONSTRAINT water_logs_amount_ml_check CHECK (amount_ml > 0 AND amount_ml <= 10000) NOT VALID;
-ALTER TABLE water_logs VALIDATE CONSTRAINT water_logs_amount_ml_check;
+-- Postgres non supporta "ADD CONSTRAINT IF NOT EXISTS": un DO block con
+-- controllo esplicito su pg_constraint, idempotente per davvero — senza
+-- questo, rieseguire la sezione (es. insieme ad altre in un unico script)
+-- fallisce con "already exists" e fa fare ROLLBACK anche a tutto il resto
+-- della transazione, comprese sezioni precedenti mai eseguite prima.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'water_logs_amount_ml_check') THEN
+    ALTER TABLE water_logs
+      ADD CONSTRAINT water_logs_amount_ml_check CHECK (amount_ml > 0 AND amount_ml <= 10000) NOT VALID;
+    ALTER TABLE water_logs VALIDATE CONSTRAINT water_logs_amount_ml_check;
+  END IF;
+END $$;
 
-ALTER TABLE fasting_logs
-  ADD CONSTRAINT fasting_logs_ended_after_started_check CHECK (ended_at IS NULL OR ended_at > started_at) NOT VALID;
-ALTER TABLE fasting_logs VALIDATE CONSTRAINT fasting_logs_ended_after_started_check;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fasting_logs_ended_after_started_check') THEN
+    ALTER TABLE fasting_logs
+      ADD CONSTRAINT fasting_logs_ended_after_started_check CHECK (ended_at IS NULL OR ended_at > started_at) NOT VALID;
+    ALTER TABLE fasting_logs VALIDATE CONSTRAINT fasting_logs_ended_after_started_check;
+  END IF;
+END $$;
 
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_119_water_fasting_constraints', 'CHECK su water_logs.amount_ml (0-10000ml) e fasting_logs.ended_at>started_at - nessun vincolo esisteva prima, solo validazione lato client')

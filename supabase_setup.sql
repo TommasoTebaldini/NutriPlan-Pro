@@ -9726,3 +9726,125 @@ END $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_124_notifications_realtime_publication', 'Aggiunge notifications alla pubblicazione supabase_realtime - senza, la sottoscrizione postgres_changes in NotificationContext.jsx (badge live) non riceverebbe mai eventi, stesso gap già visto 10 volte per altre tabelle in SEZIONE 105/106')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 125 — NUOVA FEATURE: demo sandbox pubblica
+--
+-- La registrazione pubblica è attualmente chiusa (index.html, notice
+-- "piattaforma in fase di sviluppo") — un dietista interessato non ha modo
+-- di provare la piattaforma prima del lancio. Questa sezione prepara i dati
+-- per un account demo condiviso (email demo@dietplan-pro.com), con un
+-- reset automatico ogni notte così l'esplorazione resta illimitata senza
+-- che i dati si degradino nel tempo.
+--
+-- NOTA IMPORTANTE: l'utente auth.users demo@dietplan-pro.com NON esiste
+-- ancora — va creato UNA TANTUM dall'utente umano (Supabase Dashboard →
+-- Authentication → Add user → email/password, "Auto Confirm User" attivo),
+-- perché creare un utente Auth richiede l'Admin API di Supabase, non
+-- raggiungibile da qui (né da MCP né dalla CLI locale). setup_demo_studio()
+-- è scritta per essere un NO-OP sicuro finché quell'utente non esiste
+-- (verificato con IF v_demo_id IS NULL THEN RETURN), quindi eseguire questa
+-- sezione ORA è sicuro: si limita a creare funzione+cron, il popolamento
+-- vero e proprio avviene alla prima esecuzione DOPO che l'utente esiste.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION setup_demo_studio()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_demo_id uuid;
+  v_c1 uuid; v_c2 uuid; v_c3 uuid; v_c4 uuid; v_c5 uuid; v_c6 uuid;
+  v_meals_base text;
+BEGIN
+  SELECT id INTO v_demo_id FROM auth.users WHERE email = 'demo@dietplan-pro.com';
+  IF v_demo_id IS NULL THEN
+    RAISE NOTICE 'setup_demo_studio: utente demo@dietplan-pro.com non ancora creato, nessuna azione.';
+    RETURN;
+  END IF;
+
+  INSERT INTO public.profiles (id, email, nome, cognome, username, approved, is_admin, terms_accepted_at)
+  VALUES (v_demo_id, 'demo@dietplan-pro.com', 'Studio', 'Demo', 'Studio Demo', true, false, now())
+  ON CONFLICT (id) DO UPDATE SET approved = true, terms_accepted_at = COALESCE(profiles.terms_accepted_at, now());
+
+  -- Reset: elimina tutte le cartelle esistenti del demo (CASCADE già in
+  -- place su piani/ncpt/bia_records/esami_biochimici/note_specialistiche
+  -- verso cartelle_raw) e le notifiche accumulate, poi ri-semina da zero.
+  DELETE FROM public.notifications WHERE user_id = v_demo_id;
+  DELETE FROM public.cartelle_raw WHERE user_id = v_demo_id;
+
+  v_meals_base := '[{"id":"g1","nome":"Giorno 1","meals":[' ||
+    '{"id":"colazione","nome":"Colazione","emoji":"🌅","note":"","items":[{"nome":"Yogurt greco naturale","qt":"150","kcal_100g":63,"proteins_100g":10,"carbs_100g":4,"fats_100g":0.2},{"nome":"Fiocchi d''avena","qt":"40","kcal_100g":379,"proteins_100g":13,"carbs_100g":60,"fats_100g":7}]},' ||
+    '{"id":"pranzo","nome":"Pranzo","emoji":"🍽️","note":"","items":[{"nome":"Petto di pollo","qt":"150","kcal_100g":165,"proteins_100g":31,"carbs_100g":0,"fats_100g":3.6},{"nome":"Riso integrale","qt":"70","kcal_100g":111,"proteins_100g":2.6,"carbs_100g":23,"fats_100g":0.9},{"nome":"Zucchine","qt":"200","kcal_100g":17,"proteins_100g":1.2,"carbs_100g":3.1,"fats_100g":0.3}]},' ||
+    '{"id":"cena","nome":"Cena","emoji":"🌙","note":"","items":[{"nome":"Salmone al forno","qt":"150","kcal_100g":208,"proteins_100g":20,"carbs_100g":0,"fats_100g":13},{"nome":"Insalata mista","qt":"150","kcal_100g":15,"proteins_100g":1.2,"carbs_100g":2.9,"fats_100g":0.2},{"nome":"Pane integrale","qt":"50","kcal_100g":247,"proteins_100g":8.8,"carbs_100g":41,"fats_100g":3.4}]}' ||
+  ']}]';
+
+  -- ── Paziente 1: sportivo, obiettivo ricomposizione ──
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (v_demo_id, 'Marco', 'Rossi', '1990-04-12', 'M', '["Sportivo"]'::jsonb, 'Paziente demo — corridore amatoriale, obiettivo ricomposizione corporea.', now() - interval '40 days')
+  RETURNING id INTO v_c1;
+  INSERT INTO public.bia_records (cartella_id, user_id, data_misura, peso, altezza, bf_pct, ffm_kg, angolo_fase)
+  VALUES (v_c1, v_demo_id, current_date - 5, 78.4, 180, 15.2, 66.5, 7.1);
+  INSERT INTO public.piani (user_id, cartella_id, nome, data_piano, meals, saved_at, visible_to_patient)
+  VALUES (v_demo_id, v_c1, 'Piano gennaio — fase di forza', to_char(current_date, 'YYYY-MM-DD'), v_meals_base, now(), true);
+
+  -- ── Paziente 2: gravidanza ──
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (v_demo_id, 'Giulia', 'Bianchi', '1996-09-03', 'F', '["Gravidanza"]'::jsonb, 'Paziente demo — secondo trimestre, follow-up mensile peso/fabbisogno.', now() - interval '25 days')
+  RETURNING id INTO v_c2;
+  INSERT INTO public.esami_biochimici (cartella_id, user_id, tipo, valore, unita, data_esame, note)
+  VALUES (v_c2, v_demo_id, 'Glicemia', 88, 'mg/dL', current_date - 10, 'Curva da carico nella norma.');
+
+  -- ── Paziente 3: diabete tipo 2 ──
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (v_demo_id, 'Luca', 'Verdi', '1972-01-20', 'M', '["Diabete tipo 2"]'::jsonb, 'Paziente demo — diagnosi recente, in fase educazionale su conteggio carboidrati.', now() - interval '60 days')
+  RETURNING id INTO v_c3;
+  INSERT INTO public.ncpt (user_id, cartella_id, valutazione, diagnosi, intervento, monitoraggio)
+  VALUES (v_demo_id, v_c3,
+    'Diabete mellito tipo 2 di nuova diagnosi, BMI 29.4, sedentario.',
+    'Eccessivo apporto di carboidrati semplici correlato ad abitudini alimentari pregresse, evidenziato da diario alimentare e HbA1c 7.8%.',
+    'Educazione al conteggio dei carboidrati, riduzione zuccheri semplici, incremento attività fisica graduale.',
+    'Rivalutazione HbA1c a 3 mesi, peso e diario alimentare ogni 2 settimane.');
+  INSERT INTO public.piani (user_id, cartella_id, nome, data_piano, meals, saved_at, visible_to_patient)
+  VALUES (v_demo_id, v_c3, 'Piano educazionale — conteggio CHO', to_char(current_date, 'YYYY-MM-DD'), v_meals_base, now(), true);
+
+  -- ── Paziente 4: nefropatia ──
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (v_demo_id, 'Anna', 'Ferrari', '1958-06-15', 'F', '["Nefropatia/IRC"]'::jsonb, 'Paziente demo — IRC stadio 3a, dieta ipoproteica controllata.', now() - interval '90 days')
+  RETURNING id INTO v_c4;
+  INSERT INTO public.esami_biochimici (cartella_id, user_id, tipo, valore, unita, data_esame, note)
+  VALUES (v_c4, v_demo_id, 'Creatinina', 1.4, 'mg/dL', current_date - 15, 'eGFR stabile rispetto al controllo precedente.');
+
+  -- ── Paziente 5: obesità ──
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (v_demo_id, 'Paolo', 'Galli', '1980-11-28', 'M', '["Obesità"]'::jsonb, 'Paziente demo — percorso multidisciplinare, primo controllo dopo 4 settimane.', now() - interval '30 days')
+  RETURNING id INTO v_c5;
+  INSERT INTO public.bia_records (cartella_id, user_id, data_misura, peso, altezza, bf_pct, ffm_kg, angolo_fase)
+  VALUES (v_c5, v_demo_id, current_date - 3, 104.2, 176, 34.8, 67.9, 5.4);
+
+  -- ── Paziente 6: pediatria ──
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (v_demo_id, 'Sofia', 'Colombo', '2015-03-08', 'F', '["Pediatria"]'::jsonb, 'Paziente demo — valutazione crescita, curve percentili nella norma.', now() - interval '15 days')
+  RETURNING id INTO v_c6;
+
+END;
+$$;
+REVOKE ALL ON FUNCTION setup_demo_studio() FROM PUBLIC, anon, authenticated;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'reset-demo-studio-nightly') THEN
+    PERFORM cron.unschedule('reset-demo-studio-nightly');
+  END IF;
+END $$;
+SELECT cron.schedule('reset-demo-studio-nightly', '0 3 * * *', $$SELECT public.setup_demo_studio();$$);
+
+-- Esecuzione immediata: no-op sicuro se demo@dietplan-pro.com non esiste
+-- ancora (vedi commento in cima), altrimenti semina subito i dati.
+SELECT setup_demo_studio();
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_125_demo_sandbox', 'Account demo condiviso (demo@dietplan-pro.com, da creare manualmente su Supabase Dashboard - Admin API non raggiungibile da qui) con 6 pazienti finti realistici, reset automatico ogni notte via pg_cron (setup_demo_studio, no-op finché l''utente auth non esiste). Permette di provare la piattaforma prima che la registrazione pubblica apra.')
+ON CONFLICT (id) DO NOTHING;

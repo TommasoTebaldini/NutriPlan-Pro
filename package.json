@@ -12,7 +12,10 @@
     "lint:fix": "eslint . --fix",
     "build:minify": "node scripts/build-minify.js",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "check:sql": "node scripts/check-sql-syntax.js supabase_setup.sql && node scripts/check-sql-risks.js supabase_setup.sql",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "express": "^4.21.2",
@@ -27,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.7.0",

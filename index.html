@@ -101,6 +101,12 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
     <button onclick="mostraLogin()" style="background:#0F766E;color:white;border:none;padding:10px 22px;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s" onmouseover="this.style.background='#0C5F58'" onmouseout="this.style.background='#0F766E'">
       <span data-only-lang="it">Hai già un account? Accedi →</span><span data-only-lang="en" style="display:none">Already have an account? Sign in →</span>
     </button>
+    <div style="margin-top:10px">
+      <button id="demo-login-btn" onclick="doLoginDemo()" style="background:white;color:#0F766E;border:1.5px solid #0F766E;padding:9px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background='white'">
+        🎯 <span data-only-lang="it">Prova la demo, senza registrarti</span><span data-only-lang="en" style="display:none">Try the demo, no signup needed</span>
+      </button>
+      <p style="font-size:11px;color:#94A3B8;margin-top:6px"><span data-only-lang="it">Account condiviso con pazienti finti — i dati si azzerano ogni notte.</span><span data-only-lang="en" style="display:none">Shared account with fake patients — data resets every night.</span></p>
+    </div>
   </div>
 
   <!-- LOGIN/REGISTER (nascosto di default, visibile dopo click) -->
@@ -505,6 +511,25 @@ async function doForgotPassword() {
   } finally {
     btn.disabled = false; btn.textContent = '📧 ' + _L('Invia link di recupero','Send recovery link');
   }
+}
+
+// Demo sandbox (SEZIONE 125) — account condiviso pre-seedato, per chi vuole
+// esplorare la piattaforma prima che la registrazione pubblica apra. Le
+// credenziali sono note (è un account demo pubblico per definizione, non un
+// segreto) — l'account resta comunque un normale utente Supabase, protetto
+// dalle stesse RLS di ogni altro, semplicemente i suoi dati sono tutti finti
+// e vengono azzerati/riseminati ogni notte (setup_demo_studio, pg_cron).
+async function doLoginDemo() {
+  const btn = document.getElementById('demo-login-btn');
+  btn.disabled = true;
+  const { error } = await sb.auth.signInWithPassword({ email: 'demo@dietplan-pro.com', password: 'DemoDietPlan2026!' });
+  if (error) {
+    btn.disabled = false;
+    alert(_L('Demo non disponibile al momento. Riprova più tardi o contatta lo staff.', 'Demo not available right now. Try again later or contact staff.'));
+    return;
+  }
+  const { data: { user } } = await sb.auth.getUser();
+  await checkMfaThenRedirect(user);
 }
 
 async function doLogin() {

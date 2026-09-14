@@ -138,6 +138,28 @@ async function _updateNotifBadge() {
   } catch (e) { /* best-effort, mai bloccare il caricamento della pagina */ }
 }
 
+// Demo sandbox (SEZIONE 125) — banner persistente iniettato via JS invece che
+// nel markup di ogni pagina (evita un'ennesima modifica bulk su 43 file):
+// avvisa chi sta esplorando l'account demo condiviso che i dati sono finti e
+// si azzerano ogni notte, così non scambia i pazienti demo per dati reali
+// né si stupisce se scompaiono. isDemoAccount() è esportata (window) così
+// altre pagine (es. profilo-pubblico.html) possono nascondere azioni non
+// sensate sulla demo, tipo il cambio password del login condiviso.
+function isDemoAccount() {
+  return !!(currentUser && currentUser.email === 'demo@dietplan-pro.com');
+}
+window.isDemoAccount = isDemoAccount;
+function _showDemoBannerIfNeeded() {
+  if (!isDemoAccount() || document.getElementById('demo-mode-banner')) return;
+  const bar = document.createElement('div');
+  bar.id = 'demo-mode-banner';
+  bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:400;background:#7C3AED;color:white;text-align:center;padding:6px 14px;font-size:12px;font-weight:600';
+  bar.innerHTML = '🎯 ' + _L('Modalità demo — dati finti, azzerati ogni notte alle 03:00. ','Demo mode — fake data, reset every night at 03:00. ') +
+    '<a href="index.html" style="color:white;text-decoration:underline">' + _L('Torna al sito','Back to site') + '</a>';
+  document.body.prepend(bar);
+  document.body.style.paddingTop = (parseInt(getComputedStyle(document.body).paddingTop) || 0) + 28 + 'px';
+}
+
 async function loadProfile() {
   if (!currentUser) return;
   loadProfileError = null;
@@ -171,6 +193,7 @@ async function loadProfile() {
   const adminNav = document.getElementById('nav-admin');
   if (adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
   _updateNotifBadge();
+  _showDemoBannerIfNeeded();
 
   // ── Access control ──────────────────────────────────────────────────────────
   // All approved dietitians get full access to every section.

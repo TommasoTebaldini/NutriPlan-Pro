@@ -340,7 +340,7 @@ Deno.serve(async (req: Request) => {
   }
 
   let noteGenerazione = ''
-  let providerUsato = ''
+  const providerUsati = new Set<string>()
   let parteDietetica: Record<string, unknown>[] = []
   let parteAltro: Record<string, unknown>[] = []
 
@@ -348,7 +348,7 @@ Deno.serve(async (req: Request) => {
     const articoli = await fetchPubMedArticles(TERM_DIETETICA, mindate, maxdate, 15)
     const r = await summarizeArticles(articoli.slice(0, 8))
     parteDietetica = r.items
-    if (r.provider) providerUsato = r.provider
+    if (r.provider) providerUsati.add(r.provider)
     if (!parteDietetica.length) noteGenerazione += 'Nessuno studio trovato su PubMed per la parte dietetica in questo mese. '
   } catch (e) {
     noteGenerazione += `Errore parte dietetica: ${(e as Error).message}. `
@@ -358,11 +358,16 @@ Deno.serve(async (req: Request) => {
     const articoli = await fetchPubMedArticles(TERM_ALTRO, mindate, maxdate, 15)
     const r = await summarizeArticles(articoli.slice(0, 8))
     parteAltro = r.items
-    if (r.provider) providerUsato = r.provider
+    if (r.provider) providerUsati.add(r.provider)
     if (!parteAltro.length) noteGenerazione += 'Nessuno studio trovato su PubMed per la parte medica generale in questo mese. '
   } catch (e) {
     noteGenerazione += `Errore parte altro: ${(e as Error).message}. `
   }
+
+  // Le due sezioni possono usare provider di fallback diversi (es. dietetica
+  // -> Gemini, altro -> Groq se Gemini ha fallito solo lì): il campo deve
+  // riportarli entrambi, non solo l'ultimo scritto.
+  const providerUsato = [...providerUsati].join(', ')
 
   if (!parteDietetica.length && !parteAltro.length) {
     await logServerError('generate-giornale', noteGenerazione || 'Nessun contenuto generato').catch(() => {})

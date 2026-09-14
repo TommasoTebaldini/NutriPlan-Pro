@@ -116,28 +116,42 @@ serve(async (req) => {
     const feeCents = Math.round(amountCents * PLATFORM_FEE_PCT);
     const origin = req.headers.get("origin") || "https://app.dietplan-pro.com";
 
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      client_reference_id: user.id,
-      customer_email: user.email,
-      payment_method_types: ["card", "paypal"],
-      line_items: [{
-        price_data: {
-          currency: "eur",
-          product_data: { name: fattura.tipo_visita || "Prestazione nutrizionale" },
-          unit_amount: amountCents,
+    // Il mutex claim_fattura_checkout() sopra è già acquisito a questo punto:
+    // se la chiamata Stripe fallisce (rate limit, errore di rete, account
+    // Connect in stato inatteso) va rilasciato esplicitamente — altrimenti
+    // resta bloccato fino all'autoliberazione a 30 minuti pur non essendo mai
+    // stata creata nessuna sessione di pagamento reale (SEZIONE 114).
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        client_reference_id: user.id,
+        customer_email: user.email,
+        payment_method_types: ["card", "paypal"],
+        line_items: [{
+          price_data: {
+            currency: "eur",
+            product_data: { name: fattura.tipo_visita || "Prestazione nutrizionale" },
+            unit_amount: amountCents,
+          },
+          quantity: 1,
+        }],
+        payment_intent_data: {
+          application_fee_amount: feeCents,
+          transfer_data: { destination: dietitianProfile.stripe_connect_account_id },
+          metadata: { fattura_id: fatturaId, supabase_patient_uid: user.id },
         },
-        quantity: 1,
-      }],
-      payment_intent_data: {
-        application_fee_amount: feeCents,
-        transfer_data: { destination: dietitianProfile.stripe_connect_account_id },
-        metadata: { fattura_id: fatturaId, supabase_patient_uid: user.id },
-      },
-      metadata: { fattura_id: fatturaId, kind: "invoice_payment" },
-      success_url: `${origin}/pagamenti?paid=1`,
-      cancel_url: `${origin}/pagamenti?cancelled=1`,
-    });
+        metadata: { fattura_id: fatturaId, kind: "invoice_payment" },
+        success_url: `${origin}/pagamenti?paid=1`,
+        cancel_url: `${origin}/pagamenti?cancelled=1`,
+      });
+    } catch (stripeErr) {
+      await supabaseAdmin.rpc("release_fattura_checkout", {
+        p_fattura_id: fatturaId,
+        p_patient_id: user.id,
+      }).catch(() => {});
+      throw stripeErr;
+    }
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -3754,7 +3754,12 @@ CREATE INDEX IF NOT EXISTS idx_patient_audit_log_created_at ON patient_audit_log
 -- riattivare una cartella. Finché archived = false il rapporto è
 -- considerato attivo e nulla viene mai cancellato automaticamente.
 
-ALTER TABLE cartelle ADD COLUMN IF NOT EXISTS archived_at timestamptz;
+-- NOTA: cartelle è diventata una VISTA (cifratura SEZIONE 40, security_invoker
+-- =true) — un trigger BEFORE UPDATE non può essere creato su una vista, quindi
+-- qui sotto si usa sempre cartelle_raw, mai il nome pubblico. Corretto prima
+-- dell'esecuzione (mai eseguita fino a questo punto), stesso pattern già
+-- documentato per la migrazione MFA e per SEZIONE 51.
+ALTER TABLE cartelle_raw ADD COLUMN IF NOT EXISTS archived_at timestamptz;
 
 CREATE OR REPLACE FUNCTION stamp_cartella_archived_at()
 RETURNS trigger
@@ -3768,8 +3773,8 @@ BEGIN
 END;
 $$;
 
-DROP TRIGGER IF EXISTS trg_stamp_archived_at ON cartelle;
-CREATE TRIGGER trg_stamp_archived_at BEFORE UPDATE ON cartelle
+DROP TRIGGER IF EXISTS trg_stamp_archived_at ON cartelle_raw;
+CREATE TRIGGER trg_stamp_archived_at BEFORE UPDATE ON cartelle_raw
 FOR EACH ROW EXECUTE FUNCTION stamp_cartella_archived_at();
 
 CREATE OR REPLACE FUNCTION purge_expired_patient_audit_log()
@@ -3780,8 +3785,10 @@ SET search_path = public, pg_temp
 AS $$
 BEGIN
   -- Cartelle archiviate da oltre 10 anni: fine del periodo di conservazione.
+  -- cartelle_raw (non la vista) per non dipendere dalle RLS all'interno di
+  -- una funzione SECURITY DEFINER pensata per girare come job pg_cron.
   DELETE FROM patient_audit_log al
-  USING cartelle c
+  USING cartelle_raw c
   WHERE al.patient_id = c.id
     AND c.archived = true
     AND c.archived_at IS NOT NULL
@@ -3792,7 +3799,7 @@ BEGIN
   -- dalla scrittura dell'evento stesso come rete di sicurezza, in linea con
   -- il principio di limitazione della conservazione (art. 5.1.e GDPR).
   DELETE FROM patient_audit_log al
-  WHERE NOT EXISTS (SELECT 1 FROM cartelle c WHERE c.id = al.patient_id)
+  WHERE NOT EXISTS (SELECT 1 FROM cartelle_raw c WHERE c.id = al.patient_id)
     AND al.created_at < now() - interval '10 years';
 END;
 $$;
@@ -9034,4 +9041,66 @@ SELECT cron.schedule(
 
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_112_giornale_dietista', 'Nuova feature "Il Giornale del Dietista" (richiesta utente 2026-09-06): tabella giornale_numeri (RLS: lettura pubblicata a tutti gli autenticati, bozza+scrittura solo check_is_admin()), secret dedicato in Vault (giornale_cron_secret, mai la service_role key in chiaro nel cron) e job pg_cron mensile (1° del mese, 06:00 UTC) che invoca via pg_net la Edge Function generate-giornale (supabase/functions/generate-giornale/index.ts) — questa recupera studi REALI da PubMed/MEDLINE (incl. Cochrane) e usa l''AI SOLO per riassumerli, mai per inventare contenuto; pubblica sempre come bozza, mai pubblicazione automatica, per revisione admin prima che tutti i dietisti la vedano. Codice client in giornale.html + voce di navigazione "Strumenti" aggiunta a tutte le pagine, stesso commit.')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 113 — FIX ALTO: race condition di doppia prenotazione sullo stesso
+-- slot appuntamento
+--
+-- DietitianDetailPage.jsx (Diet-Plan-Pro-app-claude, prenotazione pubblica
+-- paziente→dietista) fa un INSERT diretto su appointments dopo aver filtrato
+-- gli slot occupati solo lato client (query separata in onSelectDate()) —
+-- nessun controllo atomico lato server. Due pazienti che aprono la stessa
+-- pagina e prenotano lo stesso orario in rapida successione ottengono
+-- ENTRAMBI un appuntamento confermato sullo stesso slot, senza che nessuno dei
+-- due veda un errore. Verificato: appointments non aveva alcun vincolo
+-- UNIQUE/EXCLUSION oltre alla PK.
+--
+-- Indice UNIQUE parziale: uno slot (dietista, orario) può avere al più una
+-- riga non cancellata. 'cancelled' escluso di proposito, così un paziente può
+-- ri-prenotare lo stesso orario dopo che l'appuntamento precedente è stato
+-- cancellato. Il client (stesso commit) intercetta l'errore 23505 risultante
+-- e mostra un messaggio invece del generico "errore nella prenotazione".
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_appointments_dietitian_slot_unique
+  ON appointments (dietitian_id, appointment_date)
+  WHERE status <> 'cancelled';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_113_fix_race_condition_prenotazione', 'Indice UNIQUE parziale su appointments(dietitian_id, appointment_date) WHERE status<>''cancelled'' — chiude una race condition di doppia prenotazione sullo stesso slot (nessun controllo atomico esisteva prima, solo filtro lato client)')
+ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 114 — FIX MEDIO: mutex di pagamento fattura mai rilasciato su
+-- errore Stripe
+--
+-- claim_fattura_checkout() (SEZIONE 97) viene acquisito PRIMA della chiamata
+-- a stripe.checkout.sessions.create() in create-invoice-checkout-session. Se
+-- quella chiamata fallisce (rate limit Stripe, errore di rete, account
+-- Connect in stato inatteso), la funzione risponde 500 ma il mutex resta
+-- acquisito fino all'autoliberazione a 30 minuti — pur non essendo mai stata
+-- creata nessuna sessione di pagamento reale, il paziente non può ripagare la
+-- stessa fattura per fino a 30 minuti. Aggiunge una funzione di rilascio
+-- esplicito, chiamata dalla edge function (stesso commit) nel catch attorno
+-- alla sola chiamata Stripe.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION public.release_fattura_checkout(p_fattura_id UUID, p_patient_id UUID)
+RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public' AS $$
+BEGIN
+  UPDATE fatture
+  SET stripe_checkout_pending_at = NULL
+  WHERE id = p_fattura_id
+    AND patient_id = p_patient_id;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.release_fattura_checkout(UUID, UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.release_fattura_checkout(UUID, UUID) TO service_role;
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_114_release_fattura_checkout', 'RPC release_fattura_checkout() per liberare il mutex claim_fattura_checkout() (SEZIONE 97) quando la chiamata Stripe fallisce dopo l''acquisizione, invece di lasciarlo bloccato fino all''autoliberazione a 30 minuti')
 ON CONFLICT (id) DO NOTHING;

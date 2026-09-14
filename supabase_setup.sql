@@ -9257,3 +9257,66 @@ NOTIFY pgrst, 'reload schema';
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_116_mutex_sdi_sts', 'Mutex applicativo (claim/release_fattura_sdi, claim/release_fattura_sts) contro invii duplicati allo SDI (fattura elettronica) e al Sistema TS - nessuno dei due aveva un controllo atomico prima, a differenza del pagamento Stripe (SEZIONE 97/114)')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 117 — FIX BASSO: nessun audit trail per le azioni admin
+--
+-- admin.html (makeAdmin/removeAdmin/approvaUtente/revokaUtente) fa UPDATE
+-- diretti su profiles.is_admin/approved — protetti lato DB da
+-- prevent_self_privilege_escalation (nessuna auto-promozione possibile) ma,
+-- a differenza dei dati clinici (13 tabelle coperte da log_clinical_change),
+-- nessuna traccia di CHI ha reso admin/revocato CHI e quando.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS admin_audit_log (
+  id             BIGSERIAL   PRIMARY KEY,
+  admin_id       UUID        NOT NULL REFERENCES auth.users(id) ON DELETE SET NULL,
+  target_user_id UUID        REFERENCES auth.users(id) ON DELETE SET NULL,
+  action         TEXT        NOT NULL,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE admin_audit_log ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "admin_audit_log_admin_read" ON admin_audit_log;
+CREATE POLICY "admin_audit_log_admin_read" ON admin_audit_log
+  FOR SELECT USING (check_is_admin());
+-- Nessuna policy INSERT/UPDATE/DELETE per authenticated/anon: solo il
+-- trigger SECURITY DEFINER sotto scrive qui, mai il client direttamente.
+
+CREATE INDEX IF NOT EXISTS idx_admin_audit_log_target ON admin_audit_log(target_user_id);
+
+CREATE OR REPLACE FUNCTION log_admin_profile_change()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+BEGIN
+  IF NEW.is_admin IS DISTINCT FROM OLD.is_admin THEN
+    INSERT INTO admin_audit_log (admin_id, target_user_id, action)
+    VALUES (auth.uid(), NEW.id, CASE WHEN NEW.is_admin THEN 'is_admin_granted' ELSE 'is_admin_revoked' END);
+  END IF;
+  IF NEW.approved IS DISTINCT FROM OLD.approved THEN
+    INSERT INTO admin_audit_log (admin_id, target_user_id, action)
+    VALUES (auth.uid(), NEW.id, CASE WHEN NEW.approved THEN 'account_approved' ELSE 'account_revoked' END);
+  END IF;
+  RETURN NEW;
+EXCEPTION WHEN OTHERS THEN
+  RAISE WARNING 'log_admin_profile_change fallito su profiles %: %', NEW.id, SQLERRM;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_log_admin_profile_change ON profiles;
+CREATE TRIGGER trg_log_admin_profile_change
+AFTER UPDATE ON profiles
+FOR EACH ROW
+WHEN (NEW.is_admin IS DISTINCT FROM OLD.is_admin OR NEW.approved IS DISTINCT FROM OLD.approved)
+EXECUTE FUNCTION log_admin_profile_change();
+
+NOTIFY pgrst, 'reload schema';
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_117_admin_audit_log', 'Tabella admin_audit_log + trigger su profiles (is_admin/approved) - traccia chi ha reso admin/revocato/approvato/bloccato chi e quando, gap trovato durante audit generale (le azioni admin non avevano nessuna traccia, a differenza dei dati clinici)')
+ON CONFLICT (id) DO NOTHING;

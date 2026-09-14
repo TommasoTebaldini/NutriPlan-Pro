@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/tour.css">
 <style>
+html { scroll-behavior: smooth; }
 .lang-section { margin-bottom: 32px; }
 .lang-section h3 { font-size: 16px; font-weight: 700; color: var(--slate); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 .lang-cards { display: flex; gap: 14px; flex-wrap: wrap; }
@@ -133,6 +134,61 @@
 }
 .layout-card .lc-check { font-size: 14px; display: none; }
 .layout-card.active .lc-check { display: block; }
+
+/* Settings quick-nav + thematic groups — prima le ~10 sezioni erano un unico
+   elenco verticale senza gerarchia (nessun modo di capire a colpo d'occhio
+   "dove sono le cose", pulsanti di stili diversi mescolati). Raggruppate per
+   tema con un header colorato + una barra pillole per saltare direttamente
+   al gruppo che serve, senza scrollare tutta la pagina. */
+.settings-nav {
+  position: sticky;
+  top: 54px;
+  z-index: 60;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: rgba(248,250,252,.92);
+  backdrop-filter: blur(6px);
+  padding: 10px 2px 14px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.settings-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 100px;
+  background: white;
+  border: 1.5px solid var(--border);
+  color: var(--slate-m);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all .15s;
+}
+.settings-nav a:hover { border-color: #6366F1; color: #4F46E5; box-shadow: 0 2px 8px rgba(99,102,241,.14); }
+.settings-group { scroll-margin-top: 76px; margin-bottom: 8px; }
+.settings-group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 34px 0 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+}
+.settings-group:first-of-type .settings-group-header { margin-top: 4px; }
+.settings-group-header .sgh-icon {
+  width: 38px; height: 38px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+  background: #EEF2FF; color: #4F46E5;
+}
+.settings-group-header .sgh-text { flex: 1; min-width: 0; }
+.settings-group-header .sgh-title { font-size: 17px; font-weight: 800; color: var(--slate); }
+.settings-group-header .sgh-desc { font-size: 12px; color: var(--slate-l); margin-top: 2px; }
+.settings-group.danger .settings-group-header .sgh-icon { background: #FEF2F2; color: #DC2626; }
 </style>
 </head>
 <body>
@@ -216,6 +272,26 @@
       <div class="hero-title"><span data-only-lang="it">Impostazioni</span><span data-only-lang="en" style="display:none">Settings</span></div>
       <div class="hero-desc" data-only-lang="it">Personalizza lingua e preferenze dell'applicazione DietPlan Pro.</div>
       <div class="hero-desc" data-only-lang="en">Customise language and preferences for the DietPlan Pro application.</div>
+    </div>
+  </div>
+
+  <!-- QUICK-NAV: salta direttamente a un gruppo di impostazioni -->
+  <nav class="settings-nav" aria-label="Sezioni impostazioni">
+    <a href="#group-preferenze">🎨 <span data-only-lang="it">Preferenze app</span><span data-only-lang="en" style="display:none">App preferences</span></a>
+    <a href="#group-studio">🏢 <span data-only-lang="it">Studio</span><span data-only-lang="en" style="display:none">Practice</span></a>
+    <a href="#group-comunicazione">💬 <span data-only-lang="it">Comunicazione</span><span data-only-lang="en" style="display:none">Communication</span></a>
+    <a href="#group-sicurezza">🔐 <span data-only-lang="it">Sicurezza e notifiche</span><span data-only-lang="en" style="display:none">Security &amp; notifications</span></a>
+    <a href="#group-danger">⚠️ <span data-only-lang="it">Zona pericolosa</span><span data-only-lang="en" style="display:none">Danger zone</span></a>
+  </nav>
+
+  <!-- GRUPPO: PREFERENZE APP (lingua + tema grafico dei piani stampati) -->
+  <section class="settings-group" id="group-preferenze">
+  <div class="settings-group-header">
+    <div class="sgh-icon">🎨</div>
+    <div class="sgh-text">
+      <div class="sgh-title"><span data-only-lang="it">Preferenze app</span><span data-only-lang="en" style="display:none">App preferences</span></div>
+      <div class="sgh-desc" data-only-lang="it">Lingua dell'interfaccia e tema grafico dei piani alimentari stampati/esportati.</div>
+      <div class="sgh-desc" data-only-lang="en" style="display:none">Interface language and the graphic theme for printed/exported meal plans.</div>
     </div>
   </div>
 
@@ -402,6 +478,20 @@
     </div>
   </div>
 
+  </section>
+  <!-- /GRUPPO PREFERENZE APP -->
+
+  <!-- GRUPPO: STUDIO (collaboratori + fatturazione) -->
+  <section class="settings-group" id="group-studio">
+  <div class="settings-group-header">
+    <div class="sgh-icon">🏢</div>
+    <div class="sgh-text">
+      <div class="sgh-title"><span data-only-lang="it">Studio</span><span data-only-lang="en" style="display:none">Practice</span></div>
+      <div class="sgh-desc" data-only-lang="it">Chi lavora con te e i dati per fatturare.</div>
+      <div class="sgh-desc" data-only-lang="en" style="display:none">Who works with you, and your billing details.</div>
+    </div>
+  </div>
+
   <!-- COLLABORATORI DELLO STUDIO -->
   <div class="lang-section" id="section-collaboratori">
     <h3><span data-only-lang="it">👥 Collaboratori dello studio</span><span data-only-lang="en" style="display:none">👥 Studio Collaborators</span></h3>
@@ -554,6 +644,20 @@
     </div>
   </div>
 
+  </section>
+  <!-- /GRUPPO STUDIO -->
+
+  <!-- GRUPPO: COMUNICAZIONE (integrazioni esterne verso i pazienti) -->
+  <section class="settings-group" id="group-comunicazione">
+  <div class="settings-group-header">
+    <div class="sgh-icon">💬</div>
+    <div class="sgh-text">
+      <div class="sgh-title"><span data-only-lang="it">Comunicazione</span><span data-only-lang="en" style="display:none">Communication</span></div>
+      <div class="sgh-desc" data-only-lang="it">Canali esterni collegati per contattare i pazienti.</div>
+      <div class="sgh-desc" data-only-lang="en" style="display:none">External channels connected to reach your patients.</div>
+    </div>
+  </div>
+
   <!-- WHATSAPP BUSINESS -->
   <div class="lang-section" id="section-whatsapp">
     <h3>💬 WhatsApp Business</h3>
@@ -614,6 +718,20 @@
         <button class="btn" style="background:#25D366;color:white;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer" onclick="saveWhatsappData()">💾 Salva WhatsApp Business</button>
         <span id="wa-save-msg" style="margin-left:10px;font-size:12.5px;color:#0F766E;font-weight:600"></span>
       </div>
+    </div>
+  </div>
+
+  </section>
+  <!-- /GRUPPO COMUNICAZIONE -->
+
+  <!-- GRUPPO: SICUREZZA, NOTIFICHE E DATI -->
+  <section class="settings-group" id="group-sicurezza">
+  <div class="settings-group-header">
+    <div class="sgh-icon">🔐</div>
+    <div class="sgh-text">
+      <div class="sgh-title"><span data-only-lang="it">Sicurezza, notifiche e dati</span><span data-only-lang="en" style="display:none">Security, notifications &amp; data</span></div>
+      <div class="sgh-desc" data-only-lang="it">2FA, avvisi push/dashboard e backup completo dei dati dello studio.</div>
+      <div class="sgh-desc" data-only-lang="en" style="display:none">2FA, push/dashboard alerts, and a full backup of your practice's data.</div>
     </div>
   </div>
 
@@ -724,6 +842,12 @@
     </div>
   </div>
 
+  </section>
+  <!-- /GRUPPO SICUREZZA, NOTIFICHE E DATI -->
+
+  <!-- GRUPPO: ZONA PERICOLOSA -->
+  <section class="settings-group danger" id="group-danger">
+
   <!-- ZONA PERICOLOSA -->
   <div class="lang-section" id="section-zona-pericolosa">
     <h3 style="color:#DC2626"><span data-only-lang="it">⚠️ Zona pericolosa</span><span data-only-lang="en" style="display:none">⚠️ Danger Zone</span></h3>
@@ -738,6 +862,9 @@
       <button class="btn" style="background:#DC2626;color:white;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer" onclick="openDeleteAccountModal()">🗑️ <span data-only-lang="it">Elimina account</span><span data-only-lang="en" style="display:none">Delete account</span></button>
     </div>
   </div>
+
+  </section>
+  <!-- /GRUPPO ZONA PERICOLOSA -->
 
 </div>
 
@@ -782,6 +909,21 @@ function setPianoLayout(id) {
   });
   if (typeof toast === 'function') toast('🎨 ' + _L('Layout "' + (LAYOUT_NAMES[id]||id) + '" selezionato!', 'Layout "' + (LAYOUT_NAMES[id]||id) + '" selected!'), 'ok');
 }
+
+// Scroll esplicito invece di affidarsi solo al comportamento nativo
+// dell'ancora "#id": il target si sposta durante il caricamento (collaboratori,
+// dati fiscali ecc. arrivano async e cambiano l'altezza della pagina sotto ai
+// piedi), quindi un semplice href="#..." può saltare a una posizione ormai
+// superata. scrollIntoView calcolato al momento del click è sempre corretto.
+document.querySelectorAll('.settings-nav a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', a.getAttribute('href'));
+  });
+});
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {

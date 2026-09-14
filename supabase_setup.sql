@@ -9848,3 +9848,87 @@ SELECT setup_demo_studio();
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_125_demo_sandbox', 'Account demo condiviso (demo@dietplan-pro.com, da creare manualmente su Supabase Dashboard - Admin API non raggiungibile da qui) con 6 pazienti finti realistici, reset automatico ogni notte via pg_cron (setup_demo_studio, no-op finché l''utente auth non esiste). Permette di provare la piattaforma prima che la registrazione pubblica apra.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 126 — Alert email per errori JS lato client (chiude il debito di
+-- osservabilità: finora solo gli errori SERVER (Vercel functions/Edge
+-- Functions, api/_errorLog.js + supabase/functions/_shared/errorLog.ts)
+-- generavano un alert via Resend. Gli errori JS non gestiti lato client
+-- (window.onerror/unhandledrejection su client_errors, la maggioranza dei
+-- bug reali su pagine HTML/React) restavano silenziosi finché qualcuno non
+-- apriva Admin -> Log errori a mano — esattamente il gap segnalato:
+-- "un errore in produzione si scopre solo consultando manualmente il log".
+--
+-- Stesso pattern già usato 3 volte in questo file (SEZIONE 75
+-- notify_on_event_webhook, generate-giornale-monthly): trigger AFTER INSERT
+-- -> pg_net.http_post -> Edge Function, autenticato con un secret dedicato
+-- generato qui e letto da Vault ad ogni chiamata (mai una JWT/service key in
+-- chiaro nella definizione del trigger). Dedup: non invia una seconda email
+-- per lo stesso (app, message) nella stessa ora, stessa logica già usata dal
+-- lato server in api/_errorLog.js.
+--
+-- Deploy richiesto dopo questa sezione (una tantum, non automatizzabile da
+-- qui): supabase functions deploy alert-client-error --no-verify-jwt, poi
+-- impostare il secret CLIENT_ERROR_ALERT_TOKEN della funzione con il valore
+-- generato nel Vault sotto (RESEND_API_KEY/ADMIN_ALERT_EMAIL: se già
+-- configurati per gli alert server-side, valgono anche qui, nessuna azione
+-- ulteriore).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM vault.secrets WHERE name = 'client_error_alert_token') THEN
+    PERFORM vault.create_secret(
+      encode(extensions.gen_random_bytes(32), 'hex'),
+      'client_error_alert_token',
+      'Segreto condiviso tra il trigger alert-client-error (client_errors) e la Edge Function omonima. Va impostato come secret CLIENT_ERROR_ALERT_TOKEN della funzione dopo l''esecuzione di SEZIONE 126.'
+    );
+  END IF;
+END $$;
+
+CREATE OR REPLACE FUNCTION client_error_alert_webhook()
+RETURNS TRIGGER
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_token TEXT;
+  v_since TIMESTAMPTZ;
+  v_dup_count INT;
+BEGIN
+  -- Solo errori JS automatici lato client, non i log server (già alertati
+  -- da api/_errorLog.js / _shared/errorLog.ts) né eventuali altri "level".
+  IF NEW.level NOT IN ('error', 'unhandledrejection') OR NEW.app NOT IN ('nutriplan-pro', 'diet-plan-pro-app') THEN
+    RETURN NULL;
+  END IF;
+
+  v_since := NEW.created_at - INTERVAL '1 hour';
+  SELECT count(*) INTO v_dup_count FROM client_errors
+  WHERE app = NEW.app AND message = NEW.message AND created_at >= v_since AND id <> NEW.id;
+  IF v_dup_count > 0 THEN
+    RETURN NULL; -- già alertato per lo stesso errore nell'ultima ora
+  END IF;
+
+  SELECT decrypted_secret INTO v_token FROM vault.decrypted_secrets WHERE name = 'client_error_alert_token';
+
+  IF v_token IS NOT NULL THEN
+    PERFORM net.http_post(
+      url := 'https://hvdwqowkhutfsdpiubxe.supabase.co/functions/v1/alert-client-error',
+      body := jsonb_build_object(
+        'app', NEW.app, 'level', NEW.level, 'message', NEW.message,
+        'stack', NEW.stack, 'page_url', NEW.page_url, 'user_agent', NEW.user_agent, 'user_email', NEW.user_email
+      ),
+      headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || v_token),
+      timeout_milliseconds := 5000
+    );
+  END IF;
+
+  RETURN NULL;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS "alert-client-error" ON client_errors;
+CREATE TRIGGER "alert-client-error" AFTER INSERT ON client_errors
+  FOR EACH ROW EXECUTE FUNCTION client_error_alert_webhook();
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_126_client_error_alert', 'Trigger AFTER INSERT ON client_errors -> Edge Function alert-client-error (Resend), dedup 1h per (app,message). Copre l''ultimo buco di osservabilità: prima solo gli errori server generavano un alert, gli errori JS client restavano silenziosi su client_errors finché non si apriva Admin a mano. Deploy Edge Function + secret CLIENT_ERROR_ALERT_TOKEN richiesti una tantum dopo questa sezione.')
+ON CONFLICT (id) DO NOTHING;

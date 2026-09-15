@@ -476,7 +476,13 @@ async function handleSubscribe() {
   } catch (err) {
     toast('❌ ' + _L('Errore: ','Error: ') + err.message, 'err');
     btn.disabled = false;
-    btn.textContent = '⭐ ' + _L('Inizia la prova gratuita','Start free trial');
+    // Testo del bottone vero (vedi il markup statico più sopra) è "Abbonati
+    // ora" — questo era rimasto "Inizia la prova gratuita" da una versione
+    // precedente della pagina, prima che esistesse il flusso prova gratuita
+    // → abbonamento di oggi: un checkout fallito faceva ripartire il
+    // bottone con un testo sbagliato (e comunque fuorviante ora, dato che
+    // chi arriva qui potrebbe già essere IN prova, non doverla "iniziare").
+    btn.textContent = '⭐ ' + _L('Abbonati ora','Subscribe now');
   }
 }
 

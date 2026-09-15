@@ -151,6 +151,14 @@ function isTrialAccount() {
 window.isTrialAccount = isTrialAccount;
 function _showTrialBannerIfNeeded() {
   if (!isTrialAccount() || document.getElementById('trial-mode-banner') || !currentProfile.trial_expires_at) return;
+  // Chi si abbona (anche DURANTE la prova, non solo a fine prova) resta
+  // is_trial_account=true per sempre — il webhook Stripe aggiorna solo
+  // subscription_plan/subscription_expires_at, mai questo flag (vedi
+  // stripe-webhook/index.ts). Senza questo controllo, un cliente pagante
+  // continuerebbe a vedersi il banner "prova gratuita in scadenza" a vita.
+  const subExpires = currentProfile.subscription_expires_at;
+  const isPro = currentProfile.subscription_plan === 'pro' && (!subExpires || new Date(subExpires) > new Date());
+  if (isPro) return;
   const msLeft = new Date(currentProfile.trial_expires_at) - new Date();
   const daysLeft = Math.ceil(msLeft / 86400000);
   const bar = document.createElement('div');
@@ -197,7 +205,8 @@ async function loadProfile() {
   // il limite ricette Free lato paziente). Finché resta false, un trial
   // scaduto continua a funzionare normalmente — nessuna regressione prima
   // del lancio dei pagamenti.
-  if (data && data.is_trial_account && data.trial_expires_at && new Date(data.trial_expires_at) < new Date() && data.subscription_plan !== 'pro') {
+  const _isProNow = data && data.subscription_plan === 'pro' && (!data.subscription_expires_at || new Date(data.subscription_expires_at) > new Date());
+  if (data && data.is_trial_account && data.trial_expires_at && new Date(data.trial_expires_at) < new Date() && !_isProNow) {
     try {
       const { data: gateActive, error: gateErr } = await sb.rpc('site_payments_active');
       if (!gateErr && gateActive) { window.location.href = 'trial-scaduto.html'; return; }

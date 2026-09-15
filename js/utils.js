@@ -138,24 +138,28 @@ async function _updateNotifBadge() {
   } catch (e) { /* best-effort, mai bloccare il caricamento della pagina */ }
 }
 
-// Demo sandbox (SEZIONE 125) — banner persistente iniettato via JS invece che
-// nel markup di ogni pagina (evita un'ennesima modifica bulk su 43 file):
-// avvisa chi sta esplorando l'account demo condiviso che i dati sono finti e
-// si azzerano ogni notte, così non scambia i pazienti demo per dati reali
-// né si stupisce se scompaiono. isDemoAccount() è esportata (window) così
-// altre pagine (es. profilo-pubblico.html) possono nascondere azioni non
-// sensate sulla demo, tipo il cambio password del login condiviso.
-function isDemoAccount() {
-  return !!(currentUser && currentUser.email === 'demo@dietplan-pro.com');
+// Prova gratuita per-dietista (SEZIONE 127, sostituisce il banner
+// dell'account demo condiviso di SEZIONE 125) — banner persistente iniettato
+// via JS invece che nel markup di ogni pagina (evita un'ennesima modifica
+// bulk su 43 file): mostra quanti giorni restano e invita ad abbonarsi.
+// isTrialAccount() esportata (window) per lo stesso motivo per cui lo era
+// isDemoAccount() prima: altre pagine possono nascondere azioni non sensate
+// durante la prova, se mai servisse.
+function isTrialAccount() {
+  return !!(currentProfile && currentProfile.is_trial_account);
 }
-window.isDemoAccount = isDemoAccount;
-function _showDemoBannerIfNeeded() {
-  if (!isDemoAccount() || document.getElementById('demo-mode-banner')) return;
+window.isTrialAccount = isTrialAccount;
+function _showTrialBannerIfNeeded() {
+  if (!isTrialAccount() || document.getElementById('trial-mode-banner') || !currentProfile.trial_expires_at) return;
+  const msLeft = new Date(currentProfile.trial_expires_at) - new Date();
+  const daysLeft = Math.ceil(msLeft / 86400000);
   const bar = document.createElement('div');
-  bar.id = 'demo-mode-banner';
+  bar.id = 'trial-mode-banner';
   bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:400;background:#7C3AED;color:white;text-align:center;padding:6px 14px;font-size:12px;font-weight:600';
-  bar.innerHTML = '🎯 ' + _L('Modalità demo — dati finti, azzerati ogni notte alle 03:00. ','Demo mode — fake data, reset every night at 03:00. ') +
-    '<a href="index.html" style="color:white;text-decoration:underline">' + _L('Torna al sito','Back to site') + '</a>';
+  const msg = daysLeft > 0
+    ? _L(`🎯 Prova gratuita — ${daysLeft} ${daysLeft === 1 ? 'giorno rimasto' : 'giorni rimasti'}. `, `🎯 Free trial — ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left. `)
+    : _L('🎯 Prova gratuita terminata. ', '🎯 Free trial ended. ');
+  bar.innerHTML = msg + '<a href="abbonamento.html" style="color:white;text-decoration:underline">' + _L('Abbonati per continuare','Subscribe to continue') + '</a>';
   document.body.prepend(bar);
   document.body.style.paddingTop = (parseInt(getComputedStyle(document.body).paddingTop) || 0) + 28 + 'px';
 }
@@ -170,12 +174,12 @@ async function loadProfile() {
   if (_cached) {
     data = _cached;
     // Background refresh (don't block render)
-    sb.from('profiles').select('id,username,email,is_admin,approved,sections_enabled,nome,cognome,subscription_plan,subscription_expires_at').eq('id', currentUser.id).maybeSingle().then(({ data: fresh, error }) => {
+    sb.from('profiles').select('id,username,email,is_admin,approved,sections_enabled,nome,cognome,subscription_plan,subscription_expires_at,is_trial_account,trial_expires_at').eq('id', currentUser.id).maybeSingle().then(({ data: fresh, error }) => {
       if (!error && fresh) _writeProfileCache(currentUser.id, fresh);
     });
   } else {
     // ② No cache — fetch from DB and populate cache
-    const { data: fetched, error } = await sb.from('profiles').select('id,username,email,is_admin,approved,sections_enabled,nome,cognome,subscription_plan,subscription_expires_at').eq('id', currentUser.id).maybeSingle();
+    const { data: fetched, error } = await sb.from('profiles').select('id,username,email,is_admin,approved,sections_enabled,nome,cognome,subscription_plan,subscription_expires_at,is_trial_account,trial_expires_at').eq('id', currentUser.id).maybeSingle();
     if (error) { console.warn('loadProfile error:', error.message); loadProfileError = error; }
     data = fetched;
     if (data) _writeProfileCache(currentUser.id, data);
@@ -187,13 +191,25 @@ async function loadProfile() {
     window.location.href = 'index.html?waiting=1';
     return;
   }
+  // Prova gratuita scaduta (SEZIONE 127) — bloccata SOLO quando
+  // site_payments_active() è true lato DB (dormiente, false finché il
+  // checkout Stripe del dietista non è live: stesso pattern già usato per
+  // il limite ricette Free lato paziente). Finché resta false, un trial
+  // scaduto continua a funzionare normalmente — nessuna regressione prima
+  // del lancio dei pagamenti.
+  if (data && data.is_trial_account && data.trial_expires_at && new Date(data.trial_expires_at) < new Date() && data.subscription_plan !== 'pro') {
+    try {
+      const { data: gateActive, error: gateErr } = await sb.rpc('site_payments_active');
+      if (!gateErr && gateActive) { window.location.href = 'trial-scaduto.html'; return; }
+    } catch (e) { /* best-effort: se il check di site_payments_active fallisce, non si blocca l'accesso */ }
+  }
   // Update UI
   const el = document.getElementById('sb-user-email');
   if (el) el.textContent = data?.username || currentUser.email;
   const adminNav = document.getElementById('nav-admin');
   if (adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
   _updateNotifBadge();
-  _showDemoBannerIfNeeded();
+  _showTrialBannerIfNeeded();
 
   // ── Access control ──────────────────────────────────────────────────────────
   // All approved dietitians get full access to every section.

@@ -10,12 +10,23 @@ import { test, expect } from '@playwright/test'
 // il lato migrazioni SQL, non copribile da e2e).
 
 test.describe('Login page', () => {
-  test('loads with the dev notice and both login/demo entry points', async ({ page }) => {
+  test('loads with the dev notice, login entry point and trial signup form', async ({ page }) => {
     await page.goto('/index.html')
     await expect(page.locator('.logo h1')).toHaveText('DietPlan Pro')
     await expect(page.locator('#dev-notice')).toBeVisible()
     await expect(page.locator('button[onclick="mostraLogin()"]')).toBeVisible()
-    await expect(page.locator('#demo-login-btn')).toBeVisible()
+    await expect(page.locator('#trial-email')).toBeVisible()
+    await expect(page.locator('#trial-pw')).toBeVisible()
+    await expect(page.locator('#trial-btn')).toBeVisible()
+  })
+
+  test('starting a trial without accepting the consent checkbox shows a client-side error', async ({ page }) => {
+    await page.goto('/index.html')
+    await page.locator('#trial-email').fill('trial-e2e-test@example.com')
+    await page.locator('#trial-pw').fill('password12345')
+    await page.locator('#trial-btn').click()
+    await expect(page.locator('#trial-err')).toHaveClass(/show/)
+    await expect(page.locator('#trial-err')).not.toBeEmpty()
   })
 
   test('"Accedi" reveals the login form and hides the dev notice', async ({ page }) => {

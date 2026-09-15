@@ -9932,3 +9932,152 @@ CREATE TRIGGER "alert-client-error" AFTER INSERT ON client_errors
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_126_client_error_alert', 'Trigger AFTER INSERT ON client_errors -> Edge Function alert-client-error (Resend), dedup 1h per (app,message). Copre l''ultimo buco di osservabilità: prima solo gli errori server generavano un alert, gli errori JS client restavano silenziosi su client_errors finché non si apriva Admin a mano. Deploy Edge Function + secret CLIENT_ERROR_ALERT_TOKEN richiesti una tantum dopo questa sezione.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 127 — Prova gratuita PER DIETISTA (sostituisce l'account demo
+-- condiviso di SEZIONE 125): con più dietisti che esplorano la piattaforma
+-- nello stesso momento, un unico account condiviso significa che uno vede
+-- le modifiche dell'altro in tempo reale (stesso studio, stesse cartelle) —
+-- inaccettabile. Ogni dietista ottiene ora un vero account Supabase tutto
+-- suo (email+password scelte da lui in index.html), approvato subito
+-- (niente attesa admin, a differenza della registrazione normale) e
+-- precaricato con gli stessi 6 pazienti finti di SEZIONE 125, isolati nel
+-- suo studio dalle stesse RLS di sempre. Scade dopo 7 giorni: il blocco è
+-- gestito lato client in loadProfile() (js/utils.js), gated da
+-- site_payments_active() sotto — resta innocuo finché i pagamenti reali
+-- non sono live, stesso pattern già in uso per il limite ricette Free
+-- lato paziente (payments_active()/SEZIONE 95).
+--
+-- Il vecchio account condiviso demo@dietplan-pro.com (se mai creato
+-- dall'utente) resta innocuo ma inutilizzato: il pulsante che lo usava è
+-- stato rimosso da index.html. setup_demo_studio() e il suo cron restano
+-- nel file per cronologia ma il cron viene disattivato qui sotto.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_trial_account BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS trial_expires_at TIMESTAMPTZ;
+
+-- Unica fonte di verità per "il checkout Stripe del DIETISTA (abbonamento.html)
+-- è live" — gemella di payments_active() (quella è lato PAZIENTE, patient-portal.html/
+-- Diet-Plan-Pro-app-claude) ma intenzionalmente separata: sono due flag
+-- indipendenti, esattamente come già documentato in js/payments-config.js.
+-- Flip a true SOLO insieme a PAYMENTS_ACTIVE in js/payments-config.js, dopo
+-- aver completato SETUP-STRIPE.md.
+CREATE OR REPLACE FUNCTION site_payments_active()
+RETURNS boolean LANGUAGE sql IMMUTABLE AS $$ SELECT false $$;
+REVOKE ALL ON FUNCTION site_payments_active() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION site_payments_active() TO anon, authenticated;
+
+-- Semina gli stessi 6 pazienti finti di SEZIONE 125 (setup_demo_studio) ma
+-- per un p_uid qualunque invece del solo account demo condiviso. SOLO
+-- interna: mai chiamata direttamente dal client, solo da start_trial_signup
+-- sotto (REVOKE da anon/authenticated).
+CREATE OR REPLACE FUNCTION seed_trial_demo_data(p_uid uuid)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_c1 uuid; v_c2 uuid; v_c3 uuid; v_c4 uuid; v_c5 uuid; v_c6 uuid;
+  v_meals_base text;
+BEGIN
+  v_meals_base := '[{"id":"g1","nome":"Giorno 1","meals":[' ||
+    '{"id":"colazione","nome":"Colazione","emoji":"🌅","note":"","items":[{"nome":"Yogurt greco naturale","qt":"150","kcal_100g":63,"proteins_100g":10,"carbs_100g":4,"fats_100g":0.2},{"nome":"Fiocchi d''avena","qt":"40","kcal_100g":379,"proteins_100g":13,"carbs_100g":60,"fats_100g":7}]},' ||
+    '{"id":"pranzo","nome":"Pranzo","emoji":"🍽️","note":"","items":[{"nome":"Petto di pollo","qt":"150","kcal_100g":165,"proteins_100g":31,"carbs_100g":0,"fats_100g":3.6},{"nome":"Riso integrale","qt":"70","kcal_100g":111,"proteins_100g":2.6,"carbs_100g":23,"fats_100g":0.9},{"nome":"Zucchine","qt":"200","kcal_100g":17,"proteins_100g":1.2,"carbs_100g":3.1,"fats_100g":0.3}]},' ||
+    '{"id":"cena","nome":"Cena","emoji":"🌙","note":"","items":[{"nome":"Salmone al forno","qt":"150","kcal_100g":208,"proteins_100g":20,"carbs_100g":0,"fats_100g":13},{"nome":"Insalata mista","qt":"150","kcal_100g":15,"proteins_100g":1.2,"carbs_100g":2.9,"fats_100g":0.2},{"nome":"Pane integrale","qt":"50","kcal_100g":247,"proteins_100g":8.8,"carbs_100g":41,"fats_100g":3.4}]}' ||
+  ']}]';
+
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (p_uid, 'Marco', 'Rossi', '1990-04-12', 'M', '["Sportivo"]'::jsonb, 'Paziente demo — corridore amatoriale, obiettivo ricomposizione corporea.', now() - interval '40 days')
+  RETURNING id INTO v_c1;
+  INSERT INTO public.bia_records (cartella_id, user_id, data_misura, peso, altezza, bf_pct, ffm_kg, angolo_fase)
+  VALUES (v_c1, p_uid, current_date - 5, 78.4, 180, 15.2, 66.5, 7.1);
+  INSERT INTO public.piani (user_id, cartella_id, nome, data_piano, meals, saved_at, visible_to_patient)
+  VALUES (p_uid, v_c1, 'Piano gennaio — fase di forza', to_char(current_date, 'YYYY-MM-DD'), v_meals_base, now(), true);
+
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (p_uid, 'Giulia', 'Bianchi', '1996-09-03', 'F', '["Gravidanza"]'::jsonb, 'Paziente demo — secondo trimestre, follow-up mensile peso/fabbisogno.', now() - interval '25 days')
+  RETURNING id INTO v_c2;
+  INSERT INTO public.esami_biochimici (cartella_id, user_id, tipo, valore, unita, data_esame, note)
+  VALUES (v_c2, p_uid, 'Glicemia', 88, 'mg/dL', current_date - 10, 'Curva da carico nella norma.');
+
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (p_uid, 'Luca', 'Verdi', '1972-01-20', 'M', '["Diabete tipo 2"]'::jsonb, 'Paziente demo — diagnosi recente, in fase educazionale su conteggio carboidrati.', now() - interval '60 days')
+  RETURNING id INTO v_c3;
+  INSERT INTO public.ncpt (user_id, cartella_id, valutazione, diagnosi, intervento, monitoraggio, visible_to_patient)
+  VALUES (p_uid, v_c3,
+    'Diabete mellito tipo 2 di nuova diagnosi, BMI 29.4, sedentario.',
+    'Eccessivo apporto di carboidrati semplici correlato ad abitudini alimentari pregresse, evidenziato da diario alimentare e HbA1c 7.8%.',
+    'Educazione al conteggio dei carboidrati, riduzione zuccheri semplici, incremento attività fisica graduale.',
+    'Rivalutazione HbA1c a 3 mesi, peso e diario alimentare ogni 2 settimane.',
+    false);
+  INSERT INTO public.piani (user_id, cartella_id, nome, data_piano, meals, saved_at, visible_to_patient)
+  VALUES (p_uid, v_c3, 'Piano educazionale — conteggio CHO', to_char(current_date, 'YYYY-MM-DD'), v_meals_base, now(), true);
+
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (p_uid, 'Anna', 'Ferrari', '1958-06-15', 'F', '["Nefropatia/IRC"]'::jsonb, 'Paziente demo — IRC stadio 3a, dieta ipoproteica controllata.', now() - interval '90 days')
+  RETURNING id INTO v_c4;
+  INSERT INTO public.esami_biochimici (cartella_id, user_id, tipo, valore, unita, data_esame, note)
+  VALUES (v_c4, p_uid, 'Creatinina', 1.4, 'mg/dL', current_date - 15, 'eGFR stabile rispetto al controllo precedente.');
+
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (p_uid, 'Paolo', 'Galli', '1980-11-28', 'M', '["Obesità"]'::jsonb, 'Paziente demo — percorso multidisciplinare, primo controllo dopo 4 settimane.', now() - interval '30 days')
+  RETURNING id INTO v_c5;
+  INSERT INTO public.bia_records (cartella_id, user_id, data_misura, peso, altezza, bf_pct, ffm_kg, angolo_fase)
+  VALUES (v_c5, p_uid, current_date - 3, 104.2, 176, 34.8, 67.9, 5.4);
+
+  INSERT INTO public.cartelle (user_id, nome, cognome, ddn, sesso, tags, note, created_at)
+  VALUES (p_uid, 'Sofia', 'Colombo', '2015-03-08', 'F', '["Pediatria"]'::jsonb, 'Paziente demo — valutazione crescita, curve percentili nella norma.', now() - interval '15 days')
+  RETURNING id INTO v_c6;
+END;
+$$;
+REVOKE ALL ON FUNCTION seed_trial_demo_data(uuid) FROM PUBLIC, anon, authenticated;
+
+-- Chiamata subito dopo sb.auth.signUp() lato client (index.html, startTrial()),
+-- con lo stesso pattern/grant di create_profile_for_new_user: deve funzionare
+-- anche SENZA sessione attiva (conferma email in sospeso), quindi p_uid è un
+-- parametro esplicito, non auth.uid(). Idempotente: se chiamata due volte
+-- per lo stesso utente (es. un retry di rete) non resetta il countdown né
+-- riseeda pazienti duplicati.
+CREATE OR REPLACE FUNCTION start_trial_signup(p_uid uuid, p_email text)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_already_trial boolean;
+BEGIN
+  SELECT is_trial_account INTO v_already_trial FROM public.profiles WHERE id = p_uid;
+
+  INSERT INTO public.profiles (id, email, nome, cognome, approved, is_admin, is_trial_account, trial_expires_at, terms_accepted_at)
+  VALUES (p_uid, p_email, 'Studio', 'in prova', true, false, true, now() + interval '7 days', now())
+  ON CONFLICT (id) DO UPDATE SET
+    approved = true,
+    is_trial_account = true,
+    trial_expires_at = COALESCE(profiles.trial_expires_at, EXCLUDED.trial_expires_at),
+    terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at);
+
+  -- Semina solo la prima volta (v_already_trial era NULL/false prima di
+  -- questa chiamata): evita pazienti duplicati su una seconda invocazione.
+  IF v_already_trial IS NOT TRUE THEN
+    PERFORM seed_trial_demo_data(p_uid);
+  END IF;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION start_trial_signup(uuid, text) TO anon, authenticated;
+
+-- Il vecchio reset notturno del demo condiviso non serve più (sostituito
+-- dal trial per-dietista sopra) — disattivato, la funzione/i dati restano
+-- per cronologia ma non vengono più toccati automaticamente.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'reset-demo-studio-nightly') THEN
+    PERFORM cron.unschedule('reset-demo-studio-nightly');
+  END IF;
+END $$;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_127_trial_per_dietista', 'Sostituisce l''account demo condiviso (SEZIONE 125) con una prova gratuita di 7 giorni per-dietista: ogni dietista sceglie email+password in index.html, ottiene un vero account isolato dalle RLS, approvato subito e precaricato con 6 pazienti finti (seed_trial_demo_data). Colonne profiles.is_trial_account/trial_expires_at aggiunte. Blocco automatico allo scadere gestito lato client (loadProfile, js/utils.js), gated da site_payments_active() (dormiente, false finché Stripe dietista non è live - flippare insieme a PAYMENTS_ACTIVE in js/payments-config.js). Cron reset-demo-studio-nightly disattivato.')
+ON CONFLICT (id) DO NOTHING;

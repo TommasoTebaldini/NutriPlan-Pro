@@ -101,11 +101,20 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
     <button onclick="mostraLogin()" style="background:#0F766E;color:white;border:none;padding:10px 22px;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s" onmouseover="this.style.background='#0C5F58'" onmouseout="this.style.background='#0F766E'">
       <span data-only-lang="it">Hai già un account? Accedi →</span><span data-only-lang="en" style="display:none">Already have an account? Sign in →</span>
     </button>
-    <div style="margin-top:10px">
-      <button id="demo-login-btn" onclick="doLoginDemo()" style="background:white;color:#0F766E;border:1.5px solid #0F766E;padding:9px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s" onmouseover="this.style.background='#F0FDFA'" onmouseout="this.style.background='white'">
-        🎯 <span data-only-lang="it">Prova la demo, senza registrarti</span><span data-only-lang="en" style="display:none">Try the demo, no signup needed</span>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid #E2E8F0" id="trial-box">
+      <p style="font-size:13px;font-weight:700;color:#334155;margin-bottom:10px">🎯 <span data-only-lang="it">Prova gratis per 7 giorni, senza carta di credito</span><span data-only-lang="en" style="display:none">Try free for 7 days, no credit card</span></p>
+      <div class="err" id="trial-err"></div>
+      <div class="ok" id="trial-ok"></div>
+      <div class="fg" style="text-align:left"><input type="email" id="trial-email" placeholder="la-tua@email.com" autocomplete="email"></div>
+      <div class="fg" style="text-align:left"><input type="password" id="trial-pw" placeholder="Scegli una password (min. 8 caratteri)" autocomplete="new-password" onkeydown="if(event.key==='Enter')startTrial()"></div>
+      <label style="display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#334155;margin:8px 0;cursor:pointer;line-height:1.4;text-align:left">
+        <input type="checkbox" id="trial-consent" style="margin-top:2px;flex-shrink:0">
+        <span><span data-only-lang="it">Accetto <a href="privacy.html" target="_blank" style="color:#0F766E;font-weight:600">Privacy Policy</a> e <a href="termini.html" target="_blank" style="color:#0F766E;font-weight:600">Termini di Servizio</a>.</span><span data-only-lang="en" style="display:none">I accept the <a href="privacy.html" target="_blank" style="color:#0F766E;font-weight:600">Privacy Policy</a> and <a href="termini.html" target="_blank" style="color:#0F766E;font-weight:600">Terms of Service</a>.</span></span>
+      </label>
+      <button class="btn" id="trial-btn" onclick="startTrial()" style="margin-top:2px">
+        <span data-only-lang="it">Inizia la prova gratuita</span><span data-only-lang="en" style="display:none">Start free trial</span>
       </button>
-      <p style="font-size:11px;color:#94A3B8;margin-top:6px"><span data-only-lang="it">Account condiviso con pazienti finti — i dati si azzerano ogni notte.</span><span data-only-lang="en" style="display:none">Shared account with fake patients — data resets every night.</span></p>
+      <p style="font-size:11px;color:#94A3B8;margin-top:8px"><span data-only-lang="it">Un account tutto tuo, precaricato con pazienti finti per esplorare subito. Dopo 7 giorni potrai abbonarti per continuare — i tuoi dati restano al sicuro.</span><span data-only-lang="en" style="display:none">An account of your own, preloaded with fake patients so you can explore right away. After 7 days you can subscribe to continue — your data stays safe.</span></p>
     </div>
   </div>
 
@@ -513,23 +522,77 @@ async function doForgotPassword() {
   }
 }
 
-// Demo sandbox (SEZIONE 125) — account condiviso pre-seedato, per chi vuole
-// esplorare la piattaforma prima che la registrazione pubblica apra. Le
-// credenziali sono note (è un account demo pubblico per definizione, non un
-// segreto) — l'account resta comunque un normale utente Supabase, protetto
-// dalle stesse RLS di ogni altro, semplicemente i suoi dati sono tutti finti
-// e vengono azzerati/riseminati ogni notte (setup_demo_studio, pg_cron).
-async function doLoginDemo() {
-  const btn = document.getElementById('demo-login-btn');
-  btn.disabled = true;
-  const { error } = await sb.auth.signInWithPassword({ email: 'demo@dietplan-pro.com', password: 'DemoDietPlan2026!' });
+// Prova gratuita (SEZIONE 127) — SOSTITUISCE il precedente account demo
+// condiviso (SEZIONE 125): con più dietisti che esplorano insieme, un
+// account unico significava che uno vedeva le modifiche dell'altro in
+// tempo reale — non accettabile. Ora ogni dietista ottiene un vero account
+// Supabase tutto suo (stessa sb.auth.signUp() della registrazione normale),
+// precaricato dalla RPC start_trial_signup con gli stessi 6 pazienti finti
+// di prima ma nel SUO studio, isolato dagli altri dalle stesse RLS di
+// sempre. Diversamente dalla registrazione normale (approved=false, in
+// attesa di un admin) il trial è approvato SUBITO dalla RPC — il punto è
+// poter esplorare senza aspettare nessuno. Il blocco automatico dopo 7
+// giorni è gestito lato client in loadProfile() (js/utils.js), gated da
+// site_payments_active() — resta innocuo (nessun blocco) finché i
+// pagamenti reali non sono live, stesso pattern già usato per il limite
+// ricette Free lato paziente (vedi payments_active()/SEZIONE 95).
+async function startTrial() {
+  const email = document.getElementById('trial-email').value.trim();
+  const pw = document.getElementById('trial-pw').value;
+  const err = document.getElementById('trial-err');
+  const ok = document.getElementById('trial-ok');
+  err.classList.remove('show'); ok.classList.remove('show');
+  if (!email || !pw) { err.textContent = _L('Inserisci email e password.', 'Enter your email and password.'); err.classList.add('show'); return; }
+  if (pw.length < 8) { err.textContent = _L('Password minimo 8 caratteri.', 'Password must be at least 8 characters.'); err.classList.add('show'); return; }
+  if (!document.getElementById('trial-consent')?.checked) { err.textContent = _L('Devi accettare Privacy Policy e Termini di Servizio per iniziare la prova.', 'You must accept the Privacy Policy and Terms of Service to start the trial.'); err.classList.add('show'); return; }
+
+  const btn = document.getElementById('trial-btn');
+  btn.disabled = true; btn.textContent = _L('Attivazione...', 'Activating...');
+
+  const { data, error } = await sb.auth.signUp({
+    email, password: pw,
+    options: { data: { is_trial: true, terms_accepted_at: new Date().toISOString() } }
+  });
+  btn.disabled = false; btn.textContent = _L('Inizia la prova gratuita', 'Start free trial');
+
   if (error) {
-    btn.disabled = false;
-    alert(_L('Demo non disponibile al momento. Riprova più tardi o contatta lo staff.', 'Demo not available right now. Try again later or contact staff.'));
+    const msgs = {
+      'User already registered': _L('Email già registrata. Prova ad accedere da "Hai già un account?".', 'Email already registered. Try signing in via "Already have an account?".'),
+      'user_already_exists': _L('Email già registrata. Prova ad accedere da "Hai già un account?".', 'Email already registered. Try signing in via "Already have an account?".'),
+      'Password should be at least 6 characters': _L('Password troppo corta (min. 6 caratteri).', 'Password too short (min. 6 characters).'),
+      'Unable to validate email address: invalid format': _L('Formato email non valido.', 'Invalid email format.'),
+      'Email rate limit exceeded': _L('Troppe richieste. Riprova tra un minuto.', 'Too many requests. Try again in a minute.'),
+      'over_email_send_rate_limit': _L('Troppe richieste. Riprova tra qualche minuto.', 'Too many requests. Try again in a few minutes.'),
+      'signup is disabled': _L('Prova gratuita non disponibile al momento. Riprova più tardi.', 'Free trial not available right now. Try again later.'),
+      'Signups not allowed for this instance': _L('Prova gratuita non disponibile al momento. Riprova più tardi.', 'Free trial not available right now. Try again later.'),
+    };
+    err.textContent = msgs[error.message] || msgs[error.code] || (_L('Errore: ', 'Error: ') + error.message);
+    err.classList.add('show');
+    console.error('startTrial signUp error:', error);
     return;
   }
-  const { data: { user } } = await sb.auth.getUser();
-  await checkMfaThenRedirect(user);
+  if (!data.user) {
+    err.textContent = _L('Attivazione non riuscita. Riprova.', 'Activation failed. Please try again.');
+    err.classList.add('show');
+    return;
+  }
+
+  const { error: trialErr } = await sb.rpc('start_trial_signup', { p_uid: data.user.id, p_email: email });
+  if (trialErr) {
+    console.error('start_trial_signup error:', trialErr);
+    err.textContent = _L('Account creato ma si è verificato un problema nella configurazione della prova. Contatta il supporto.', 'Account created but there was a problem setting up the trial. Please contact support.');
+    err.classList.add('show');
+    return;
+  }
+
+  if (data.session) {
+    ok.textContent = '✅ ' + _L('Prova attivata! Reindirizzamento...', 'Trial activated! Redirecting...');
+    ok.classList.add('show');
+    setTimeout(() => checkAndRedirect(data.user), 1200);
+  } else {
+    ok.textContent = '✅ ' + _L('Prova creata! Controlla la tua email per confermare l\'account e iniziare.', 'Trial created! Check your email to confirm your account and get started.');
+    ok.classList.add('show');
+  }
 }
 
 async function doLogin() {

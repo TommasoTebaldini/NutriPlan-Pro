@@ -53,6 +53,7 @@ function filterConsigli() { renderConsigli(document.getElementById('cs-search').
 function toggleAll(open) {
   document.querySelectorAll('.cc-body').forEach(b => b.classList.toggle('open', open));
   document.querySelectorAll('.cc-toggle-btn').forEach(t => t.textContent = open ? '▲' : '▼');
+  document.querySelectorAll('.cc-hdr').forEach(h => h.setAttribute('aria-expanded', open ? 'true' : 'false'));
 }
 
 // ═══════════════════════════════

@@ -103,15 +103,15 @@
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
-  <button id="sb-toggle-btn" onclick="toggleSidebar()" class="no-print">☰</button>
-  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" data-i18n-tooltip="paz.toggle_sidebar" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()" data-i18n-tooltip="paz.toggle_sidebar">☰</button>
   <h2>💬 WhatsApp Business</h2>
   <div class="tbar-actions"></div>
 </div>
 <main id="main">
 <div class="page-content" style="padding:14px;display:flex;flex-direction:column">
 
-  <div id="wa-not-configured" style="display:none;background:#FEF3C7;border:1.5px solid #FDE68A;border-radius:12px;padding:16px 18px;margin-bottom:14px;font-size:13px;color:#92400E;line-height:1.6">
+  <div id="wa-not-configured" role="status" style="display:none;background:#FEF3C7;border:1.5px solid #FDE68A;border-radius:12px;padding:16px 18px;margin-bottom:14px;font-size:13px;color:#92400E;line-height:1.6">
     ⚠️ Nessun numero WhatsApp Business collegato. Configuralo in <a href="impostazioni.html#section-whatsapp" style="color:#92400E;font-weight:700;text-decoration:underline">Impostazioni → WhatsApp Business</a>.
   </div>
 
@@ -135,13 +135,13 @@
             <div class="wa-thread-name" id="wa-thread-name"></div>
             <div class="wa-thread-phone" id="wa-thread-phone"></div>
           </div>
-          <button class="btn btn-ghost btn-xs" onclick="loadThread(activeCartellaId)" title="Aggiorna / Refresh">🔄</button>
+          <button class="btn btn-ghost btn-xs" onclick="loadThread(activeCartellaId)" title="Aggiorna / Refresh" aria-label="Aggiorna conversazione">🔄</button>
         </div>
         <div class="wa-messages-area" id="wa-messages-area"></div>
         <div class="wa-input-row">
-          <div class="wa-window-note" id="wa-window-note"></div>
+          <div class="wa-window-note" id="wa-window-note" aria-live="polite"></div>
           <div class="row">
-            <textarea id="wa-input" placeholder="Scrivi un messaggio... / Write a message..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendWaMessage()}"></textarea>
+            <textarea id="wa-input" placeholder="Scrivi un messaggio... / Write a message..." rows="1" aria-label="Scrivi un messaggio" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendWaMessage()}"></textarea>
             <button class="btn btn-primary btn-sm" onclick="sendWaMessage()">Invia ➤</button>
           </div>
         </div>
@@ -189,7 +189,7 @@ function renderContacts() {
     return;
   }
   el.innerHTML = contacts.map(c => `
-    <div class="wa-contact ${c.id === activeCartellaId ? 'active' : ''}" onclick="loadThread('${c.id}')">
+    <div class="wa-contact ${c.id === activeCartellaId ? 'active' : ''}" role="button" tabindex="0" aria-pressed="${c.id === activeCartellaId}" onclick="loadThread('${c.id}')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();loadThread('${c.id}')}">
       <div style="flex:1;min-width:0">
         <div class="wa-contact-name">${esc(c.nome || '')} ${esc(c.cognome || '')}</div>
         <div class="wa-contact-phone">${esc(c.telefono || '')}</div>

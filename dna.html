@@ -132,7 +132,7 @@
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" data-i18n-tooltip="paz.toggle_sidebar" class="no-print">☰</button>
-  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()" data-i18n-tooltip="paz.toggle_sidebar">☰</button>
   <h2>🫀 <span data-only-lang="it">DCA — Disturbi del Comportamento Alimentare</span><span data-only-lang="en" style="display:none">EDs — Eating Disorders</span></h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
@@ -166,7 +166,7 @@
     <div id="dca-cartella-cw"></div>
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
-    <label>📝 Titolo sessione</label>
+    <label for="dca-nota">📝 Titolo sessione</label>
     <input type="text" id="dca-nota" placeholder="es. Prima visita DCA... / e.g. First ED visit..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
   </div>
   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
@@ -175,16 +175,16 @@
   </div>
 </div>
 
-<div class="dna-tabs">
-  <button class="dna-tab active" onclick="showDna('overview')">📋 Panoramica</button>
-  <button class="dna-tab" onclick="showDna('screening')">🔍 Screening</button>
-  <button class="dna-tab" onclick="showDna('anoressia')">⚠️ Anoressia Nervosa</button>
-  <button class="dna-tab" onclick="showDna('bulimia')">🔄 Bulimia &amp; BED</button>
-  <button class="dna-tab" onclick="showDna('complicanze')">🏥 Complicanze Mediche</button>
-  <button class="dna-tab" onclick="showDna('trattamento')">🤝 Approccio Terapeutico</button>
-  <button class="dna-tab" onclick="showDna('linee_guida')">📚 Linee Guida</button>
-  <button class="dna-tab" onclick="showDna('piano_dca')">🍽️ Piano Alimentare DCA</button>
-  <button class="dna-tab" onclick="showDna('piano_esempio_dca')">🍽️ Esempi</button>
+<div class="dna-tabs" role="tablist">
+  <button class="dna-tab active" role="tab" aria-selected="true" aria-controls="tab-overview" onclick="showDna('overview')">📋 Panoramica</button>
+  <button class="dna-tab" role="tab" aria-selected="false" aria-controls="tab-screening" onclick="showDna('screening')">🔍 Screening</button>
+  <button class="dna-tab" role="tab" aria-selected="false" aria-controls="tab-anoressia" onclick="showDna('anoressia')">⚠️ Anoressia Nervosa</button>
+  <button class="dna-tab" role="tab" aria-selected="false" aria-controls="tab-bulimia" onclick="showDna('bulimia')">🔄 Bulimia &amp; BED</button>
+  <button class="dna-tab" role="tab" aria-selected="false" aria-controls="tab-complicanze" onclick="showDna('complicanze')">🏥 Complicanze Mediche</button>
+  <button class="dna-tab" role="tab" aria-selected="false" aria-controls="tab-trattamento" onclick="showDna('trattamento')">🤝 Approccio Terapeutico</button>
+  <button class="dna-tab" role="tab" aria-selected="false" aria-controls="tab-linee_guida" onclick="showDna('linee_guida')">📚 Linee Guida</button>
+  <button class="dna-tab" role="tab" aria-selected="false" aria-controls="tab-piano_dca" onclick="showDna('piano_dca')">🍽️ Piano Alimentare DCA</button>
+  <button class="dna-tab" role="tab" aria-selected="false" aria-controls="tab-piano_esempio_dca" onclick="showDna('piano_esempio_dca')">🍽️ Esempi</button>
 </div>
 
 <!-- PANORAMICA -->
@@ -192,7 +192,7 @@
 <!-- TAB VALUTAZIONE PAZIENTE                          -->
 <!-- ══════════════════════════════════════════════════ -->
 
-<div class="dna-panel active" id="tab-overview">
+<div class="dna-panel active" role="tabpanel" id="tab-overview">
   <div class="info-box ib-blue" data-only-lang="it">
     <b>🫀 Disturbi del Comportamento Alimentare (DCA)</b> — I DCA sono condizioni psichiatriche gravi caratterizzate da alterazioni persistenti del comportamento alimentare, dell'immagine corporea e della relazione con il cibo. Richiedono un approccio multidisciplinare che include dietista, psicologo/psichiatra e medico.
   </div>
@@ -404,12 +404,12 @@
       </div>
       <div style="padding:14px 16px;background:#FEF2F2">
         <div id="dca-fobici-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:10px">
-          <div class="nf dca-fobico-item"><label>Alimento fobico 1</label><input type="text" id="dca-fobico-1" placeholder="Es. carne rossa / e.g. red meat" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
-          <div class="nf dca-fobico-item"><label>Alimento fobico 2</label><input type="text" id="dca-fobico-2" placeholder="Es. dolci / e.g. sweets" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
-          <div class="nf dca-fobico-item"><label>Alimento fobico 3</label><input type="text" id="dca-fobico-3" placeholder="Es. pane bianco / e.g. white bread" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
-          <div class="nf dca-fobico-item"><label>Alimento fobico 4</label><input type="text" id="dca-fobico-4" placeholder="Es. grassi / e.g. fats" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
-          <div class="nf dca-fobico-item"><label>Alimento fobico 5</label><input type="text" id="dca-fobico-5" placeholder="Es. formaggi / e.g. cheeses" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
-          <div class="nf dca-fobico-item"><label>Alimento fobico 6</label><input type="text" id="dca-fobico-6" placeholder="Es. legumi / e.g. legumes" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label for="dca-fobico-1">Alimento fobico 1</label><input type="text" id="dca-fobico-1" placeholder="Es. carne rossa / e.g. red meat" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label for="dca-fobico-2">Alimento fobico 2</label><input type="text" id="dca-fobico-2" placeholder="Es. dolci / e.g. sweets" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label for="dca-fobico-3">Alimento fobico 3</label><input type="text" id="dca-fobico-3" placeholder="Es. pane bianco / e.g. white bread" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label for="dca-fobico-4">Alimento fobico 4</label><input type="text" id="dca-fobico-4" placeholder="Es. grassi / e.g. fats" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label for="dca-fobico-5">Alimento fobico 5</label><input type="text" id="dca-fobico-5" placeholder="Es. formaggi / e.g. cheeses" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
+          <div class="nf dca-fobico-item"><label for="dca-fobico-6">Alimento fobico 6</label><input type="text" id="dca-fobico-6" placeholder="Es. legumi / e.g. legumes" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'"></div>
         </div>
         <div class="nf">
           <label for="dca-fobici-note">Note sugli alimenti fobici</label>
@@ -491,60 +491,60 @@
         <div id="dca-comp-dettaglio-attfisica" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
           <div style="font-size:16px;font-weight:700;color:#6D28D9;margin-bottom:6px">🏃 Dettagli — Attività fisica compensatoria</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div class="nf"><label>Tipo di attività</label><input type="text" id="dca-comp-attfisica-tipo" placeholder="Es. corsa, cyclette, pesi... / e.g. running, exercise bike, weights..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Frequenza</label><input type="text" id="dca-comp-attfisica-freq" placeholder="Es. ogni giorno, 2-3 volte/die... / e.g. every day, 2-3 times/day..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Durata media/sessione</label><input type="text" id="dca-comp-attfisica-durata" placeholder="Es. 2-3 ore / e.g. 2-3 hours" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Grado di distress se non praticata</label><select id="dca-comp-attfisica-distress" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"><option value="">Seleziona...</option><option>Lieve (lieve disagio)</option><option>Moderato (ansia significativa)</option><option>Severo (panico, rituali)</option></select></div>
+            <div class="nf"><label for="dca-comp-attfisica-tipo">Tipo di attività</label><input type="text" id="dca-comp-attfisica-tipo" placeholder="Es. corsa, cyclette, pesi... / e.g. running, exercise bike, weights..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-attfisica-freq">Frequenza</label><input type="text" id="dca-comp-attfisica-freq" placeholder="Es. ogni giorno, 2-3 volte/die... / e.g. every day, 2-3 times/day..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-attfisica-durata">Durata media/sessione</label><input type="text" id="dca-comp-attfisica-durata" placeholder="Es. 2-3 ore / e.g. 2-3 hours" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-attfisica-distress">Grado di distress se non praticata</label><select id="dca-comp-attfisica-distress" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"><option value="">Seleziona...</option><option>Lieve (lieve disagio)</option><option>Moderato (ansia significativa)</option><option>Severo (panico, rituali)</option></select></div>
           </div>
         </div>
         <div id="dca-comp-dettaglio-vomito" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
           <div style="font-size:16px;font-weight:700;color:#6D28D9;margin-bottom:6px">🤢 Dettagli — Vomito autoindotto</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div class="nf"><label>Frequenza settimanale</label><input type="text" id="dca-comp-vomito-freq" placeholder="Es. 1-2 volte/settimana, quotidiano... / e.g. 1-2 times/week, daily..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Momento rispetto al pasto</label><input type="text" id="dca-comp-vomito-momento" placeholder="Es. subito dopo, entro 1h... / e.g. right after, within 1h..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Da quanti mesi/anni</label><input type="text" id="dca-comp-vomito-durata" placeholder="Es. 6 mesi, 2 anni... / e.g. 6 months, 2 years..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Sintomi correlati</label><input type="text" id="dca-comp-vomito-sintomi" placeholder="Es. erosioni dentali, reflusso... / e.g. dental erosion, reflux..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-vomito-freq">Frequenza settimanale</label><input type="text" id="dca-comp-vomito-freq" placeholder="Es. 1-2 volte/settimana, quotidiano... / e.g. 1-2 times/week, daily..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-vomito-momento">Momento rispetto al pasto</label><input type="text" id="dca-comp-vomito-momento" placeholder="Es. subito dopo, entro 1h... / e.g. right after, within 1h..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-vomito-durata">Da quanti mesi/anni</label><input type="text" id="dca-comp-vomito-durata" placeholder="Es. 6 mesi, 2 anni... / e.g. 6 months, 2 years..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-vomito-sintomi">Sintomi correlati</label><input type="text" id="dca-comp-vomito-sintomi" placeholder="Es. erosioni dentali, reflusso... / e.g. dental erosion, reflux..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
           </div>
         </div>
         <div id="dca-comp-dettaglio-diuretici" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
           <div style="font-size:16px;font-weight:700;color:#6D28D9;margin-bottom:6px">💊 Dettagli — Diuretici</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div class="nf"><label>Tipo/nome farmaco</label><input type="text" id="dca-comp-diuretici-tipo" placeholder="Es. furosemide, tisane diuretiche... / e.g. furosemide, diuretic herbal teas..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Frequenza/dose</label><input type="text" id="dca-comp-diuretici-freq" placeholder="Es. quotidiano, 2 volte/settimana... / e.g. daily, 2 times/week..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Prescritti o autoprescritti</label><select id="dca-comp-diuretici-prescrizione" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"><option value="">Seleziona...</option><option>Prescritti dal medico</option><option>Autoprescritti</option><option>Prodotti erboristici / OTC</option></select></div>
-            <div class="nf"><label>Da quanto tempo</label><input type="text" id="dca-comp-diuretici-durata" placeholder="Es. 3 mesi, 1 anno... / e.g. 3 months, 1 year..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-diuretici-tipo">Tipo/nome farmaco</label><input type="text" id="dca-comp-diuretici-tipo" placeholder="Es. furosemide, tisane diuretiche... / e.g. furosemide, diuretic herbal teas..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-diuretici-freq">Frequenza/dose</label><input type="text" id="dca-comp-diuretici-freq" placeholder="Es. quotidiano, 2 volte/settimana... / e.g. daily, 2 times/week..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-diuretici-prescrizione">Prescritti o autoprescritti</label><select id="dca-comp-diuretici-prescrizione" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"><option value="">Seleziona...</option><option>Prescritti dal medico</option><option>Autoprescritti</option><option>Prodotti erboristici / OTC</option></select></div>
+            <div class="nf"><label for="dca-comp-diuretici-durata">Da quanto tempo</label><input type="text" id="dca-comp-diuretici-durata" placeholder="Es. 3 mesi, 1 anno... / e.g. 3 months, 1 year..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
           </div>
         </div>
         <div id="dca-comp-dettaglio-lassativi" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
           <div style="font-size:16px;font-weight:700;color:#6D28D9;margin-bottom:6px">🌿 Dettagli — Lassativi</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div class="nf"><label>Tipo/nome prodotto</label><input type="text" id="dca-comp-lassativi-tipo" placeholder="Es. senna, bisacodile, macrogol... / e.g. senna, bisacodyl, macrogol..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Frequenza</label><input type="text" id="dca-comp-lassativi-freq" placeholder="Es. quotidiano, dopo ogni pasto... / e.g. daily, after every meal..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Prescritti o autoprescritti</label><select id="dca-comp-lassativi-prescrizione" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"><option value="">Seleziona...</option><option>Prescritti dal medico</option><option>Autoprescritti</option><option>Prodotti erboristici / OTC</option></select></div>
-            <div class="nf"><label>Da quanto tempo</label><input type="text" id="dca-comp-lassativi-durata" placeholder="Es. 3 mesi, 1 anno... / e.g. 3 months, 1 year..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-lassativi-tipo">Tipo/nome prodotto</label><input type="text" id="dca-comp-lassativi-tipo" placeholder="Es. senna, bisacodile, macrogol... / e.g. senna, bisacodyl, macrogol..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-lassativi-freq">Frequenza</label><input type="text" id="dca-comp-lassativi-freq" placeholder="Es. quotidiano, dopo ogni pasto... / e.g. daily, after every meal..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-lassativi-prescrizione">Prescritti o autoprescritti</label><select id="dca-comp-lassativi-prescrizione" style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"><option value="">Seleziona...</option><option>Prescritti dal medico</option><option>Autoprescritti</option><option>Prodotti erboristici / OTC</option></select></div>
+            <div class="nf"><label for="dca-comp-lassativi-durata">Da quanto tempo</label><input type="text" id="dca-comp-lassativi-durata" placeholder="Es. 3 mesi, 1 anno... / e.g. 3 months, 1 year..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
           </div>
         </div>
         <div id="dca-comp-dettaglio-digiuno" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
           <div style="font-size:16px;font-weight:700;color:#6D28D9;margin-bottom:6px">🚫 Dettagli — Digiuno / Restrizione compensatoria</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div class="nf"><label>Modalità</label><input type="text" id="dca-comp-digiuno-modalita" placeholder="Es. salta colazione, digiuno intera giornata... / e.g. skips breakfast, whole-day fasting..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Frequenza</label><input type="text" id="dca-comp-digiuno-freq" placeholder="Es. dopo ogni eccesso, 2 volte/settimana... / e.g. after every binge, 2 times/week..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-digiuno-modalita">Modalità</label><input type="text" id="dca-comp-digiuno-modalita" placeholder="Es. salta colazione, digiuno intera giornata... / e.g. skips breakfast, whole-day fasting..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-digiuno-freq">Frequenza</label><input type="text" id="dca-comp-digiuno-freq" placeholder="Es. dopo ogni eccesso, 2 volte/settimana... / e.g. after every binge, 2 times/week..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
           </div>
         </div>
         <div id="dca-comp-dettaglio-enema" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
           <div style="font-size:16px;font-weight:700;color:#6D28D9;margin-bottom:6px">🩺 Dettagli — Clisteri / Enteroclismi</div>
-          <div class="nf"><label>Frequenza e modalità</label><input type="text" id="dca-comp-enema-dettaglio" placeholder="Es. 1 volta/settimana, autoprescritti... / e.g. once/week, self-prescribed..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+          <div class="nf"><label for="dca-comp-enema-dettaglio">Frequenza e modalità</label><input type="text" id="dca-comp-enema-dettaglio" placeholder="Es. 1 volta/settimana, autoprescritti... / e.g. once/week, self-prescribed..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
         </div>
         <div id="dca-comp-dettaglio-farmaci" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
           <div style="font-size:16px;font-weight:700;color:#6D28D9;margin-bottom:6px">💉 Dettagli — Altri farmaci / Sostanze</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div class="nf"><label>Tipo di farmaco/sostanza</label><input type="text" id="dca-comp-farmaci-tipo" placeholder="Es. pillole dimagranti, termogenici... / e.g. diet pills, thermogenics..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
-            <div class="nf"><label>Frequenza</label><input type="text" id="dca-comp-farmaci-freq" placeholder="Es. quotidiano, prima dei pasti... / e.g. daily, before meals..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-farmaci-tipo">Tipo di farmaco/sostanza</label><input type="text" id="dca-comp-farmaci-tipo" placeholder="Es. pillole dimagranti, termogenici... / e.g. diet pills, thermogenics..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
+            <div class="nf"><label for="dca-comp-farmaci-freq">Frequenza</label><input type="text" id="dca-comp-farmaci-freq" placeholder="Es. quotidiano, prima dei pasti... / e.g. daily, before meals..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></div>
           </div>
         </div>
         <div id="dca-comp-dettaglio-altro" style="display:none;margin-bottom:8px;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;background:white">
           <div style="font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:6px">➕ Dettagli — Altro</div>
-          <div class="nf"><label>Descrivere il meccanismo</label><textarea id="dca-comp-altro-desc" rows="2" placeholder="Descrivere il comportamento compensatorio... / Describe the compensatory behaviour..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></textarea></div>
+          <div class="nf"><label for="dca-comp-altro-desc">Descrivere il meccanismo</label><textarea id="dca-comp-altro-desc" rows="2" placeholder="Descrivere il comportamento compensatorio... / Describe the compensatory behaviour..." style="border-color:#DDD6FE" onfocus="this.style.borderColor='#7C3AED'" onblur="this.style.borderColor='#DDD6FE'"></textarea></div>
         </div>
         <div class="nf" style="margin-top:4px">
           <label for="dca-comp-note">Note cliniche sui meccanismi di compenso</label>
@@ -561,7 +561,7 @@
 </div>
 
 <!-- SCREENING -->
-<div class="dna-panel" id="tab-screening">
+<div class="dna-panel" role="tabpanel" id="tab-screening">
   <div class="info-box ib-teal" data-only-lang="it">
     <b>🔍 Strumenti di Screening</b> — Il dietista non effettua diagnosi (spetta allo psichiatra/psicologo), ma può utilizzare questi strumenti per rilevare il rischio e indirizzare il paziente al team multidisciplinare.
   </div>
@@ -580,7 +580,7 @@
         <div class="scoff-q"><label><input type="checkbox" id="s5"> <span data-only-lang="it">Diresti che il cibo domina la tua vita?</span><span data-only-lang="en" style="display:none">Would you say that food dominates your life?</span></label></div>
       </div>
       <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="calcolaScoff()">📊 Calcola Punteggio</button>
-      <div id="scoff-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px"></div>
+      <div id="scoff-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px" aria-live="polite"></div>
     </div>
     <div class="calc-box">
       <h3><span data-only-lang="it">📋 EDE-Q — Eating Disorder Examination</span><span data-only-lang="en" style="display:none">📋 EDE-Q — Eating Disorder Examination</span></h3>
@@ -622,7 +622,7 @@
         <div style="display:flex;gap:3px;flex-wrap:wrap" id="edeq_wc2_wrap"></div>
       </div>
       <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="calcEDEQ_dca()">📊 Calcola EDE-Q (Screening)</button>
-      <div id="edeq-dca-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:16px"></div>
+      <div id="edeq-dca-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:16px" aria-live="polite"></div>
     </div>
   </div>
   <div class="grid-2">
@@ -641,7 +641,7 @@
         </select>
       </div>
       <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="calcBITE()">📊 Calcola BITE</button>
-      <div id="bite-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px"></div>
+      <div id="bite-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px" aria-live="polite"></div>
     </div>
     <div class="calc-box">
       <h3><span data-only-lang="it">🧒 ChEAT-26 / KEDS (età evolutiva)</span><span data-only-lang="en" style="display:none">🧒 ChEAT-26 / KEDS (paediatric age)</span></h3>
@@ -654,20 +654,20 @@
         <p style="font-size:12px;color:var(--slate-l);margin-bottom:8px">Scala: 3=Sempre · 2=Molto spesso · 1=Spesso · 0=Qualche volta/Raramente/Mai</p>
         <div id="cheat-items-container"></div>
         <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="calcChEAT()">📊 Calcola ChEAT-26</button>
-        <div id="cheat-result" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px"></div>
+        <div id="cheat-result" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px" aria-live="polite"></div>
       </div>
       <div id="panel-keds" style="display:none">
         <p style="font-size:12px;color:var(--slate-l);margin-bottom:8px">14 item. Rispondere Sì/No. Cut-off ≥4 = possibile DCA.</p>
         <div id="keds-items-container"></div>
         <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="calcKEDS()">📊 Calcola KEDS</button>
-        <div id="keds-result" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px"></div>
+        <div id="keds-result" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px" aria-live="polite"></div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- ANORESSIA NERVOSA -->
-<div class="dna-panel" id="tab-anoressia">
+<div class="dna-panel" role="tabpanel" id="tab-anoressia">
   <div class="info-box ib-red" data-only-lang="it">
     <b>⚠️ Anoressia Nervosa — Condizione a Elevata Mortalità</b> — L'AN ha il più alto tasso di mortalità tra tutti i disturbi psichiatrici (5–10%). Il trattamento nutrizionale richiede estrema cautela per il rischio di <b>Refeeding Syndrome</b>. Il dietista deve sempre operare all'interno di un team multidisciplinare.
   </div>
@@ -789,7 +789,7 @@
 </div>
 
 <!-- BULIMIA E BED -->
-<div class="dna-panel" id="tab-bulimia">
+<div class="dna-panel" role="tabpanel" id="tab-bulimia">
   <div class="grid-2">
     <div>
       <div class="calc-box">
@@ -900,7 +900,7 @@
 </div>
 
 <!-- COMPLICANZE -->
-<div class="dna-panel" id="tab-complicanze">
+<div class="dna-panel" role="tabpanel" id="tab-complicanze">
   <div class="info-box ib-red" data-only-lang="it">
     <b>🏥 Complicanze Mediche nei DCA</b> — Le complicanze mediche possono essere gravi e potenzialmente letali. Il dietista deve riconoscerle e indirizzare tempestivamente il paziente al medico. Non trattare le complicanze in autonomia senza supervisione medica.
   </div>
@@ -1007,7 +1007,7 @@
 </div>
 
 <!-- TRATTAMENTO -->
-<div class="dna-panel" id="tab-trattamento">
+<div class="dna-panel" role="tabpanel" id="tab-trattamento">
   <div class="info-box ib-teal" data-only-lang="it">
     <b>🤝 Approccio Multidisciplinare</b> — Il trattamento dei DCA richiede un team integrato. Il dietista è una figura chiave ma non può operare in isolamento. La collaborazione con psicologo/psichiatra e medico è essenziale per la sicurezza del paziente.
   </div>
@@ -1097,7 +1097,7 @@
 </div>
 
 <!-- LINEE GUIDA -->
-<div class="dna-panel" id="tab-linee_guida">
+<div class="dna-panel" role="tabpanel" id="tab-linee_guida">
   <div class="info-box ib-blue" data-only-lang="it">
     <b>📚 Linee Guida Internazionali e Nazionali</b> — I DCA devono essere trattati secondo le evidenze scientifiche più aggiornate. Le principali linee guida internazionali convergono sull'importanza del trattamento multidisciplinare e della CBT-E come gold standard psicoterapeutico.
   </div>
@@ -1184,7 +1184,7 @@
 
 </div>
 <!-- PIANO ESEMPIO DCA -->
-<div class="dna-panel" id="tab-piano_esempio_dca">
+<div class="dna-panel" role="tabpanel" id="tab-piano_esempio_dca">
   <div style="background:#F0FDF4;border-left:3px solid #0F766E;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#064E3B" data-only-lang="it">
     <b>🌱 Piani Alimentari per DCA — Esempi Clinici</b> — Strumento di supporto clinico per la strutturazione dei pasti nelle diverse fasi del trattamento. Ogni piano deve essere adattato al singolo paziente con approccio multidisciplinare.
   </div>
@@ -1232,20 +1232,20 @@
       + '<div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button class="btn btn-primary btn-sm" onclick="apriInPianoAlimentareDca()" style="background:#0F766E">📂 ' + _L('Apri in Piano Alimentare','Open in Meal Plan') + '</button><button class="btn btn-primary btn-sm" onclick="eliminaPianoDca()" style="background:#DC2626">🗑️ ' + _L('Elimina Piano','Delete Plan') + '</button></div>'
       + '<div class="grid-2">'
       + '<div class="calc-box"><h3>⚙️ ' + _L('Configurazione Piano','Plan Configuration') + '</h3>'
-      + '<div class="nf" style="margin-bottom:10px"><label>' + _L('Tipo DCA','ED Type') + '</label><select id="dca-piano-tipo"><option value="AN">' + _L('Anoressia Nervosa (AN)','Anorexia Nervosa (AN)') + '</option><option value="BN">' + _L('Bulimia Nervosa (BN)','Bulimia Nervosa (BN)') + '</option><option value="BED">Binge Eating Disorder (BED)</option><option value="ARFID">ARFID</option><option value="altro">' + _L('Altro / NAS','Other / NOS') + '</option></select></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>' + _L('Fase trattamento','Treatment Phase') + '</label><select id="dca-piano-fase"><option value="acuta">' + _L('Acuta / Refeeding','Acute / Refeeding') + '</option><option value="stabilizzazione">' + _L('Stabilizzazione','Stabilisation') + '</option><option value="mantenimento">' + _L('Mantenimento','Maintenance') + '</option><option value="prevenzione_ricadute">' + _L('Prevenzione ricadute','Relapse prevention') + '</option></select></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>' + _L('Kcal target/giorno','Target kcal/day') + '</label><input type="number" id="dca-piano-kcal" placeholder="' + _L('es. 1800','e.g. 1800') + '" oninput="calcolaDcaMacro()"></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>' + _L('Approccio alimentare','Dietary approach') + '</label><select id="dca-piano-approccio"><option value="meccanico">' + _L('Pasto meccanico (orari fissi, grammi stabiliti)','Mechanical eating (fixed times, set grams)') + '</option><option value="strutturato">' + _L('Strutturato con flessibilità guidata','Structured with guided flexibility') + '</option><option value="mindful">' + _L('Mindful eating (fase avanzata)','Mindful eating (advanced phase)') + '</option></select></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label for="dca-piano-tipo">' + _L('Tipo DCA','ED Type') + '</label><select id="dca-piano-tipo"><option value="AN">' + _L('Anoressia Nervosa (AN)','Anorexia Nervosa (AN)') + '</option><option value="BN">' + _L('Bulimia Nervosa (BN)','Bulimia Nervosa (BN)') + '</option><option value="BED">Binge Eating Disorder (BED)</option><option value="ARFID">ARFID</option><option value="altro">' + _L('Altro / NAS','Other / NOS') + '</option></select></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label for="dca-piano-fase">' + _L('Fase trattamento','Treatment Phase') + '</label><select id="dca-piano-fase"><option value="acuta">' + _L('Acuta / Refeeding','Acute / Refeeding') + '</option><option value="stabilizzazione">' + _L('Stabilizzazione','Stabilisation') + '</option><option value="mantenimento">' + _L('Mantenimento','Maintenance') + '</option><option value="prevenzione_ricadute">' + _L('Prevenzione ricadute','Relapse prevention') + '</option></select></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label for="dca-piano-kcal">' + _L('Kcal target/giorno','Target kcal/day') + '</label><input type="number" id="dca-piano-kcal" placeholder="' + _L('es. 1800','e.g. 1800') + '" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label for="dca-piano-approccio">' + _L('Approccio alimentare','Dietary approach') + '</label><select id="dca-piano-approccio"><option value="meccanico">' + _L('Pasto meccanico (orari fissi, grammi stabiliti)','Mechanical eating (fixed times, set grams)') + '</option><option value="strutturato">' + _L('Strutturato con flessibilità guidata','Structured with guided flexibility') + '</option><option value="mindful">' + _L('Mindful eating (fase avanzata)','Mindful eating (advanced phase)') + '</option></select></div>'
       + '<div style="background:#FEF2F2;border:1.5px solid #FECACA;border-radius:10px;padding:12px;margin-bottom:0">'
       + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="background:#FEE2E2;color:#991B1B;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">📋</span><span style="font-size:11px;font-weight:800;color:#991B1B;text-transform:uppercase;letter-spacing:.6px;font-family:\'DM Sans\',sans-serif">' + _L('Note Cliniche sul Paziente','Clinical Notes on Patient') + '</span></div>'
       + '<textarea id="dca-piano-note-cliniche" rows="3" placeholder="' + _L('Diagnosi specifica, comorbilità, farmaci, storia DCA, obiettivi concordati col team...','Specific diagnosis, comorbidities, medications, ED history, team-agreed objectives...') + '" style="width:100%;padding:10px 12px;border:1.5px solid #FECACA;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical;outline:none;background:white;color:var(--slate);box-sizing:border-box;line-height:1.65;transition:border-color .15s" onfocus="this.style.borderColor=\'#EF4444\'" onblur="this.style.borderColor=\'#FECACA\'"></textarea>'
       + '</div>'
       + '</div>'
       + '<div class="calc-box"><h3>📊 ' + _L('Obiettivi Nutrizionali','Nutritional Goals') + '</h3>'
-      + '<div id="dca-macro-result" style="margin-bottom:12px;padding:12px;background:#FEF9F9;border-radius:8px;font-size:13px;line-height:1.9"><i>' + _L('Inserisci le kcal target per calcolare la distribuzione dei macronutrienti.','Enter target kcal to calculate macronutrient distribution.') + '</i></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>% ' + _L('Proteine','Protein') + '</label><input type="number" id="dca-prot-perc" value="20" min="15" max="30" oninput="calcolaDcaMacro()"></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>% ' + _L('Carboidrati','Carbohydrates') + '</label><input type="number" id="dca-cho-perc" value="55" min="45" max="65" oninput="calcolaDcaMacro()"></div>'
-      + '<div class="nf" style="margin-bottom:10px"><label>% ' + _L('Grassi','Fat') + '</label><input type="number" id="dca-fat-perc" value="25" min="20" max="35" oninput="calcolaDcaMacro()"></div>'
+      + '<div id="dca-macro-result" style="margin-bottom:12px;padding:12px;background:#FEF9F9;border-radius:8px;font-size:13px;line-height:1.9" aria-live="polite"><i>' + _L('Inserisci le kcal target per calcolare la distribuzione dei macronutrienti.','Enter target kcal to calculate macronutrient distribution.') + '</i></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label for="dca-prot-perc">% ' + _L('Proteine','Protein') + '</label><input type="number" id="dca-prot-perc" value="20" min="15" max="30" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label for="dca-cho-perc">% ' + _L('Carboidrati','Carbohydrates') + '</label><input type="number" id="dca-cho-perc" value="55" min="45" max="65" oninput="calcolaDcaMacro()"></div>'
+      + '<div class="nf" style="margin-bottom:10px"><label for="dca-fat-perc">% ' + _L('Grassi','Fat') + '</label><input type="number" id="dca-fat-perc" value="25" min="20" max="35" oninput="calcolaDcaMacro()"></div>'
       + '<div class="info-box ib-amber" style="margin-top:10px;font-size:12px"><b>⚠️ ' + _L('Linee guida DCA:','ED guidelines:') + '</b> ' + _L('Nell\'AN refeeding: partire da 30–40 kcal/kg/die, aumentare di 200–300 kcal ogni 3–5 giorni. Nella BN: garantire adeguatezza calorica per ridurre la restrizione-abbuffata. Nel BED: approccio non restrittivo, struttura regolare dei pasti.','AN refeeding: start at 30–40 kcal/kg/day, increase by 200–300 kcal every 3–5 days. BN: ensure caloric adequacy to reduce restriction-binge cycle. BED: non-restrictive approach, regular meal structure.') + '</div>'
       + '</div>'
       + '</div>'
@@ -1293,11 +1293,12 @@ function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStora
 
 function showDna(id) {
   autoSavePage_dna();
-  document.querySelectorAll('.dna-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dna-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
   document.querySelectorAll('.dna-panel').forEach(p => p.classList.remove('active'));
   const panel = document.getElementById('tab-' + id);
   if (panel) panel.classList.add('active');
   event.target.classList.add('active');
+  event.target.setAttribute('aria-selected', 'true');
 }
 
 function calcolaScoff() {
@@ -1358,7 +1359,7 @@ function aggiungiFobico(valore) {
   const div = document.createElement('div');
   div.className = 'nf dca-fobico-item';
   div.style.position = 'relative';
-  div.innerHTML = `<label>${_L('Alimento fobico','Fear food')} ${n} <button type="button" onclick="this.closest('.dca-fobico-item').remove()" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:16px;padding:0 2px;margin-left:4px;line-height:1" title="${_L('Rimuovi','Remove')}">✕</button></label><input type="text" id="dca-fobico-${n}" placeholder="${_L('Inserisci alimento...','Enter food...')}" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'">`;
+  div.innerHTML = `<label for="dca-fobico-${n}">${_L('Alimento fobico','Fear food')} ${n} <button type="button" onclick="this.closest('.dca-fobico-item').remove()" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:16px;padding:0 2px;margin-left:4px;line-height:1" title="${_L('Rimuovi','Remove')}">✕</button></label><input type="text" id="dca-fobico-${n}" placeholder="${_L('Inserisci alimento...','Enter food...')}" style="border-color:#FECACA" onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#FECACA'">`;
   grid.appendChild(div);
   const inp = div.querySelector('input');
   if (inp) { if (valore) inp.value = valore; inp.focus(); }

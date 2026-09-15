@@ -103,10 +103,10 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
     </button>
     <div style="margin-top:14px;padding-top:14px;border-top:1px solid #E2E8F0" id="trial-box">
       <p style="font-size:13px;font-weight:700;color:#334155;margin-bottom:10px">🎯 <span data-only-lang="it">Prova gratis per 7 giorni, senza carta di credito</span><span data-only-lang="en" style="display:none">Try free for 7 days, no credit card</span></p>
-      <div class="err" id="trial-err"></div>
-      <div class="ok" id="trial-ok"></div>
-      <div class="fg" style="text-align:left"><input type="email" id="trial-email" placeholder="la-tua@email.com" autocomplete="email"></div>
-      <div class="fg" style="text-align:left"><input type="password" id="trial-pw" placeholder="Scegli una password (min. 8 caratteri)" autocomplete="new-password" onkeydown="if(event.key==='Enter')startTrial()"></div>
+      <div class="err" id="trial-err" role="alert"></div>
+      <div class="ok" id="trial-ok" role="status"></div>
+      <div class="fg" style="text-align:left"><input type="email" id="trial-email" placeholder="la-tua@email.com" autocomplete="email" aria-label="Email"></div>
+      <div class="fg" style="text-align:left"><input type="password" id="trial-pw" placeholder="Scegli una password (min. 8 caratteri)" autocomplete="new-password" onkeydown="if(event.key==='Enter')startTrial()" aria-label="Password"></div>
       <label style="display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#334155;margin:8px 0;cursor:pointer;line-height:1.4;text-align:left">
         <input type="checkbox" id="trial-consent" style="margin-top:2px;flex-shrink:0">
         <span><span data-only-lang="it">Accetto <a href="privacy.html" target="_blank" style="color:#0F766E;font-weight:600">Privacy Policy</a> e <a href="termini.html" target="_blank" style="color:#0F766E;font-weight:600">Termini di Servizio</a>.</span><span data-only-lang="en" style="display:none">I accept the <a href="privacy.html" target="_blank" style="color:#0F766E;font-weight:600">Privacy Policy</a> and <a href="termini.html" target="_blank" style="color:#0F766E;font-weight:600">Terms of Service</a>.</span></span>
@@ -126,15 +126,15 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
     </div>
 
     <div class="panel active" id="p-login">
-      <div class="err" id="login-err"></div>
-      <div class="fg"><label data-i18n="index.email">Email</label><input type="email" id="login-email" placeholder="la-tua@email.com" autocomplete="email"></div>
-      <div class="fg"><label data-i18n="index.password">Password</label><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="err" id="login-err" role="alert"></div>
+      <div class="fg"><label for="login-email" data-i18n="index.email">Email</label><input type="email" id="login-email" placeholder="la-tua@email.com" autocomplete="email"></div>
+      <div class="fg"><label for="login-pw" data-i18n="index.password">Password</label><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="btn" id="login-btn" onclick="doLogin()" data-i18n="index.login_btn">Accedi</button>
       <p class="note" style="margin-top:10px"><button onclick="showForgot()" style="background:none;border:none;padding:0;color:#0F766E;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline"><span data-only-lang="it">Password dimenticata?</span><span data-only-lang="en" style="display:none">Forgot password?</span></button></p>
 
       <p class="note" style="margin-top:14px;text-align:center"><button onclick="toggleSsoOptions()" id="sso-toggle-btn" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline"><span data-only-lang="it">Accesso aziendale (SSO) →</span><span data-only-lang="en" style="display:none">Company login (SSO) →</span></button></p>
       <div id="sso-options" style="display:none;margin-top:10px;padding-top:12px;border-top:1px solid #E2E8F0">
-        <div class="err" id="sso-err"></div>
+        <div class="err" id="sso-err" role="alert"></div>
         <button type="button" onclick="doLoginAzure()" style="width:100%;padding:10px;background:white;color:#1E293B;border:1.5px solid #E2E8F0;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px">
           <svg width="16" height="16" viewBox="0 0 16 16"><rect width="7" height="7" fill="#F25022"/><rect x="9" width="7" height="7" fill="#7FBA00"/><rect y="9" width="7" height="7" fill="#00A4EF"/><rect x="9" y="9" width="7" height="7" fill="#FFB900"/></svg>
           <span data-only-lang="it">Accedi con Microsoft</span><span data-only-lang="en" style="display:none">Sign in with Microsoft</span>
@@ -151,10 +151,10 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
     <!-- Pannello reset password -->
     <div class="panel" id="p-forgot" style="display:none">
       <button onclick="showLogin()" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:14px;display:flex;align-items:center;gap:4px"><span data-only-lang="it">← Torna al login</span><span data-only-lang="en" style="display:none">← Back to login</span></button>
-      <div class="err" id="forgot-err"></div>
-      <div class="ok" id="forgot-ok"></div>
+      <div class="err" id="forgot-err" role="alert"></div>
+      <div class="ok" id="forgot-ok" role="status"></div>
       <div class="fg">
-        <label><span data-only-lang="it">Email del tuo account</span><span data-only-lang="en" style="display:none">Your account email</span></label>
+        <label for="forgot-email"><span data-only-lang="it">Email del tuo account</span><span data-only-lang="en" style="display:none">Your account email</span></label>
         <input type="email" id="forgot-email" placeholder="la-tua@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')doForgotPassword()">
       </div>
       <button class="btn" id="forgot-btn" onclick="doForgotPassword()">📧 <span data-only-lang="it">Invia link di recupero</span><span data-only-lang="en" style="display:none">Send recovery link</span></button>
@@ -164,25 +164,25 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
     <!-- Pannello nuova password (dopo click link email) -->
     <div class="panel" id="p-reset" style="display:none">
       <h3 style="margin:0 0 14px;color:#0F766E;font-size:16px"><span data-only-lang="it">Imposta nuova password</span><span data-only-lang="en" style="display:none">Set new password</span></h3>
-      <div class="err" id="reset-err"></div>
-      <div class="ok" id="reset-ok"></div>
+      <div class="err" id="reset-err" role="alert"></div>
+      <div class="ok" id="reset-ok" role="status"></div>
       <div class="fg">
-        <label><span data-only-lang="it">Nuova password</span><span data-only-lang="en" style="display:none">New password</span></label>
+        <label for="reset-pw1"><span data-only-lang="it">Nuova password</span><span data-only-lang="en" style="display:none">New password</span></label>
         <input type="password" id="reset-pw1" placeholder="Minimo 8 caratteri / Minimum 8 characters" autocomplete="new-password">
       </div>
       <div class="fg">
-        <label><span data-only-lang="it">Conferma password</span><span data-only-lang="en" style="display:none">Confirm password</span></label>
+        <label for="reset-pw2"><span data-only-lang="it">Conferma password</span><span data-only-lang="en" style="display:none">Confirm password</span></label>
         <input type="password" id="reset-pw2" placeholder="Ripeti la password / Repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doResetPassword()">
       </div>
       <button class="btn" id="reset-btn" onclick="doResetPassword()"><span data-only-lang="it">Salva nuova password</span><span data-only-lang="en" style="display:none">Save new password</span></button>
     </div>
 
     <div class="panel" id="p-register" style="display:none">
-      <div class="err" id="reg-err"></div>
-      <div class="ok" id="reg-ok"></div>
-      <div class="fg"><label data-i18n="index.email">Email</label><input type="email" id="reg-email" placeholder="la-tua@email.com" autocomplete="email"></div>
-      <div class="fg"><label data-i18n="index.password">Password</label><input type="password" id="reg-pw" placeholder="Minimo 8 caratteri / Minimum 8 characters" autocomplete="new-password"></div>
-      <div class="fg"><label data-i18n="index.confirm_password">Conferma Password</label><input type="password" id="reg-pw2" placeholder="Ripeti la password / Repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
+      <div class="err" id="reg-err" role="alert"></div>
+      <div class="ok" id="reg-ok" role="status"></div>
+      <div class="fg"><label for="reg-email" data-i18n="index.email">Email</label><input type="email" id="reg-email" placeholder="la-tua@email.com" autocomplete="email"></div>
+      <div class="fg"><label for="reg-pw" data-i18n="index.password">Password</label><input type="password" id="reg-pw" placeholder="Minimo 8 caratteri / Minimum 8 characters" autocomplete="new-password"></div>
+      <div class="fg"><label for="reg-pw2" data-i18n="index.confirm_password">Conferma Password</label><input type="password" id="reg-pw2" placeholder="Ripeti la password / Repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
       <label style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:#334155;margin:10px 0;cursor:pointer;line-height:1.4">
         <input type="checkbox" id="reg-consent" style="margin-top:2px;flex-shrink:0">
         <span><span data-only-lang="it">Dichiaro di aver letto e di accettare la <a href="privacy.html" target="_blank" style="color:#0F766E;font-weight:600">Privacy Policy</a> e i <a href="termini.html" target="_blank" style="color:#0F766E;font-weight:600">Termini di Servizio</a>.</span><span data-only-lang="en" style="display:none">I declare that I have read and accept the <a href="privacy.html" target="_blank" style="color:#0F766E;font-weight:600">Privacy Policy</a> and <a href="termini.html" target="_blank" style="color:#0F766E;font-weight:600">Terms of Service</a>.</span></span>
@@ -198,9 +198,9 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
 
 <!-- MODAL DPA — appare solo al primo accesso dopo l'approvazione -->
 <div id="dpa-modal">
-  <div class="dpa-box">
+  <div class="dpa-box" role="dialog" aria-modal="true" aria-labelledby="dpa-modal-title" tabindex="-1">
     <div class="dpa-head">
-      <h2><span data-only-lang="it">Accordo sul Trattamento dei Dati (DPA)</span><span data-only-lang="en" style="display:none">Data Processing Agreement (DPA)</span></h2>
+      <h2 id="dpa-modal-title"><span data-only-lang="it">Accordo sul Trattamento dei Dati (DPA)</span><span data-only-lang="en" style="display:none">Data Processing Agreement (DPA)</span></h2>
       <p><span data-only-lang="it">Ai sensi dell'art. 28 del Regolamento (UE) 2016/679 — GDPR &nbsp;·&nbsp; Lettura obbligatoria prima dell'accesso</span><span data-only-lang="en" style="display:none">Pursuant to Art. 28 of Regulation (EU) 2016/679 — GDPR &nbsp;·&nbsp; Mandatory reading before access</span></p>
     </div>
     <div class="dpa-body" id="dpa-scroll" onscroll="checkDpaScroll()">
@@ -411,13 +411,13 @@ body{font-family:'DM Sans',sans-serif;min-height:100vh;background:linear-gradien
 
 <!-- MODAL 2FA — appare al login se l'account ha la verifica in due passaggi attiva -->
 <div id="mfa-modal" style="position:fixed;inset:0;background:rgba(15,30,50,.88);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px">
-  <div style="background:white;border-radius:16px;max-width:380px;width:100%;padding:28px 26px;box-shadow:0 32px 80px rgba(0,0,0,.55)">
-    <h3 style="font-size:18px;font-weight:700;color:#1E293B;margin-bottom:8px">🔐 <span data-only-lang="it">Verifica in due passaggi</span><span data-only-lang="en" style="display:none">Two-step verification</span></h3>
+  <div role="dialog" aria-modal="true" aria-labelledby="mfa-modal-title" style="background:white;border-radius:16px;max-width:380px;width:100%;padding:28px 26px;box-shadow:0 32px 80px rgba(0,0,0,.55)">
+    <h3 id="mfa-modal-title" style="font-size:18px;font-weight:700;color:#1E293B;margin-bottom:8px">🔐 <span data-only-lang="it">Verifica in due passaggi</span><span data-only-lang="en" style="display:none">Two-step verification</span></h3>
     <p style="font-size:13px;color:#64748B;margin-bottom:18px;line-height:1.5"><span data-only-lang="it">Inserisci il codice a 6 cifre generato dalla tua app authenticator.</span><span data-only-lang="en" style="display:none">Enter the 6-digit code generated by your authenticator app.</span></p>
-    <input type="text" id="mfa-code" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code"
+    <input type="text" id="mfa-code" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code" aria-label="Codice a 6 cifre"
       style="width:100%;padding:12px 14px;border:1.5px solid #CBD5E1;border-radius:10px;font-size:20px;font-family:inherit;letter-spacing:6px;text-align:center;outline:none;margin-bottom:12px"
       onkeydown="if(event.key==='Enter')verifyMfaCode()">
-    <div class="err" id="mfa-err" style="margin-bottom:10px"></div>
+    <div class="err" id="mfa-err" role="alert" style="margin-bottom:10px"></div>
     <button class="btn" style="width:100%" onclick="verifyMfaCode()"><span data-only-lang="it">Verifica</span><span data-only-lang="en" style="display:none">Verify</span></button>
     <p style="text-align:center;margin-top:12px"><button onclick="cancelMfa()" style="background:none;border:none;padding:0;color:#64748B;font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline"><span data-only-lang="it">Annulla e torna al login</span><span data-only-lang="en" style="display:none">Cancel and return to login</span></button></p>
   </div>
@@ -825,6 +825,11 @@ async function checkAndRedirect(user) {
       // subito dopo l'apertura, con un frame di ritardo perché il browser
       // calcoli scrollHeight/clientHeight dopo il display:flex appena applicato.
       requestAnimationFrame(checkDpaScroll);
+      // Accessibilità: sposta il focus nel dialog obbligatorio (role="dialog"
+      // aria-modal="true" su .dpa-box) così chi naviga da tastiera/screen
+      // reader non resta sulla pagina sottostante mentre il DPA è aperto.
+      const dpaBox = document.querySelector('#dpa-modal .dpa-box');
+      if (dpaBox) dpaBox.focus({ preventScroll: true });
     } else {
       window.location.href='app.html';
     }

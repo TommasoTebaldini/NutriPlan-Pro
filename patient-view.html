@@ -55,7 +55,7 @@
   .doc-footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #aaa; text-align: center; }
   /* Error */
   .error { text-align: center; padding: 60px 20px; color: #666; }
-  .error h2 { font-size: 20px; margin-bottom: 8px; }
+  .error h1 { font-size: 20px; margin-bottom: 8px; }
   /* Lang toggle */
   .lang-toggle { position: fixed; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 10; }
   .lang-toggle button { padding: 5px 12px; border-radius: 8px; border: 1.5px solid #e5e7eb; background: white; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
@@ -72,11 +72,11 @@
 </head>
 <body>
 <div class="lang-toggle no-print">
-  <button onclick="setLang('it')" id="lang-btn-it">🇮🇹 IT</button>
-  <button onclick="setLang('en')" id="lang-btn-en">🇬🇧 EN</button>
+  <button onclick="setLang('it')" id="lang-btn-it" aria-label="Italiano">🇮🇹 IT</button>
+  <button onclick="setLang('en')" id="lang-btn-en" aria-label="English">🇬🇧 EN</button>
 </div>
 <div class="doc-wrap" id="app">
-  <div class="error"><h2>⏳ <span data-only-lang="it">Caricamento documento...</span><span data-only-lang="en" style="display:none">Loading document...</span></h2></div>
+  <div class="error"><h1>⏳ <span data-only-lang="it">Caricamento documento...</span><span data-only-lang="en" style="display:none">Loading document...</span></h1></div>
 </div>
 
 <script src="js/lang.min.js?v=2" defer></script>
@@ -123,13 +123,13 @@ function secTable(title, rows, icon='') {
   const validRows = rows.filter(([,v]) => v!==''&&v!==null&&v!==undefined&&!Array.isArray(v)&&typeof v!=='object')
   if (!validRows.length) return null
   const thead = el('thead',{},el('tr',{},...[[_L('Campo','Field'),_L('Valore','Value')]].map(
-    ([h]) => el('th',{},h)
+    ([h]) => el('th',{scope:'col'},h)
   )))
   const tbody = el('tbody',{},...validRows.map(([k,v]) =>
     el('tr',{},el('td',{class:'key-col'},k),el('td',{},String(v)))
   ))
   return el('div',{class:'section'},
-    el('div',{class:'section-head'},`${icon} ${title}`),
+    el('h2',{class:'section-head'},`${icon} ${title}`),
     el('div',{style:'overflow-x:auto'},el('table',{},thead,tbody))
   )
 }
@@ -166,7 +166,7 @@ function renderPiano(dati, meta) {
   for (const day of days) {
     const meals = parseArr(day.meals)
     const dayEl = el('div',{class:'day-block'},
-      el('div',{class:'day-head'},'📅 ',day.nome||_L('Giorno','Day'))
+      el('h2',{class:'day-head'},'📅 ',day.nome||_L('Giorno','Day'))
     )
     for (const meal of meals) {
       const mKey = meal.id||meal.tipo||''
@@ -178,7 +178,7 @@ function renderPiano(dati, meta) {
       const note = meal.note||meal.notes||''
       const mealEl = el('div',{class:'meal-block'},
         el('div',{class:'meal-head'},
-          el('span',{class:'meal-name'},meal.emoji||mEmoji,' ',meal.nome||mLabel),
+          el('h3',{class:'meal-name'},meal.emoji||mEmoji,' ',meal.nome||mLabel),
           kcal?el('span',{class:'meal-kcal'},'🔥 ',kcal,' kcal'):null
         )
       )
@@ -230,9 +230,9 @@ function renderRistorazione(dati) {
       )
     ))
     frag.appendChild(el('div',{class:'section'},
-      el('div',{class:'section-head'},'🍽️ '+_L('Portate','Courses')),
+      el('h2',{class:'section-head'},'🍽️ '+_L('Portate','Courses')),
       el('div',{style:'overflow-x:auto'},el('table',{},
-        el('thead',{},el('tr',{},...[_L('Portata','Course'),_L('Porzione','Portion'),_L('Note','Notes')].map(h=>el('th',{},h)))),
+        el('thead',{},el('tr',{},...[_L('Portata','Course'),_L('Porzione','Portion'),_L('Note','Notes')].map(h=>el('th',{scope:'col'},h)))),
         tbody
       ))
     ))
@@ -266,9 +266,9 @@ function renderPediatria(dati) {
       )
     ))
     frag.appendChild(el('div',{class:'section'},
-      el('div',{class:'section-head'},'🍼 '+_L('Schema pasti','Meal schedule')),
+      el('h2',{class:'section-head'},'🍼 '+_L('Schema pasti','Meal schedule')),
       el('div',{style:'overflow-x:auto'},el('table',{},
-        el('thead',{},el('tr',{},...[_L('Pasto','Meal'),_L('Orario','Time'),_L('Descrizione','Description')].map(h=>el('th',{},h)))),
+        el('thead',{},el('tr',{},...[_L('Pasto','Meal'),_L('Orario','Time'),_L('Descrizione','Description')].map(h=>el('th',{scope:'col'},h)))),
         tbody
       ))
     ))
@@ -307,19 +307,19 @@ function renderConsiglio(dati) {
   const limitare   = dati.alimenti_limitare?.length   ? dati.alimenti_limitare   : (dati.mod||[])
   const evitare    = dati.alimenti_evitare?.length    ? dati.alimenti_evitare    : (dati.no||[])
   if (consentiti.length) frag.appendChild(el('div',{class:'list-section'},
-    el('div',{class:'list-head green'},'✅ '+_L('Alimenti consigliati','Recommended foods')),
+    el('h2',{class:'list-head green'},'✅ '+_L('Alimenti consigliati','Recommended foods')),
     el('ul',{class:'items'},...consentiti.map(a=>el('li',{},a)))))
   if (limitare.length) frag.appendChild(el('div',{class:'list-section'},
-    el('div',{class:'list-head yellow'},'⚠️ '+_L('Da limitare','To limit')),
+    el('h2',{class:'list-head yellow'},'⚠️ '+_L('Da limitare','To limit')),
     el('ul',{class:'items'},...limitare.map(a=>el('li',{},a)))))
   if (evitare.length) frag.appendChild(el('div',{class:'list-section'},
-    el('div',{class:'list-head red'},'🚫 '+_L('Da evitare','To avoid')),
+    el('h2',{class:'list-head red'},'🚫 '+_L('Da evitare','To avoid')),
     el('ul',{class:'items'},...evitare.map(a=>el('li',{},a)))))
   if (dati.pratici?.length) frag.appendChild(el('div',{class:'list-section'},
-    el('div',{class:'list-head green'},'💡 '+_L('Consigli pratici','Practical tips')),
+    el('h2',{class:'list-head green'},'💡 '+_L('Consigli pratici','Practical tips')),
     el('ul',{class:'items'},...dati.pratici.map(a=>el('li',{},a)))))
   if (dati.avvisi?.length) frag.appendChild(el('div',{class:'list-section'},
-    el('div',{class:'list-head red'},'🚨 '+_L('Avvisi importanti','Important warnings')),
+    el('h2',{class:'list-head red'},'🚨 '+_L('Avvisi importanti','Important warnings')),
     el('ul',{class:'items'},...dati.avvisi.map(a=>el('li',{},a)))))
   if (dati.note_paziente) frag.appendChild(el('div',{class:'note-box',style:'margin:0 0 16px'},'📝 '+dati.note_paziente))
   if (dati.note) frag.appendChild(el('div',{class:'note-box',style:'margin:0 0 16px'},'💡 '+dati.note))
@@ -334,7 +334,7 @@ function render() {
   const dataB64 = params.get('data')||''
 
   if (!dataB64) {
-    document.getElementById('app').innerHTML = '<div class="error"><h2>⚠️ '+_L('Nessun documento','No document')+'</h2><p>'+_L('Parametri mancanti nell\'URL','Missing parameters in the URL')+'</p></div>'
+    document.getElementById('app').innerHTML = '<div class="error"><h1>⚠️ '+_L('Nessun documento','No document')+'</h1><p>'+_L('Parametri mancanti nell\'URL','Missing parameters in the URL')+'</p></div>'
     return
   }
 
@@ -343,7 +343,7 @@ function render() {
     const json = decodeURIComponent(atob(dataB64))
     dati = deepParse(json)||{}
   } catch(e) {
-    document.getElementById('app').innerHTML = '<div class="error"><h2>⚠️ '+_L('Errore decodifica','Decoding error')+'</h2><p>'+e.message+'</p></div>'
+    document.getElementById('app').innerHTML = '<div class="error"><h1>⚠️ '+_L('Errore decodifica','Decoding error')+'</h1><p>'+e.message+'</p></div>'
     return
   }
 
@@ -371,7 +371,7 @@ function render() {
   // Header
   wrap.appendChild(el('div',{class:'doc-header'},
     el('div',{class:'category'},m.icon+' '+m.cat),
-    el('div',{class:'title'},nota||m.cat),
+    el('h1',{class:'title'},nota||m.cat),
     el('div',{class:'subtitle'},new Date().toLocaleDateString(getLang(),{day:'numeric',month:'long',year:'numeric'}))
   ))
 
@@ -387,7 +387,7 @@ function render() {
     const scoreColor = (dati.score||0)>=3?'#dc2626':(dati.score||0)>=1?'#d97706':'#16a34a'
     const sb = el('div',{class:'score-box',style:`border-color:${scoreColor}30`},
       el('div',{class:'score-num',style:`color:${scoreColor}`},dati.score??'—'),
-      el('div',{class:'score-label',style:`color:${scoreColor}`},dati.label||''),
+      el('h2',{class:'score-label',style:`color:${scoreColor}`},dati.label||''),
       dati.desc?el('div',{class:'score-desc'},dati.desc):null
     )
     const fr = document.createDocumentFragment()

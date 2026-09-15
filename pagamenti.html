@@ -94,8 +94,8 @@
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
-  <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Mostra/Nascondi barra laterale" class="no-print">☰</button>
-  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" data-i18n-tooltip="paz.toggle_sidebar" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()" data-i18n-tooltip="paz.toggle_sidebar">☰</button>
   <h2>💳 <span data-only-lang="it">Pagamenti</span><span data-only-lang="en">Payments</span></h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm" onclick="exportFattureCSV()">⬇️ <span data-only-lang="it">Esporta CSV</span><span data-only-lang="en">Export CSV</span></button>
@@ -145,14 +145,14 @@
   </div>
 
   <!-- TABS -->
-  <div id="pag-tabs" style="display:flex;gap:8px;margin-bottom:16px">
-    <button class="pag-tab active" id="tab-fatture-btn" onclick="setTab('fatture')">🧾 Fatture</button>
-    <button class="pag-tab" id="tab-tariffario-btn" onclick="setTab('tariffario')">💶 Tariffario</button>
-    <button class="pag-tab" id="tab-pacchetti-btn" onclick="setTab('pacchetti')">📦 Pacchetti</button>
+  <div id="pag-tabs" role="tablist" style="display:flex;gap:8px;margin-bottom:16px">
+    <button class="pag-tab active" id="tab-fatture-btn" role="tab" aria-selected="true" aria-controls="tab-fatture" onclick="setTab('fatture')">🧾 Fatture</button>
+    <button class="pag-tab" id="tab-tariffario-btn" role="tab" aria-selected="false" aria-controls="tab-tariffario" onclick="setTab('tariffario')">💶 Tariffario</button>
+    <button class="pag-tab" id="tab-pacchetti-btn" role="tab" aria-selected="false" aria-controls="tab-pacchetti" onclick="setTab('pacchetti')">📦 Pacchetti</button>
   </div>
 
   <!-- TAB: FATTURE -->
-  <div id="tab-fatture">
+  <div id="tab-fatture" role="tabpanel" aria-labelledby="tab-fatture-btn">
     <div id="fatt-filters" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
       <input type="text" id="fatt-search" placeholder="🔍 Cerca paziente... / Search patient..." class="db-search" style="flex:1;min-width:160px" oninput="renderFatture()">
       <select id="fatt-filter-stato" class="db-search" style="min-width:130px" onchange="renderFatture()">
@@ -167,7 +167,7 @@
   </div>
 
   <!-- TAB: PACCHETTI -->
-  <div id="tab-pacchetti" style="display:none">
+  <div id="tab-pacchetti" role="tabpanel" aria-labelledby="tab-pacchetti-btn" style="display:none">
     <div class="card" style="margin-bottom:14px;padding:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px">
         <div style="font-size:14px;font-weight:700;color:var(--slate)">📦 <span data-only-lang="it">I tuoi pacchetti</span><span data-only-lang="en">Your packages</span></div>
@@ -183,7 +183,7 @@
   </div>
 
   <!-- TAB: TARIFFARIO -->
-  <div id="tab-tariffario" style="display:none">
+  <div id="tab-tariffario" role="tabpanel" aria-labelledby="tab-tariffario-btn" style="display:none">
     <div class="card" style="margin-bottom:14px;padding:16px">
       <div style="font-size:14px;font-weight:700;margin-bottom:14px;color:var(--slate)">💶 Il tuo Tariffario</div>
       <p style="font-size:12px;color:var(--slate-m);margin-bottom:14px;line-height:1.5">Imposta il prezzo per ogni tipo di visita. Questi valori vengono proposti automaticamente quando crei una nuova fattura.</p>
@@ -203,11 +203,11 @@
     <div class="mhdr"><h2 id="pacc-modal-title">📦 Nuovo Pacchetto</h2><button class="mclose" onclick="closeM('modal-pacchetto')">✕</button></div>
     <div class="mbody">
       <div class="fgrid">
-        <div class="fg full"><label>Nome pacchetto *</label><input type="text" id="pacc-nome" maxlength="80" placeholder="es. Percorso 3 mesi / e.g. 3-month program"></div>
-        <div class="fg"><label>N° visite incluse *</label><input type="number" id="pacc-visite" min="1" max="99" step="1" placeholder="6"></div>
-        <div class="fg"><label>Prezzo (€) *</label><input type="number" id="pacc-prezzo" min="0" step="0.01" placeholder="0.00"></div>
-        <div class="fg"><label>Validità (giorni)</label><input type="number" id="pacc-durata" min="0" step="1" placeholder="90"></div>
-        <div class="fg full"><label>Descrizione</label><textarea id="pacc-desc" rows="2" maxlength="300" placeholder="Cosa include il percorso... / What the program includes..."></textarea></div>
+        <div class="fg full"><label for="pacc-nome">Nome pacchetto *</label><input type="text" id="pacc-nome" maxlength="80" placeholder="es. Percorso 3 mesi / e.g. 3-month program"></div>
+        <div class="fg"><label for="pacc-visite">N° visite incluse *</label><input type="number" id="pacc-visite" min="1" max="99" step="1" placeholder="6"></div>
+        <div class="fg"><label for="pacc-prezzo">Prezzo (€) *</label><input type="number" id="pacc-prezzo" min="0" step="0.01" placeholder="0.00"></div>
+        <div class="fg"><label for="pacc-durata">Validità (giorni)</label><input type="number" id="pacc-durata" min="0" step="1" placeholder="90"></div>
+        <div class="fg full"><label for="pacc-desc">Descrizione</label><textarea id="pacc-desc" rows="2" maxlength="300" placeholder="Cosa include il percorso... / What the program includes..."></textarea></div>
       </div>
     </div>
     <div class="mfoot">
@@ -223,14 +223,14 @@
     <div class="mhdr"><h2>🎟️ Assegna Pacchetto</h2><button class="mclose" onclick="closeM('modal-vendi-pacchetto')">✕</button></div>
     <div class="mbody">
       <div class="fgrid">
-        <div class="fg full"><label>Pacchetto</label><div id="vendi-pacc-info" style="font-size:13px;font-weight:600;color:var(--slate)"></div></div>
+        <div class="fg full"><label id="vendi-pacc-info-label">Pacchetto</label><div id="vendi-pacc-info" role="status" aria-labelledby="vendi-pacc-info-label" style="font-size:13px;font-weight:600;color:var(--slate)"></div></div>
         <div class="fg full">
-          <label>Paziente *</label>
+          <label for="vendi-patient">Paziente *</label>
           <select id="vendi-patient"><option value="">— Seleziona paziente —</option></select>
         </div>
-        <div class="fg"><label>Data inizio *</label><input type="date" id="vendi-data"></div>
+        <div class="fg"><label for="vendi-data">Data inizio *</label><input type="date" id="vendi-data"></div>
         <div class="fg">
-          <label>Stato pagamento</label>
+          <label for="vendi-stato">Stato pagamento</label>
           <select id="vendi-stato"><option value="da_pagare">In attesa</option><option value="pagato">Pagato</option></select>
         </div>
       </div>
@@ -249,21 +249,21 @@
     <div class="mbody">
       <div class="fgrid">
         <div class="fg full">
-          <label>Paziente *</label>
+          <label for="fatt-patient">Paziente *</label>
           <select id="fatt-patient" onchange="onPatientChange()">
             <option value="">— Seleziona paziente —</option>
           </select>
         </div>
         <div class="fg">
-          <label>Data fattura *</label>
+          <label for="fatt-data">Data fattura *</label>
           <input type="date" id="fatt-data">
         </div>
         <div class="fg">
-          <label>N° Fattura</label>
+          <label for="fatt-numero">N° Fattura</label>
           <input type="text" id="fatt-numero" placeholder="es. 2026/001 / e.g. 2026/001" readonly style="background:#F8FAFC;color:var(--slate-m)">
         </div>
         <div class="fg full">
-          <label>Tipo visita *</label>
+          <label for="fatt-tipo">Tipo visita *</label>
           <select id="fatt-tipo" onchange="onTipoChange()">
             <option value="">— Seleziona —</option>
             <option value="Prima visita">Prima visita</option>
@@ -275,46 +275,46 @@
           </select>
         </div>
         <div class="fg">
-          <label>Importo (€) *</label>
+          <label for="fatt-importo">Importo (€) *</label>
           <input type="number" id="fatt-importo" min="0" step="0.01" placeholder="0.00">
         </div>
         <div class="fg">
-          <label>Stato</label>
+          <label for="fatt-stato">Stato</label>
           <select id="fatt-stato">
             <option value="da_pagare">In attesa di pagamento</option>
             <option value="pagato">Pagato</option>
           </select>
         </div>
         <div class="fg">
-          <label>Scadenza pagamento</label>
-          <input type="date" id="fatt-scadenza">
-          <div style="font-size:11px;color:var(--slate-l);margin-top:3px">Se impostata, ricevi un promemoria push quando è scaduta e non ancora pagata.</div>
+          <label for="fatt-scadenza">Scadenza pagamento</label>
+          <input type="date" id="fatt-scadenza" aria-describedby="fatt-scadenza-hint">
+          <div id="fatt-scadenza-hint" style="font-size:11px;color:var(--slate-l);margin-top:3px">Se impostata, ricevi un promemoria push quando è scaduta e non ancora pagata.</div>
         </div>
         <div class="fg full">
-          <label>Note</label>
+          <label for="fatt-note">Note</label>
           <textarea id="fatt-note" rows="2" placeholder="Note aggiuntive (opzionale)... / Additional notes (optional)..."></textarea>
         </div>
         <div class="fg full" style="border-top:1px solid var(--border);margin-top:6px;padding-top:12px">
-          <label style="display:flex;align-items:center;gap:6px">📄 Dati per fattura elettronica <span style="font-weight:400;color:var(--slate-l);font-size:11.5px">(facoltativi, servono solo per generare l'XML FatturaPA)</span></label>
+          <div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;color:var(--slate)">📄 Dati per fattura elettronica <span style="font-weight:400;color:var(--slate-l);font-size:11.5px">(facoltativi, servono solo per generare l'XML FatturaPA)</span></div>
         </div>
         <div class="fg">
-          <label>Codice Fiscale paziente</label>
+          <label for="fatt-cf-paziente">Codice Fiscale paziente</label>
           <input type="text" id="fatt-cf-paziente" placeholder="RSSMRA80A01H501U" oninput="this.value=this.value.toUpperCase()">
         </div>
         <div class="fg">
-          <label>Indirizzo</label>
+          <label for="fatt-indirizzo-paziente">Indirizzo</label>
           <input type="text" id="fatt-indirizzo-paziente" placeholder="Via Roma 1">
         </div>
         <div class="fg">
-          <label>CAP</label>
+          <label for="fatt-cap-paziente">CAP</label>
           <input type="text" id="fatt-cap-paziente" placeholder="00100" maxlength="5">
         </div>
         <div class="fg">
-          <label>Comune</label>
+          <label for="fatt-comune-paziente">Comune</label>
           <input type="text" id="fatt-comune-paziente" placeholder="Roma">
         </div>
         <div class="fg">
-          <label>Provincia</label>
+          <label for="fatt-provincia-paziente">Provincia</label>
           <input type="text" id="fatt-provincia-paziente" placeholder="RM" maxlength="2" oninput="this.value=this.value.toUpperCase()">
         </div>
       </div>
@@ -577,12 +577,12 @@ function renderFatture() {
         ${f.stato !== 'pagato' && f.scadenza && new Date(f.scadenza) < new Date() ? '<span style="color:#DC2626;font-weight:700;font-size:11px">⚠ Scaduta ' + new Date(f.scadenza).toLocaleDateString('it') + '</span>' : ''}
         <span class="fatt-date">${fmtDate(f.data_fattura)}</span>
         <div style="display:flex;gap:4px;margin-left:auto">
-          ${f.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="togglePagato('${esc(f.id)}')" title="${_L('Segna come pagato', 'Mark as paid')}">✓</button>` : ''}
-          <button class="btn btn-ghost btn-xs" onclick="generaFatturaElettronica('${esc(f.id)}')" title="${f.xml_generato_at ? _L('XML già generato — rigenera', 'XML already generated — regenerate') : _L('Genera XML fattura elettronica', 'Generate electronic invoice XML')}">${f.xml_generato_at ? '📄✓' : '📄'}</button>
-          ${f.sdi_inviato_at ? `<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="${_L('Inviata allo SDI via Fatture in Cloud', 'Sent to SDI via Fatture in Cloud')}">📤✓</span>` : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSDI('${esc(f.id)}')" title="${_L('Invia allo SDI via Fatture in Cloud (richiede il collegamento in Impostazioni → Dati fiscali)', 'Send to SDI via Fatture in Cloud (requires the connection in Settings → Fiscal data)')}">📤</button>`}
-          ${f.sts_stato === 'INVI' || f.sts_stato === 'PREN' ? `<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="${_L('Inviata al Sistema TS', 'Sent to Sistema TS')}${f.sts_protocollo ? _L(' — protocollo ', ' — protocol ') + esc(f.sts_protocollo) : ''}">🏥✓</span>` : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSTS('${esc(f.id)}')" title="${f.sts_stato === 'ERRO' ? _L('Ultimo invio Sistema TS fallito: ', 'Last Sistema TS submission failed: ') + esc(f.sts_messaggio || '') + _L(' — riprova', ' — retry') : _L('Invia al Sistema Tessera Sanitaria (richiede la registrazione in Impostazioni → Dati fiscali)', 'Send to Sistema Tessera Sanitaria (requires registration in Settings → Fiscal data)')}">${f.sts_stato === 'ERRO' ? '🏥⚠' : '🏥'}</button>`}
-          <button class="btn btn-ghost btn-xs" onclick="editFattura('${esc(f.id)}')" title="${_L('Modifica', 'Edit')}">✏️</button>
-          <button class="btn btn-ghost btn-xs" onclick="deleteFattura('${esc(f.id)}')" title="${_L('Elimina', 'Delete')}">🗑️</button>
+          ${f.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="togglePagato('${esc(f.id)}')" title="${_L('Segna come pagato', 'Mark as paid')}" aria-label="${_L('Segna come pagato', 'Mark as paid')}">✓</button>` : ''}
+          <button class="btn btn-ghost btn-xs" onclick="generaFatturaElettronica('${esc(f.id)}')" title="${f.xml_generato_at ? _L('XML già generato — rigenera', 'XML already generated — regenerate') : _L('Genera XML fattura elettronica', 'Generate electronic invoice XML')}" aria-label="${f.xml_generato_at ? _L('XML già generato — rigenera', 'XML already generated — regenerate') : _L('Genera XML fattura elettronica', 'Generate electronic invoice XML')}">${f.xml_generato_at ? '📄✓' : '📄'}</button>
+          ${f.sdi_inviato_at ? `<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="${_L('Inviata allo SDI via Fatture in Cloud', 'Sent to SDI via Fatture in Cloud')}" aria-label="${_L('Inviata allo SDI via Fatture in Cloud', 'Sent to SDI via Fatture in Cloud')}">📤✓</span>` : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSDI('${esc(f.id)}')" title="${_L('Invia allo SDI via Fatture in Cloud (richiede il collegamento in Impostazioni → Dati fiscali)', 'Send to SDI via Fatture in Cloud (requires the connection in Settings → Fiscal data)')}" aria-label="${_L('Invia allo SDI via Fatture in Cloud', 'Send to SDI via Fatture in Cloud')}">📤</button>`}
+          ${f.sts_stato === 'INVI' || f.sts_stato === 'PREN' ? `<span class="btn btn-ghost btn-xs" style="cursor:default;color:#16A34A" title="${_L('Inviata al Sistema TS', 'Sent to Sistema TS')}${f.sts_protocollo ? _L(' — protocollo ', ' — protocol ') + esc(f.sts_protocollo) : ''}" aria-label="${_L('Inviata al Sistema TS', 'Sent to Sistema TS')}">🏥✓</span>` : `<button class="btn btn-ghost btn-xs" onclick="inviaFatturaSTS('${esc(f.id)}')" title="${f.sts_stato === 'ERRO' ? _L('Ultimo invio Sistema TS fallito: ', 'Last Sistema TS submission failed: ') + esc(f.sts_messaggio || '') + _L(' — riprova', ' — retry') : _L('Invia al Sistema Tessera Sanitaria (richiede la registrazione in Impostazioni → Dati fiscali)', 'Send to Sistema Tessera Sanitaria (requires registration in Settings → Fiscal data)')}" aria-label="${_L('Invia al Sistema Tessera Sanitaria', 'Send to Sistema Tessera Sanitaria')}">${f.sts_stato === 'ERRO' ? '🏥⚠' : '🏥'}</button>`}
+          <button class="btn btn-ghost btn-xs" onclick="editFattura('${esc(f.id)}')" title="${_L('Modifica', 'Edit')}" aria-label="${_L('Modifica fattura', 'Edit invoice')}">✏️</button>
+          <button class="btn btn-ghost btn-xs" onclick="deleteFattura('${esc(f.id)}')" title="${_L('Elimina', 'Delete')}" aria-label="${_L('Elimina fattura', 'Delete invoice')}">🗑️</button>
         </div>
       </div>
       ${f.note ? `<div style="font-size:11.5px;color:var(--slate-l);margin-top:6px;font-style:italic">${esc(f.note)}</div>` : ''}
@@ -706,6 +706,9 @@ function setTab(name) {
   document.getElementById('tab-fatture-btn').classList.toggle('active', name === 'fatture');
   document.getElementById('tab-tariffario-btn').classList.toggle('active', name === 'tariffario');
   document.getElementById('tab-pacchetti-btn').classList.toggle('active', name === 'pacchetti');
+  document.getElementById('tab-fatture-btn').setAttribute('aria-selected', String(name === 'fatture'));
+  document.getElementById('tab-tariffario-btn').setAttribute('aria-selected', String(name === 'tariffario'));
+  document.getElementById('tab-pacchetti-btn').setAttribute('aria-selected', String(name === 'pacchetti'));
   if (name === 'pacchetti' && !_pacchettiLoaded) loadPacchetti();
 }
 
@@ -748,8 +751,8 @@ function renderPacchetti() {
           ${p.descrizione ? `<div style="font-size:11px;color:var(--slate-l);margin-top:2px">${esc(p.descrizione)}</div>` : ''}
         </div>
         <button class="btn btn-primary btn-xs" onclick="openVendiPacchetto('${p.id}')">🎟️ Assegna</button>
-        <button class="btn btn-ghost btn-xs" onclick="openPacchettoModal('${p.id}')">✏️</button>
-        <button class="btn btn-ghost btn-xs" style="color:#DC2626" onclick="deletePacchetto('${p.id}')">🗑️</button>
+        <button class="btn btn-ghost btn-xs" onclick="openPacchettoModal('${p.id}')" aria-label="${_L('Modifica pacchetto', 'Edit package')}">✏️</button>
+        <button class="btn btn-ghost btn-xs" style="color:#DC2626" onclick="deletePacchetto('${p.id}')" aria-label="${_L('Elimina pacchetto', 'Delete package')}">🗑️</button>
       </div>`).join('');
   }
 
@@ -778,7 +781,7 @@ function renderPacchetti() {
           </div>
           ${!finito && !scaduto ? `<button class="btn btn-primary btn-xs" onclick="registraVisitaPacchetto('${v.id}')">+1 visita</button>` : ''}
           ${v.stato !== 'pagato' ? `<button class="btn btn-ghost btn-xs" onclick="fatturaDaPacchetto('${v.id}')">🧾 Fattura</button>` : ''}
-          <button class="btn btn-ghost btn-xs" style="color:#DC2626" onclick="deletePacchettoVenduto('${v.id}')">🗑️</button>
+          <button class="btn btn-ghost btn-xs" style="color:#DC2626" onclick="deletePacchettoVenduto('${v.id}')" aria-label="${_L('Elimina pacchetto assegnato', 'Delete assigned package')}">🗑️</button>
         </div>
       </div>`;
   }).join('');
@@ -921,29 +924,29 @@ function renderTariffario() {
       <colgroup><col><col style="width:140px"><col style="width:50px"></colgroup>
       <thead>
         <tr>
-          <th style="background:var(--teal-d);text-align:center;padding:10px 0;font-size:11px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.5px">Tipo Visita</th>
-          <th style="background:var(--teal-d);text-align:center;padding:10px 0;font-size:11px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.5px">Prezzo</th>
-          <th style="background:var(--teal-d)"></th>
+          <th scope="col" style="background:var(--teal-d);text-align:center;padding:10px 0;font-size:11px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.5px">Tipo Visita</th>
+          <th scope="col" style="background:var(--teal-d);text-align:center;padding:10px 0;font-size:11px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.5px">Prezzo</th>
+          <th scope="col" style="background:var(--teal-d)"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Azioni</span></th>
         </tr>
       </thead>
       <tbody>
         ${tariff.map((row, i) => `
         <tr>
           <td style="padding:9px 12px 9px 0;border-bottom:1px solid #F1F5F9">
-            <input type="text" value="${esc(row.tipo)}" placeholder="es. Prima visita, Controllo... / e.g. First visit, Follow-up..."
+            <input type="text" value="${esc(row.tipo)}" placeholder="es. Prima visita, Controllo... / e.g. First visit, Follow-up..." aria-label="Tipo visita"
               style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:9px;font-size:13px;font-family:inherit;background:white;outline:none;transition:border-color .15s"
               onfocus="this.style.borderColor='#2DD4BF'" onblur="this.style.borderColor='#E2E8F0'">
           </td>
           <td style="padding:9px 0;border-bottom:1px solid #F1F5F9">
             <div style="position:relative">
               <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#94A3B8;font-weight:600;pointer-events:none">€</span>
-              <input type="number" value="${row.prezzo}" min="0" step="1"
+              <input type="number" value="${row.prezzo}" min="0" step="1" aria-label="Prezzo in euro"
                 style="width:100%;box-sizing:border-box;padding:9px 10px 9px 24px;border:1.5px solid #E2E8F0;border-radius:9px;font-size:15px;font-weight:700;text-align:right;font-family:inherit;background:white;outline:none;transition:border-color .15s;color:#0D9488"
                 onfocus="this.style.borderColor='#2DD4BF'" onblur="this.style.borderColor='#E2E8F0'">
             </div>
           </td>
           <td style="padding:9px 0;border-bottom:1px solid #F1F5F9;text-align:center">
-            <button onclick="removeRow(${i})"
+            <button onclick="removeRow(${i})" aria-label="Rimuovi voce tariffario"
               style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:8px;cursor:pointer;color:#94A3B8;font-size:14px;font-family:inherit;transition:all .15s"
               onmouseover="this.style.background='#FEE2E2';this.style.color='#DC2626';this.style.borderColor='#FCA5A5'"
               onmouseout="this.style.background='#F8FAFC';this.style.color='#94A3B8';this.style.borderColor='#E2E8F0'">✕</button>

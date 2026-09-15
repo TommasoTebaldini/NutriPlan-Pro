@@ -105,8 +105,8 @@
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
-  <button id="sb-toggle-btn" onclick="toggleSidebar()" class="no-print">☰</button>
-  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" data-i18n-tooltip="paz.toggle_sidebar" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()" data-i18n-tooltip="paz.toggle_sidebar">☰</button>
   <h2>📊 Analytics Studio</h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ CSV</button>
@@ -121,10 +121,10 @@
   <!-- Range selector -->
   <div class="export-bar" id="analytics-range-bar">
     <span style="font-size:12.5px;font-weight:600;color:var(--slate-l)">Periodo:</span>
-    <button class="range-btn" data-months="3" onclick="setRange(3)">3 mesi</button>
-    <button class="range-btn active" data-months="6" onclick="setRange(6)">6 mesi</button>
-    <button class="range-btn" data-months="12" onclick="setRange(12)">12 mesi</button>
-    <button class="range-btn" data-months="24" onclick="setRange(24)">24 mesi</button>
+    <button class="range-btn" data-months="3" aria-pressed="false" onclick="setRange(3)">3 mesi</button>
+    <button class="range-btn active" data-months="6" aria-pressed="true" onclick="setRange(6)">6 mesi</button>
+    <button class="range-btn" data-months="12" aria-pressed="false" onclick="setRange(12)">12 mesi</button>
+    <button class="range-btn" data-months="24" aria-pressed="false" onclick="setRange(24)">24 mesi</button>
   </div>
 
   <!-- KPI cards -->
@@ -143,16 +143,16 @@
   <!-- Charts row 1 -->
   <div class="chart-grid" id="analytics-charts-row1">
     <div class="chart-card">
-      <h3>📈 <span data-only-lang="it">Pazienti acquisiti / mese</span><span data-only-lang="en" style="display:none">Patients acquired / month</span></h3>
-      <div class="chart-wrap"><canvas id="chart-acquired"></canvas></div>
+      <h3 id="chart-acquired-title">📈 <span data-only-lang="it">Pazienti acquisiti / mese</span><span data-only-lang="en" style="display:none">Patients acquired / month</span></h3>
+      <div class="chart-wrap"><canvas id="chart-acquired" role="img" aria-labelledby="chart-acquired-title"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>📅 <span data-only-lang="it">Visite / mese</span><span data-only-lang="en" style="display:none">Visits / month</span></h3>
-      <div class="chart-wrap"><canvas id="chart-appts"></canvas></div>
+      <h3 id="chart-appts-title">📅 <span data-only-lang="it">Visite / mese</span><span data-only-lang="en" style="display:none">Visits / month</span></h3>
+      <div class="chart-wrap"><canvas id="chart-appts" role="img" aria-labelledby="chart-appts-title"></canvas></div>
     </div>
     <div class="chart-card full">
-      <h3>🔄 <span data-only-lang="it">Retention rate mensile</span><span data-only-lang="en" style="display:none">Monthly retention rate</span></h3>
-      <div class="chart-wrap" style="height:180px"><canvas id="chart-retention"></canvas></div>
+      <h3 id="chart-retention-title">🔄 <span data-only-lang="it">Retention rate mensile</span><span data-only-lang="en" style="display:none">Monthly retention rate</span></h3>
+      <div class="chart-wrap" style="height:180px"><canvas id="chart-retention" role="img" aria-labelledby="chart-retention-title"></canvas></div>
     </div>
   </div>
 
@@ -165,8 +165,8 @@
   </div>
   <div class="chart-grid">
     <div class="chart-card full">
-      <h3>📊 <span data-only-lang="it">Pazienti attivi per settimana (diario alimentare)</span><span data-only-lang="en" style="display:none">Active patients per week (food diary)</span></h3>
-      <div class="chart-wrap" style="height:180px"><canvas id="chart-adherence"></canvas></div>
+      <h3 id="chart-adherence-title">📊 <span data-only-lang="it">Pazienti attivi per settimana (diario alimentare)</span><span data-only-lang="en" style="display:none">Active patients per week (food diary)</span></h3>
+      <div class="chart-wrap" style="height:180px"><canvas id="chart-adherence" role="img" aria-labelledby="chart-adherence-title"></canvas></div>
     </div>
   </div>
 
@@ -177,12 +177,12 @@
       <table class="cohort-table" id="cohort-table">
         <thead>
           <tr>
-            <th style="text-align:left">Mese</th>
-            <th>Registrati</th>
-            <th>Attivi 30gg</th>
-            <th>Attivi 90gg</th>
-            <th>Retention 90gg</th>
-            <th>Visite</th>
+            <th scope="col" style="text-align:left">Mese</th>
+            <th scope="col">Registrati</th>
+            <th scope="col">Attivi 30gg</th>
+            <th scope="col">Attivi 90gg</th>
+            <th scope="col">Retention 90gg</th>
+            <th scope="col">Visite</th>
           </tr>
         </thead>
         <tbody id="cohort-tbody">
@@ -219,7 +219,11 @@ async function loadChartJs() {
 
 function setRange(months) {
   activeMonths = months;
-  document.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', +b.dataset.months === months));
+  document.querySelectorAll('.range-btn').forEach(b => {
+    const isActive = +b.dataset.months === months;
+    b.classList.toggle('active', isActive);
+    b.setAttribute('aria-pressed', String(isActive));
+  });
   renderAll();
 }
 

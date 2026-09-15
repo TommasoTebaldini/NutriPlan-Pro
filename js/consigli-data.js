@@ -3058,8 +3058,8 @@ const ATLAS_DATA = [
 let atlasFilter = 'tutti';
 function filterAtlas(cat, btn) {
   atlasFilter = cat;
-  document.querySelectorAll('#tab-atlante .atlas-cat-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+  document.querySelectorAll('#tab-atlante .atlas-cat-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+  if (btn) { btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true'); }
   renderAtlas();
 }
 function renderAtlas() {
@@ -3120,8 +3120,8 @@ const ECM_DATA = [
 let ecmFilter = 'tutti';
 function filterECM(cat, btn) {
   ecmFilter = cat;
-  document.querySelectorAll('#tab-ecm .atlas-cat-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+  document.querySelectorAll('#tab-ecm .atlas-cat-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+  if (btn) { btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true'); }
   renderECM();
 }
 function renderECM() {
@@ -3152,10 +3152,10 @@ function renderECM() {
 
 function showTab(id, btn) {
   document.querySelectorAll('.cs-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.cs-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.cs-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); t.tabIndex = -1; });
   document.getElementById('tab-' + id).classList.add('active');
-  if (btn) btn.classList.add('active');
-  else document.querySelector(`.cs-tab[onclick*="${id}"]`)?.classList.add('active');
+  const activeTab = btn || document.querySelector(`.cs-tab[onclick*="${id}"]`);
+  if (activeTab) { activeTab.classList.add('active'); activeTab.setAttribute('aria-selected', 'true'); activeTab.tabIndex = 0; }
   document.body.dataset.printTab = id;
 }
 
@@ -3507,14 +3507,14 @@ function buildConsiglio(c, isCustom = false) {
 
   const hex = c.colore || '#0F766E';
   div.innerHTML = `
-    <div class="cc-hdr" style="border-left:4px solid ${hex}" onclick="toggleCC(this)">
-      <span class="cc-emoji" style="color:${hex}">${esc(c.emoji)}</span>
+    <div class="cc-hdr" style="border-left:4px solid ${hex}" onclick="toggleCC(this)" role="button" tabindex="0" aria-expanded="false" aria-controls="cc-body-${c.id}" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCC(this)}">
+      <span class="cc-emoji" style="color:${hex}" aria-hidden="true">${esc(c.emoji)}</span>
       <h3 style="color:${hex}">${esc(nome)}</h3>
       ${isCustom ? `<span class="cc-badge" style="background:${hex}18;border-color:${hex}30;color:${hex}">✏️ ${lblPersonalizzato}</span>` : ''}
       <span class="cc-badge" style="background:${hex}12;border-color:${hex}25;color:${hex}">🍽️ ${pasti}</span>
-      <span style="margin-left:4px;font-size:16px;color:${hex};opacity:.7;transition:transform .2s" class="cc-toggle-btn">▼</span>
+      <span style="margin-left:4px;font-size:16px;color:${hex};opacity:.7;transition:transform .2s" class="cc-toggle-btn" aria-hidden="true">▼</span>
     </div>
-    <div class="cc-body">
+    <div class="cc-body" id="cc-body-${c.id}">
       <div class="consiglio-info">
         <div class="ci-box" style="border-left-color:${hex}"><div class="ci-label">🍽️ ${lblPasti}</div><div class="ci-val">${esc(pasti)}</div></div>
         <div class="ci-box" style="border-left-color:${hex}"><div class="ci-label">🥣 ${lblPorzioni}</div><div class="ci-val">${esc(porzioni)}</div></div>
@@ -3559,6 +3559,7 @@ function toggleCC(hdr) {
   const body = hdr.nextElementSibling;
   const tog = hdr.querySelector('.cc-toggle-btn');
   const isOpen = body.classList.toggle('open');
+  hdr.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   if (tog) {
     tog.textContent = isOpen ? '▲' : '▼';
     tog.style.transform = isOpen ? 'rotate(0deg)' : '';

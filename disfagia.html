@@ -161,7 +161,7 @@
 
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" data-i18n-tooltip="paz.toggle_sidebar" class="no-print">☰</button>
-  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()" data-i18n-tooltip="paz.toggle_sidebar">☰</button>
   <h2>🗣️ <span data-only-lang="it">Disfagia — Dieta IDDSI</span><span data-only-lang="en" style="display:none">Dysphagia — IDDSI Diet</span></h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
@@ -207,7 +207,7 @@
     <input type="hidden" id="dis-cartella" value="">
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
-    <label>📝 Nota / Titolo sessione</label>
+    <label for="dis-nota">📝 Nota / Titolo sessione</label>
     <input type="text" id="dis-nota" placeholder="es. Prima visita, follow-up... / e.g. First visit, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
   </div>
   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
@@ -217,13 +217,13 @@
 </div>
 
 <!-- TABS -->
-<div class="dis-tabs no-print">
-  <button class="dis-tab active" onclick="showDisTab('iddsi',event)">📋 Scala IDDSI</button>
-  <button class="dis-tab" onclick="showDisTab('piano',event)">🍽️ Piano Dietetico</button>
-  <button class="dis-tab" onclick="showDisTab('alimenti',event)">🥦 Alimenti per Livello</button>
-  <button class="dis-tab" onclick="showDisTab('clinica',event)">⚠️ Avvertenze Cliniche</button>
-  <button class="dis-tab" onclick="showDisTab('esempi',event)">📊 Esempi</button>
-  <button class="dis-tab" onclick="showDisTab('linee_guida_dis',event)">📚 Linee Guida</button>
+<div class="dis-tabs no-print" role="tablist">
+  <button class="dis-tab active" role="tab" aria-selected="true" aria-controls="tab-iddsi" onclick="showDisTab('iddsi',event)">📋 Scala IDDSI</button>
+  <button class="dis-tab" role="tab" aria-selected="false" aria-controls="tab-piano" onclick="showDisTab('piano',event)">🍽️ Piano Dietetico</button>
+  <button class="dis-tab" role="tab" aria-selected="false" aria-controls="tab-alimenti" onclick="showDisTab('alimenti',event)">🥦 Alimenti per Livello</button>
+  <button class="dis-tab" role="tab" aria-selected="false" aria-controls="tab-clinica" onclick="showDisTab('clinica',event)">⚠️ Avvertenze Cliniche</button>
+  <button class="dis-tab" role="tab" aria-selected="false" aria-controls="tab-esempi" onclick="showDisTab('esempi',event)">📊 Esempi</button>
+  <button class="dis-tab" role="tab" aria-selected="false" aria-controls="tab-linee_guida_dis" onclick="showDisTab('linee_guida_dis',event)">📚 Linee Guida</button>
 </div>
 
 <!-- ══════════════════════════════════════════════ -->
@@ -233,7 +233,7 @@
 <!-- TAB VALUTAZIONE PAZIENTE                          -->
 <!-- ══════════════════════════════════════════════════ -->
 
-<div class="dis-panel active" id="tab-iddsi">
+<div class="dis-panel active" role="tabpanel" id="tab-iddsi">
 
   <div class="alert-info alert-box">
     <span data-only-lang="it"><b>🗣️ IDDSI — International Dysphagia Diet Standardisation Initiative (2019)</b> — La classificazione IDDSI definisce 8 livelli (0–7) di consistenza per alimenti e liquidi. I <b>Livelli 0–4</b> descrivono bevande/liquidi, i <b>Livelli 3–7</b> descrivono alimenti. Il livello 0 (Thin) è la consistenza normale dei liquidi non modificati.</span>
@@ -463,7 +463,7 @@
 <!-- ══════════════════════════════════════════════ -->
 <!-- TAB 2: PIANO DIETETICO                        -->
 <!-- ══════════════════════════════════════════════ -->
-<div class="dis-panel" id="tab-piano">
+<div class="dis-panel" role="tabpanel" id="tab-piano">
 
   <div class="piano-selector no-print">
     <h3>⚙️ <span data-only-lang="it">Seleziona Livello IDDSI e Target Calorico</span><span data-only-lang="en" style="display:none">Select IDDSI Level and Caloric Target</span></h3>
@@ -489,7 +489,7 @@
 <!-- ══════════════════════════════════════════════ -->
 <!-- TAB 3: ALIMENTI PER LIVELLO                   -->
 <!-- ══════════════════════════════════════════════ -->
-<div class="dis-panel" id="tab-alimenti">
+<div class="dis-panel" role="tabpanel" id="tab-alimenti">
 
   <div class="alert-info alert-box">
     <span data-only-lang="it"><b>🔍 Guida agli alimenti per livello IDDSI</b> — I cibi elencati sono indicativi. La preparazione corretta (cottura, consistenza, umidità) è fondamentale. Consultare sempre il logopedista per la valutazione individuale.</span>
@@ -503,7 +503,7 @@
 <!-- ══════════════════════════════════════════════ -->
 <!-- TAB 4: AVVERTENZE CLINICHE                    -->
 <!-- ══════════════════════════════════════════════ -->
-<div class="dis-panel" id="tab-clinica">
+<div class="dis-panel" role="tabpanel" id="tab-clinica">
 
   <div data-only-lang="it">
     <div class="grid-2">
@@ -654,7 +654,7 @@
 <!-- ══════════════════════════════════════════════ -->
 <!-- TAB 5: ESEMPI                                  -->
 <!-- ══════════════════════════════════════════════ -->
-<div class="dis-panel" id="tab-esempi">
+<div class="dis-panel" role="tabpanel" id="tab-esempi">
 
   <div class="alert-info alert-box">
     <span data-only-lang="it"><b>📊 Esempi di Piani Giornalieri per Disfagia</b> — Seleziona il livello IDDSI per visualizzare un esempio di menu giornaliero adatto. Le quantità sono calibrate su un fabbisogno standard (~1800 kcal). Adattare sempre in base al fabbisogno individuale calcolato nel tab "Piano Dietetico".</span>
@@ -667,7 +667,7 @@
 </div><!-- /tab-esempi -->
 
 <!-- TAB: LINEE GUIDA DISFAGIA -->
-<div class="dis-panel" id="tab-linee_guida_dis">
+<div class="dis-panel" role="tabpanel" id="tab-linee_guida_dis">
   <div class="alert-info alert-box">
     <span data-only-lang="it"><b>📚 Linee Guida e Standard Internazionali per la Disfagia</b> — ESSD, ASHA, IDDSI Framework, FEES/VFSS. La disfagia richiede un approccio multidisciplinare con standard di sicurezza codificati per la consistenza degli alimenti e dei liquidi.</span>
     <span data-only-lang="en" style="display:none"><b>📚 International Guidelines and Standards for Dysphagia</b> — ESSD, ASHA, IDDSI Framework, FEES/VFSS. Dysphagia requires a multidisciplinary approach with coded safety standards for food and liquid texture.</span>
@@ -1021,9 +1021,9 @@ function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStora
 function showDisTab(id, ev) {
   autoSavePage_disfagia();
   document.querySelectorAll('.dis-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.dis-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dis-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
   document.getElementById('tab-' + id).classList.add('active');
-  if (ev && ev.target) ev.target.classList.add('active');
+  if (ev && ev.target) { ev.target.classList.add('active'); ev.target.setAttribute('aria-selected', 'true'); }
 }
 
 /* ═══════════════════════════════════════════════

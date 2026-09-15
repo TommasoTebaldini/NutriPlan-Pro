@@ -168,7 +168,7 @@
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" data-i18n-tooltip="paz.toggle_sidebar" class="no-print">☰</button>
-  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()" data-i18n-tooltip="paz.toggle_sidebar">☰</button>
   <h2>🌿 <span data-only-lang="it">Paziente Sano — Nutrizione in Salute</span><span data-only-lang="en" style="display:none">Healthy Patient — Nutrition in Health</span></h2>
   <div class="tbar-actions">
     <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">🖨️ Stampa</button>
@@ -209,7 +209,7 @@
     <input type="hidden" id="ps-cartella">
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
-    <label>📝 <span data-only-lang="it">Nota sessione</span><span data-only-lang="en" style="display:none">Session note</span></label>
+    <label for="ps-nota">📝 <span data-only-lang="it">Nota sessione</span><span data-only-lang="en" style="display:none">Session note</span></label>
     <input type="text" id="ps-nota" placeholder="es. Prima visita, follow-up... / e.g. First visit, follow-up..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:13px">
   </div>
   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
@@ -219,18 +219,18 @@
 </div>
 
 <!-- TABS -->
-<div class="ps-tabs">
-  <button class="ps-tab active" onclick="showPSTab('valutazione')"><span data-only-lang="it">📊 Valutazione</span><span data-only-lang="en" style="display:none">📊 Assessment</span></button>
-  <button class="ps-tab" onclick="showPSTab('larn')">📋 LARN V</button>
-  <button class="ps-tab" onclick="showPSTab('porzioni')"><span data-only-lang="it">🍽️ Porzioni & Frequenze</span><span data-only-lang="en" style="display:none">🍽️ Portions &amp; Frequencies</span></button>
-  <button class="ps-tab" onclick="showPSTab('linee')"><span data-only-lang="it">💡 Linee Guida</span><span data-only-lang="en" style="display:none">💡 Guidelines</span></button>
-  <button class="ps-tab" onclick="showPSTab('piano')"><span data-only-lang="it">🤖 Piano Settimanale AI</span><span data-only-lang="en" style="display:none">🤖 AI Weekly Plan</span></button>
+<div class="ps-tabs" role="tablist">
+  <button class="ps-tab active" role="tab" aria-selected="true" aria-controls="tab-valutazione" onclick="showPSTab('valutazione')"><span data-only-lang="it">📊 Valutazione</span><span data-only-lang="en" style="display:none">📊 Assessment</span></button>
+  <button class="ps-tab" role="tab" aria-selected="false" aria-controls="tab-larn" onclick="showPSTab('larn')">📋 LARN V</button>
+  <button class="ps-tab" role="tab" aria-selected="false" aria-controls="tab-porzioni" onclick="showPSTab('porzioni')"><span data-only-lang="it">🍽️ Porzioni & Frequenze</span><span data-only-lang="en" style="display:none">🍽️ Portions &amp; Frequencies</span></button>
+  <button class="ps-tab" role="tab" aria-selected="false" aria-controls="tab-linee" onclick="showPSTab('linee')"><span data-only-lang="it">💡 Linee Guida</span><span data-only-lang="en" style="display:none">💡 Guidelines</span></button>
+  <button class="ps-tab" role="tab" aria-selected="false" aria-controls="tab-piano" onclick="showPSTab('piano')"><span data-only-lang="it">🤖 Piano Settimanale AI</span><span data-only-lang="en" style="display:none">🤖 AI Weekly Plan</span></button>
 </div>
 
 <!-- ══════════════════════════════════════════════════ -->
 <!-- TAB 1: VALUTAZIONE                                -->
 <!-- ══════════════════════════════════════════════════ -->
-<div class="ps-panel active" id="tab-valutazione">
+<div class="ps-panel active" role="tabpanel" id="tab-valutazione">
   <div class="alert-green">
     <span data-only-lang="it"><b>📊 Valutazione Nutrizionale del Paziente Sano</b> — Calcola BMI, peso ideale, fabbisogno energetico basale e totale con i metodi validati (Mifflin-St Jeor). I valori vengono automaticamente utilizzati nel generatore del Piano AI.</span>
     <span data-only-lang="en" style="display:none"><b>📊 Nutritional Assessment of the Healthy Patient</b> — Calculates BMI, ideal weight, basal and total energy requirements using validated methods (Mifflin-St Jeor). Values are automatically used in the AI Plan generator.</span>
@@ -239,20 +239,20 @@
     <div class="calc-box">
       <h3><span data-only-lang="it">👤 Dati Antropometrici</span><span data-only-lang="en" style="display:none">👤 Anthropometric Data</span></h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div class="nf"><label><span data-only-lang="it">Sesso</span><span data-only-lang="en" style="display:none">Sex</span></label>
+        <div class="nf"><label for="ps-sesso"><span data-only-lang="it">Sesso</span><span data-only-lang="en" style="display:none">Sex</span></label>
           <select id="ps-sesso" onchange="calcolaPS()"><option value="M">Maschio</option><option value="F">Femmina</option></select>
         </div>
-        <div class="nf"><label><span data-only-lang="it">Età (anni)</span><span data-only-lang="en" style="display:none">Age (years)</span></label>
+        <div class="nf"><label for="ps-eta"><span data-only-lang="it">Età (anni)</span><span data-only-lang="en" style="display:none">Age (years)</span></label>
           <input type="number" id="ps-eta" placeholder="es. 35 / e.g. 35" min="18" max="100" oninput="calcolaPS()">
         </div>
-        <div class="nf"><label><span data-only-lang="it">Peso attuale (kg)</span><span data-only-lang="en" style="display:none">Current weight (kg)</span></label>
+        <div class="nf"><label for="ps-peso"><span data-only-lang="it">Peso attuale (kg)</span><span data-only-lang="en" style="display:none">Current weight (kg)</span></label>
           <input type="number" id="ps-peso" placeholder="es. 70 / e.g. 70" step="0.1" oninput="calcolaPS()">
         </div>
-        <div class="nf"><label><span data-only-lang="it">Altezza (cm)</span><span data-only-lang="en" style="display:none">Height (cm)</span></label>
+        <div class="nf"><label for="ps-altezza"><span data-only-lang="it">Altezza (cm)</span><span data-only-lang="en" style="display:none">Height (cm)</span></label>
           <input type="number" id="ps-altezza" placeholder="es. 170 / e.g. 170" oninput="calcolaPS()">
         </div>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Livello di attività fisica (PAL)</span><span data-only-lang="en" style="display:none">Physical activity level (PAL)</span></label>
+      <div class="nf" style="margin-bottom:10px"><label for="ps-pal"><span data-only-lang="it">Livello di attività fisica (PAL)</span><span data-only-lang="en" style="display:none">Physical activity level (PAL)</span></label>
         <select id="ps-pal" onchange="calcolaPS()">
           <option value="1.2">Sedentario (no esercizio)</option>
           <option value="1.375">Leggermente attivo (1-2 gg/sett)</option>
@@ -261,7 +261,7 @@
           <option value="1.9">Estremamente attivo (atleta/lavoro fisico)</option>
         </select>
       </div>
-      <div class="nf"><label><span data-only-lang="it">Obiettivo nutrizionale</span><span data-only-lang="en" style="display:none">Nutritional goal</span></label>
+      <div class="nf"><label for="ps-obiettivo"><span data-only-lang="it">Obiettivo nutrizionale</span><span data-only-lang="en" style="display:none">Nutritional goal</span></label>
         <select id="ps-obiettivo" onchange="calcolaPS()">
           <option value="mantenimento">Mantenimento del peso</option>
           <option value="perdita_lieve">Lieve calo ponderale (−300 kcal)</option>
@@ -272,7 +272,7 @@
     </div>
 
     <div>
-      <div class="calc-box" id="ps-result-box" style="display:none">
+      <div class="calc-box" id="ps-result-box" style="display:none" aria-live="polite">
         <h3><span data-only-lang="it">📈 Risultati</span><span data-only-lang="en" style="display:none">📈 Results</span></h3>
         <span class="calc-ref-note">&#9877;&#65039; <span data-only-lang="it">Riferimento da letteratura scientifica &#8212; non costituisce prescrizione.</span><span data-only-lang="en" style="display:none">Reference from scientific literature &#8212; does not constitute a prescription.</span></span>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
@@ -307,16 +307,16 @@
             </div>
           </div>
         </div>
-        <div id="ps-macro-result" style="font-size:12.5px"></div>
+        <div id="ps-macro-result" style="font-size:12.5px" aria-live="polite"></div>
       </div>
       <div class="calc-box">
         <h3><span data-only-lang="it">💧 Fabbisogno Idrico</span><span data-only-lang="en" style="display:none">💧 Water Requirements</span></h3>
         <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:10px"><span data-only-lang="it">AI LARN V: <b>2,0 L/die</b> (donne) · <b>2,5 L/die</b> (uomini), inclusa l'acqua degli alimenti (~700 mL). Aumenta con sudorazione, febbre, temperature elevate.</span><span data-only-lang="en" style="display:none">AI LARN V: <b>2.0 L/day</b> (women) · <b>2.5 L/day</b> (men), including water from foods (~700 mL). Increases with sweating, fever, high temperatures.</span></p>
-        <div id="ps-acqua-result" style="background:#EFF6FF;border-radius:8px;padding:12px;font-size:13px;text-align:center;display:none">
+        <div id="ps-acqua-result" style="background:#EFF6FF;border-radius:8px;padding:12px;font-size:13px;text-align:center;display:none" aria-live="polite">
           <div style="font-size:11px;color:var(--slate-l)"><span data-only-lang="it">Acqua raccomandata (da bere)</span><span data-only-lang="en" style="display:none">Recommended water intake (to drink)</span></div>
           <div style="font-size:24px;font-weight:700;color:#3B82F6" id="ps-acqua">—</div>
         </div>
-        <div class="nf" style="margin-top:10px"><label><span data-only-lang="it">Calcolo rapido (35 mL/kg peso corporeo)</span><span data-only-lang="en" style="display:none">Quick calculation (35 mL/kg body weight)</span></label>
+        <div class="nf" style="margin-top:10px"><label for="ps-acqua-kg"><span data-only-lang="it">Calcolo rapido (35 mL/kg peso corporeo)</span><span data-only-lang="en" style="display:none">Quick calculation (35 mL/kg body weight)</span></label>
           <input type="number" id="ps-acqua-kg" placeholder="es. 70 kg / e.g. 70 kg" oninput="calcolaAcqua()" style="max-width:200px">
         </div>
         <div id="ps-acqua-calc" style="font-size:13px;color:#3B82F6;font-weight:700;margin-top:6px"></div>
@@ -333,7 +333,7 @@
 <!-- ══════════════════════════════════════════════════ -->
 <!-- TAB 2: LARN V                                     -->
 <!-- ══════════════════════════════════════════════════ -->
-<div class="ps-panel" id="tab-larn">
+<div class="ps-panel" role="tabpanel" id="tab-larn">
   <div class="alert-green">
     <span data-only-lang="it"><b>📋 LARN V Revisione — Livelli di Assunzione di Riferimento di Nutrienti ed Energia per la popolazione italiana</b> (SINU, 2014 con aggiornamenti 2023). <span class="larn-badge larn-pri">PRI</span> = Population Reference Intake · <span class="larn-badge larn-ar">AR</span> = Average Requirement · <span class="larn-badge larn-ai">AI</span> = Adequate Intake · <span class="larn-badge larn-ul">UL</span> = Upper Level</span>
     <span data-only-lang="en" style="display:none"><b>📋 LARN V Revision — Reference Intake Levels of Nutrients and Energy for the Italian population</b> (SINU, 2014 with 2023 updates). <span class="larn-badge larn-pri">PRI</span> = Population Reference Intake · <span class="larn-badge larn-ar">AR</span> = Average Requirement · <span class="larn-badge larn-ai">AI</span> = Adequate Intake · <span class="larn-badge larn-ul">UL</span> = Upper Level</span>
@@ -463,7 +463,7 @@
 <!-- ══════════════════════════════════════════════════ -->
 <!-- TAB 3: PORZIONI & FREQUENZE                       -->
 <!-- ══════════════════════════════════════════════════ -->
-<div class="ps-panel" id="tab-porzioni">
+<div class="ps-panel" role="tabpanel" id="tab-porzioni">
   <div class="alert-green">
     <span data-only-lang="it"><b>🍽️ Porzioni e Frequenze di Consumo</b> — Basate su <b>LARN V</b>, <b>Linee Guida per una Sana Alimentazione (CREA 2018)</b> e principi della <b>Dieta Mediterranea UNESCO</b>. Le frequenze si riferiscono a un adulto sano normopeso con apporto di circa 2000 kcal/die.</span>
     <span data-only-lang="en" style="display:none"><b>🍽️ Portions and Consumption Frequencies</b> — Based on <b>LARN V</b>, <b>Guidelines for Healthy Eating (CREA 2018)</b> and principles of the <b>Mediterranean Diet UNESCO</b>. Frequencies refer to a healthy normal-weight adult with an intake of approximately 2000 kcal/day.</span>
@@ -663,7 +663,7 @@
 <!-- ══════════════════════════════════════════════════ -->
 <!-- TAB 4: LINEE GUIDA                                -->
 <!-- ══════════════════════════════════════════════════ -->
-<div class="ps-panel" id="tab-linee">
+<div class="ps-panel" role="tabpanel" id="tab-linee">
   <div class="alert-green">
     <span data-only-lang="it"><b>💡 Linee Guida per una Sana Alimentazione</b> — Sintesi operativa basata su LARN V revisione (SINU 2014), Linee Guida CREA 2018, OMS 2023, EAT-Lancet Commission 2024, Dieta Mediterranea (patrimonio UNESCO).</span>
     <span data-only-lang="en" style="display:none"><b>💡 Guidelines for Healthy Eating</b> — Operational summary based on LARN V revision (SINU 2014), CREA 2018 Guidelines, WHO 2023, EAT-Lancet Commission 2024, Mediterranean Diet (UNESCO heritage).</span>
@@ -838,7 +838,7 @@
 <!-- ══════════════════════════════════════════════════ -->
 <!-- TAB 5: PIANO SETTIMANALE AI                       -->
 <!-- ══════════════════════════════════════════════════ -->
-<div class="ps-panel" id="tab-piano">
+<div class="ps-panel" role="tabpanel" id="tab-piano">
   <div class="alert-green">
     <span data-only-lang="it"><b>🤖 Generatore Piano Settimanale AI</b> — Configura le caratteristiche del paziente e le preferenze alimentari. L'AI genererà un piano completo di 7 giorni (colazione, spuntino, pranzo, merenda, cena) personalizzato sui parametri inseriti, rispettando le linee guida LARN V e la Dieta Mediterranea.</span>
     <span data-only-lang="en" style="display:none"><b>🤖 AI Weekly Plan Generator</b> — Configure the patient's characteristics and dietary preferences. The AI will generate a complete 7-day plan (breakfast, snack, lunch, snack, dinner) personalised to the entered parameters, following LARN V and Mediterranean Diet guidelines.</span>
@@ -849,20 +849,20 @@
     <div class="calc-box">
       <h3><span data-only-lang="it">⚙️ Parametri del Paziente</span><span data-only-lang="en" style="display:none">⚙️ Patient Parameters</span></h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-        <div class="nf"><label><span data-only-lang="it">Sesso</span><span data-only-lang="en" style="display:none">Sex</span></label>
+        <div class="nf"><label for="ai-sesso"><span data-only-lang="it">Sesso</span><span data-only-lang="en" style="display:none">Sex</span></label>
           <select id="ai-sesso"><option value="M">Maschio</option><option value="F">Femmina</option></select>
         </div>
-        <div class="nf"><label><span data-only-lang="it">Età</span><span data-only-lang="en" style="display:none">Age</span></label>
+        <div class="nf"><label for="ai-eta"><span data-only-lang="it">Età</span><span data-only-lang="en" style="display:none">Age</span></label>
           <input type="number" id="ai-eta" placeholder="es. 35 / e.g. 35" min="18" max="99">
         </div>
-        <div class="nf"><label><span data-only-lang="it">Peso (kg)</span><span data-only-lang="en" style="display:none">Weight (kg)</span></label>
+        <div class="nf"><label for="ai-peso"><span data-only-lang="it">Peso (kg)</span><span data-only-lang="en" style="display:none">Weight (kg)</span></label>
           <input type="number" id="ai-peso" placeholder="es. 70 / e.g. 70" step="0.5" oninput="syncAIFromValutazione()">
         </div>
-        <div class="nf"><label><span data-only-lang="it">Altezza (cm)</span><span data-only-lang="en" style="display:none">Height (cm)</span></label>
+        <div class="nf"><label for="ai-altezza"><span data-only-lang="it">Altezza (cm)</span><span data-only-lang="en" style="display:none">Height (cm)</span></label>
           <input type="number" id="ai-altezza" placeholder="es. 170 / e.g. 170" oninput="syncAIFromValutazione()">
         </div>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Livello attività fisica</span><span data-only-lang="en" style="display:none">Physical activity level</span></label>
+      <div class="nf" style="margin-bottom:10px"><label for="ai-pal"><span data-only-lang="it">Livello attività fisica</span><span data-only-lang="en" style="display:none">Physical activity level</span></label>
         <select id="ai-pal">
           <option value="sedentario">Sedentario</option>
           <option value="leggermente_attivo">Leggermente attivo (1-2 gg/sett)</option>
@@ -871,7 +871,7 @@
           <option value="intensivo">Molto intenso / atleta</option>
         </select>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Obiettivo</span><span data-only-lang="en" style="display:none">Goal</span></label>
+      <div class="nf" style="margin-bottom:10px"><label for="ai-obiettivo"><span data-only-lang="it">Obiettivo</span><span data-only-lang="en" style="display:none">Goal</span></label>
         <select id="ai-obiettivo">
           <option value="mantenimento">Mantenimento peso</option>
           <option value="calo_lieve">Lieve calo ponderale</option>
@@ -879,17 +879,17 @@
           <option value="aumento_massa">Aumento massa muscolare</option>
         </select>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Kcal target/die (lascia vuoto per calcolo automatico)</span><span data-only-lang="en" style="display:none">Target kcal/day (leave blank for automatic calculation)</span></label>
+      <div class="nf" style="margin-bottom:10px"><label for="ai-kcal"><span data-only-lang="it">Kcal target/die (lascia vuoto per calcolo automatico)</span><span data-only-lang="en" style="display:none">Target kcal/day (leave blank for automatic calculation)</span></label>
         <input type="number" id="ai-kcal" placeholder="es. 1800 (auto se vuoto) / e.g. 1800 (auto if empty)">
       </div>
-      <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">N° pasti al giorno</span><span data-only-lang="en" style="display:none">Meals per day</span></label>
+      <div class="nf" style="margin-bottom:10px"><label for="ai-npasti"><span data-only-lang="it">N° pasti al giorno</span><span data-only-lang="en" style="display:none">Meals per day</span></label>
         <select id="ai-npasti">
           <option value="3">3 pasti (senza spuntini)</option>
           <option value="4">4 pasti (1 spuntino)</option>
           <option value="5" selected>5 pasti (2 spuntini)</option>
         </select>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Schema alimentare preferito</span><span data-only-lang="en" style="display:none">Preferred dietary pattern</span></label>
+      <div class="nf" style="margin-bottom:10px"><label for="ai-schema"><span data-only-lang="it">Schema alimentare preferito</span><span data-only-lang="en" style="display:none">Preferred dietary pattern</span></label>
         <select id="ai-schema">
           <option value="mediterraneo" selected>Dieta Mediterranea</option>
           <option value="vegetariano">Vegetariano (no carne/pesce)</option>
@@ -899,7 +899,7 @@
           <option value="low_carb">Low-carb / ridotto in CHO</option>
         </select>
       </div>
-      <div class="nf"><label><span data-only-lang="it">Stagione / contesto culinario</span><span data-only-lang="en" style="display:none">Season / culinary context</span></label>
+      <div class="nf"><label for="ai-stagione"><span data-only-lang="it">Stagione / contesto culinario</span><span data-only-lang="en" style="display:none">Season / culinary context</span></label>
         <select id="ai-stagione">
           <option value="primavera_estate">Primavera / Estate</option>
           <option value="autunno_inverno">Autunno / Inverno</option>
@@ -912,38 +912,38 @@
     <div>
       <div class="calc-box">
         <h3><span data-only-lang="it">🍽️ Frequenze di Consumo Settimanale</span><span data-only-lang="en" style="display:none">🍽️ Weekly Consumption Frequencies</span></h3>
-        <div class="freq-row"><label><span data-only-lang="it">🥩 Carne rossa</span><span data-only-lang="en" style="display:none">🥩 Red meat</span></label>
+        <div class="freq-row"><label for="ai-f-carne-r"><span data-only-lang="it">🥩 Carne rossa</span><span data-only-lang="en" style="display:none">🥩 Red meat</span></label>
           <select id="ai-f-carne-r"><option value="mai">Mai</option><option value="1" selected>1 volta/sett</option><option value="2">2 volte/sett</option><option value="3">3 volte/sett</option></select>
         </div>
-        <div class="freq-row"><label><span data-only-lang="it">🐔 Carne bianca (pollo/tacchino)</span><span data-only-lang="en" style="display:none">🐔 White meat (chicken/turkey)</span></label>
+        <div class="freq-row"><label for="ai-f-carne-b"><span data-only-lang="it">🐔 Carne bianca (pollo/tacchino)</span><span data-only-lang="en" style="display:none">🐔 White meat (chicken/turkey)</span></label>
           <select id="ai-f-carne-b"><option value="mai">Mai</option><option value="1">1 volta/sett</option><option value="2">2 volte/sett</option><option value="3" selected>3 volte/sett</option><option value="4">4 volte/sett</option></select>
         </div>
-        <div class="freq-row"><label><span data-only-lang="it">🐟 Pesce fresco</span><span data-only-lang="en" style="display:none">🐟 Fresh fish</span></label>
+        <div class="freq-row"><label for="ai-f-pesce"><span data-only-lang="it">🐟 Pesce fresco</span><span data-only-lang="en" style="display:none">🐟 Fresh fish</span></label>
           <select id="ai-f-pesce"><option value="mai">Mai</option><option value="1">1 volta/sett</option><option value="2" selected>2 volte/sett</option><option value="3">3 volte/sett</option></select>
         </div>
-        <div class="freq-row"><label>🥚 <span data-only-lang="it">Uova</span><span data-only-lang="en" style="display:none">Eggs</span></label>
+        <div class="freq-row"><label for="ai-f-uova">🥚 <span data-only-lang="it">Uova</span><span data-only-lang="en" style="display:none">Eggs</span></label>
           <select id="ai-f-uova"><option value="1">1 volta/sett</option><option value="2" selected>2 volte/sett</option><option value="3">3 volte/sett</option><option value="4">4 volte/sett</option></select>
         </div>
-        <div class="freq-row"><label>🫘 <span data-only-lang="it">Legumi</span><span data-only-lang="en" style="display:none">Pulses</span></label>
+        <div class="freq-row"><label for="ai-f-legumi">🫘 <span data-only-lang="it">Legumi</span><span data-only-lang="en" style="display:none">Pulses</span></label>
           <select id="ai-f-legumi"><option value="1">1 volta/sett</option><option value="2">2 volte/sett</option><option value="3" selected>3 volte/sett</option><option value="4">4 volte/sett</option><option value="5">5+ volte/sett</option></select>
         </div>
-        <div class="freq-row"><label><span data-only-lang="it">🥛 Latticini (latte/yogurt)</span><span data-only-lang="en" style="display:none">🥛 Dairy (milk/yogurt)</span></label>
+        <div class="freq-row"><label for="ai-f-latticini"><span data-only-lang="it">🥛 Latticini (latte/yogurt)</span><span data-only-lang="en" style="display:none">🥛 Dairy (milk/yogurt)</span></label>
           <select id="ai-f-latticini"><option value="qualche_volta">Qualche volta/sett</option><option value="ogni_giorno" selected>Ogni giorno</option><option value="due_volte_die">2 volte/die</option></select>
         </div>
-        <div class="freq-row"><label><span data-only-lang="it">🧀 Formaggi</span><span data-only-lang="en" style="display:none">🧀 Cheese</span></label>
+        <div class="freq-row"><label for="ai-f-formaggi"><span data-only-lang="it">🧀 Formaggi</span><span data-only-lang="en" style="display:none">🧀 Cheese</span></label>
           <select id="ai-f-formaggi"><option value="mai">Mai</option><option value="1">1 volta/sett</option><option value="2" selected>2 volte/sett</option><option value="3">3 volte/sett</option></select>
         </div>
-        <div class="freq-row"><label><span data-only-lang="it">🥜 Frutta secca/semi</span><span data-only-lang="en" style="display:none">🥜 Nuts/seeds</span></label>
+        <div class="freq-row"><label for="ai-f-fsecca"><span data-only-lang="it">🥜 Frutta secca/semi</span><span data-only-lang="en" style="display:none">🥜 Nuts/seeds</span></label>
           <select id="ai-f-fsecca"><option value="raramente">Raramente</option><option value="3" selected>3–4 volte/sett</option><option value="ogni_giorno">Ogni giorno</option></select>
         </div>
       </div>
 
       <div class="calc-box">
         <h3><span data-only-lang="it">❤️ Preferenze e Restrizioni</span><span data-only-lang="en" style="display:none">❤️ Preferences and Restrictions</span></h3>
-        <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Alimenti preferiti dal paziente</span><span data-only-lang="en" style="display:none">Patient's preferred foods</span></label>
+        <div class="nf" style="margin-bottom:10px"><label for="ai-preferiti"><span data-only-lang="it">Alimenti preferiti dal paziente</span><span data-only-lang="en" style="display:none">Patient's preferred foods</span></label>
           <textarea id="ai-preferiti" rows="2" placeholder="es. Pasta, pollo, broccoli, yogurt greco, noci, salmone… / e.g. Pasta, chicken, broccoli, Greek yogurt, walnuts, salmon…"></textarea>
         </div>
-        <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Alimenti non graditi / da evitare</span><span data-only-lang="en" style="display:none">Disliked / foods to avoid</span></label>
+        <div class="nf" style="margin-bottom:10px"><label for="ai-evitare"><span data-only-lang="it">Alimenti non graditi / da evitare</span><span data-only-lang="en" style="display:none">Disliked / foods to avoid</span></label>
           <textarea id="ai-evitare" rows="2" placeholder="e.g. Oily fish, pulses, onion, mushrooms…"></textarea>
         </div>
         <div class="nf" style="margin-bottom:10px"><label><span data-only-lang="it">Intolleranze / Allergie</span><span data-only-lang="en" style="display:none">Intolerances / Allergies</span></label>
@@ -957,7 +957,7 @@
             <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0"><input type="checkbox" id="al-nichel"> <span data-only-lang="it">Nichel</span><span data-only-lang="en" style="display:none">Nickel</span></label>
           </div>
         </div>
-        <div class="nf"><label><span data-only-lang="it">Note aggiuntive per l'AI</span><span data-only-lang="en" style="display:none">Additional notes for the AI</span></label>
+        <div class="nf"><label for="ai-note-extra"><span data-only-lang="it">Note aggiuntive per l'AI</span><span data-only-lang="en" style="display:none">Additional notes for the AI</span></label>
           <textarea id="ai-note-extra" rows="2" placeholder="e.g. Works outside home (packed lunch), simple cooking habits, does not eat spicy food…"></textarea>
         </div>
       </div>
@@ -1004,7 +1004,11 @@ function _L(it,en){try{const l=typeof getLang==='function'?getLang():(localStora
 
 // ── Tab switching ──
 function showPSTab(id) {
-  document.querySelectorAll('.ps-tab').forEach((t,i) => t.classList.toggle('active', t.getAttribute('onclick').includes("'"+id+"'")));
+  document.querySelectorAll('.ps-tab').forEach((t,i) => {
+    const sel = t.getAttribute('onclick').includes("'"+id+"'");
+    t.classList.toggle('active', sel);
+    t.setAttribute('aria-selected', sel ? 'true' : 'false');
+  });
   document.querySelectorAll('.ps-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
 }

@@ -217,8 +217,8 @@
 </nav>
 <div id="sb-overlay" onclick="closeSB()"></div>
 <div id="topbar">
-  <button id="sb-toggle-btn" onclick="toggleSidebar()" class="no-print">☰</button>
-  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <button id="sb-toggle-btn" onclick="toggleSidebar()" data-i18n-tooltip="paz.toggle_sidebar" class="no-print">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()" data-i18n-tooltip="paz.toggle_sidebar">☰</button>
   <h2>💳 <span data-only-lang="it">Abbonamento</span><span data-only-lang="en" style="display:none">Subscription</span></h2>
 </div>
 
@@ -249,7 +249,7 @@
     <!-- Toggle mensile / annuale -->
     <div class="plan-toggle">
       <span class="toggle-label active" id="lbl-monthly"><span data-only-lang="it">Mensile</span><span data-only-lang="en" style="display:none">Monthly</span></span>
-      <div class="toggle-switch" id="billing-toggle" onclick="toggleBilling()"></div>
+      <div class="toggle-switch" id="billing-toggle" role="switch" aria-checked="false" aria-label="Fatturazione annuale" tabindex="0" onclick="toggleBilling()" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleBilling()}"></div>
       <span class="toggle-label" id="lbl-annual"><span data-only-lang="it">Annuale</span><span data-only-lang="en" style="display:none">Annual</span> <span class="annual-badge">-17%</span></span>
     </div>
 
@@ -323,11 +323,11 @@
 
     <!-- FAQ -->
     <div class="section-title">❓ <span data-only-lang="it">Domande frequenti</span><span data-only-lang="en" style="display:none">Frequently asked questions</span></div>
-    <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)"><span data-only-lang="it">Posso disdire in qualsiasi momento?</span><span data-only-lang="en" style="display:none">Can I cancel at any time?</span> <span>▼</span></div><div class="faq-a"><span data-only-lang="it">Sì, puoi disdire quando vuoi direttamente dal portale Stripe (pulsante "Gestisci abbonamento"). L'accesso rimane attivo fino alla fine del periodo già pagato. Non ci sono penali o vincoli.</span><span data-only-lang="en" style="display:none">Yes, you can cancel anytime directly from the Stripe portal ("Manage subscription" button). Access remains active until the end of the already-paid period. No penalties or lock-in.</span></div></div>
-    <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)"><span data-only-lang="it">Le sezioni specialistiche (Diabete, Renale ecc.) sono incluse nell'abbonamento?</span><span data-only-lang="en" style="display:none">Are the specialty sections (Diabetes, Renal, etc.) included in the subscription?</span> <span>▼</span></div><div class="faq-a"><span data-only-lang="it">L'abbonamento include tutte le funzionalità della piattaforma. Le sezioni di patologia specialistica (Diabete, Renale, Oncologia ecc.) richiedono un'abilitazione da parte dell'amministratore per garantire che siano usate da professionisti qualificati. Verranno abilitate entro 24-48 ore dalla richiesta.</span><span data-only-lang="en" style="display:none">The subscription includes all platform features. Specialty pathology sections (Diabetes, Renal, Oncology, etc.) require admin approval to ensure they are used by qualified professionals. They will be activated within 24–48 hours of request.</span></div></div>
-    <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)"><span data-only-lang="it">Posso passare da mensile ad annuale?</span><span data-only-lang="en" style="display:none">Can I switch from monthly to annual?</span> <span>▼</span></div><div class="faq-a"><span data-only-lang="it">Sì, puoi cambiare il piano in qualsiasi momento dal portale Stripe. Il credito del periodo rimanente viene scalato automaticamente.</span><span data-only-lang="en" style="display:none">Yes, you can change your plan at any time from the Stripe portal. The remaining period credit is applied automatically.</span></div></div>
-    <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)"><span data-only-lang="it">I dati dei miei pazienti sono al sicuro?</span><span data-only-lang="en" style="display:none">Is my patients' data safe?</span> <span>▼</span></div><div class="faq-a"><span data-only-lang="it">Sì. I dati sono archiviati su Supabase (PostgreSQL) con crittografia TLS in transito e a riposo. I pagamenti sono gestiti da Stripe, certificato PCI-DSS Level 1. NutriPlan Pro non memorizza mai i dati della tua carta.</span><span data-only-lang="en" style="display:none">Yes. Data is stored on Supabase (PostgreSQL) with TLS encryption in transit and at rest. Payments are managed by Stripe, PCI-DSS Level 1 certified. NutriPlan Pro never stores your card details.</span></div></div>
-    <div class="faq-card"><div class="faq-q" onclick="toggleFAQ(this)"><span data-only-lang="it">Esiste anche un'app per i miei pazienti?</span><span data-only-lang="en" style="display:none">Is there also an app for my patients?</span> <span>▼</span></div><div class="faq-a"><span data-only-lang="it">Sì! L'app pazienti permette ai tuoi assistiti di vedere i piani alimentari assegnati, tenere un diario alimentare e comunicare con te.</span><span data-only-lang="en" style="display:none">Yes! The patient app lets your clients view assigned meal plans, keep a food diary, and communicate with you.</span></div></div>
+    <div class="faq-card"><div class="faq-q" role="button" tabindex="0" aria-expanded="false" aria-controls="faq-a-1" onclick="toggleFAQ(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleFAQ(this)}"><span data-only-lang="it">Posso disdire in qualsiasi momento?</span><span data-only-lang="en" style="display:none">Can I cancel at any time?</span> <span aria-hidden="true">▼</span></div><div class="faq-a" id="faq-a-1"><span data-only-lang="it">Sì, puoi disdire quando vuoi direttamente dal portale Stripe (pulsante "Gestisci abbonamento"). L'accesso rimane attivo fino alla fine del periodo già pagato. Non ci sono penali o vincoli.</span><span data-only-lang="en" style="display:none">Yes, you can cancel anytime directly from the Stripe portal ("Manage subscription" button). Access remains active until the end of the already-paid period. No penalties or lock-in.</span></div></div>
+    <div class="faq-card"><div class="faq-q" role="button" tabindex="0" aria-expanded="false" aria-controls="faq-a-2" onclick="toggleFAQ(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleFAQ(this)}"><span data-only-lang="it">Le sezioni specialistiche (Diabete, Renale ecc.) sono incluse nell'abbonamento?</span><span data-only-lang="en" style="display:none">Are the specialty sections (Diabetes, Renal, etc.) included in the subscription?</span> <span aria-hidden="true">▼</span></div><div class="faq-a" id="faq-a-2"><span data-only-lang="it">L'abbonamento include tutte le funzionalità della piattaforma. Le sezioni di patologia specialistica (Diabete, Renale, Oncologia ecc.) richiedono un'abilitazione da parte dell'amministratore per garantire che siano usate da professionisti qualificati. Verranno abilitate entro 24-48 ore dalla richiesta.</span><span data-only-lang="en" style="display:none">The subscription includes all platform features. Specialty pathology sections (Diabetes, Renal, Oncology, etc.) require admin approval to ensure they are used by qualified professionals. They will be activated within 24–48 hours of request.</span></div></div>
+    <div class="faq-card"><div class="faq-q" role="button" tabindex="0" aria-expanded="false" aria-controls="faq-a-3" onclick="toggleFAQ(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleFAQ(this)}"><span data-only-lang="it">Posso passare da mensile ad annuale?</span><span data-only-lang="en" style="display:none">Can I switch from monthly to annual?</span> <span aria-hidden="true">▼</span></div><div class="faq-a" id="faq-a-3"><span data-only-lang="it">Sì, puoi cambiare il piano in qualsiasi momento dal portale Stripe. Il credito del periodo rimanente viene scalato automaticamente.</span><span data-only-lang="en" style="display:none">Yes, you can change your plan at any time from the Stripe portal. The remaining period credit is applied automatically.</span></div></div>
+    <div class="faq-card"><div class="faq-q" role="button" tabindex="0" aria-expanded="false" aria-controls="faq-a-4" onclick="toggleFAQ(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleFAQ(this)}"><span data-only-lang="it">I dati dei miei pazienti sono al sicuro?</span><span data-only-lang="en" style="display:none">Is my patients' data safe?</span> <span aria-hidden="true">▼</span></div><div class="faq-a" id="faq-a-4"><span data-only-lang="it">Sì. I dati sono archiviati su Supabase (PostgreSQL) con crittografia TLS in transito e a riposo. I pagamenti sono gestiti da Stripe, certificato PCI-DSS Level 1. NutriPlan Pro non memorizza mai i dati della tua carta.</span><span data-only-lang="en" style="display:none">Yes. Data is stored on Supabase (PostgreSQL) with TLS encryption in transit and at rest. Payments are managed by Stripe, PCI-DSS Level 1 certified. NutriPlan Pro never stores your card details.</span></div></div>
+    <div class="faq-card"><div class="faq-q" role="button" tabindex="0" aria-expanded="false" aria-controls="faq-a-5" onclick="toggleFAQ(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleFAQ(this)}"><span data-only-lang="it">Esiste anche un'app per i miei pazienti?</span><span data-only-lang="en" style="display:none">Is there also an app for my patients?</span> <span aria-hidden="true">▼</span></div><div class="faq-a" id="faq-a-5"><span data-only-lang="it">Sì! L'app pazienti permette ai tuoi assistiti di vedere i piani alimentari assegnati, tenere un diario alimentare e comunicare con te.</span><span data-only-lang="en" style="display:none">Yes! The patient app lets your clients view assigned meal plans, keep a food diary, and communicate with you.</span></div></div>
 
     <div style="text-align:center;margin-top:32px;padding:20px;color:var(--slate-l);font-size:12.5px">
       <span data-only-lang="it">Hai domande? Scrivici a <strong>supporto@nutriplanpro.it</strong></span><span data-only-lang="en" style="display:none">Questions? Email us at <strong>support@nutriplanpro.it</strong></span><br>
@@ -431,6 +431,7 @@ function toggleBilling() {
   billingAnnual = !billingAnnual;
   const toggle = document.getElementById('billing-toggle');
   toggle.classList.toggle('annual', billingAnnual);
+  toggle.setAttribute('aria-checked', String(billingAnnual));
   document.getElementById('lbl-monthly').classList.toggle('active', !billingAnnual);
   document.getElementById('lbl-annual').classList.toggle('active', billingAnnual);
 
@@ -498,9 +499,11 @@ async function manageSubscription() {
 // ─── FAQ accordion ───────────────────────────────────────
 function toggleFAQ(el) {
   const ans = el.nextElementSibling;
-  const arrow = el.querySelector('span');
+  const arrow = el.querySelector('span[aria-hidden]') || el.querySelector('span');
   ans.classList.toggle('open');
-  arrow.textContent = ans.classList.contains('open') ? '▲' : '▼';
+  const isOpen = ans.classList.contains('open');
+  arrow.textContent = isOpen ? '▲' : '▼';
+  el.setAttribute('aria-expanded', String(isOpen));
 }
 
 document.addEventListener('DOMContentLoaded', init);

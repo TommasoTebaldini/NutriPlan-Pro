@@ -21,7 +21,7 @@
 .lg-card{background:white;border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;transition:all .18s;margin-bottom:8px;animation:lgCardIn .3s cubic-bezier(.16,1,.3,1) both;content-visibility:auto;contain-intrinsic-size:0 120px}
 @keyframes lgCardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .lg-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.07);transform:translateY(-1px)}
-.lg-card-hdr{padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .1s}
+.lg-card-hdr{padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .1s;border:none;width:100%;text-align:left;font:inherit;color:inherit}
 .lg-card-hdr:hover{filter:brightness(0.96)}
 .lg-card-body{padding:14px 16px;border-top:1px solid var(--border);display:none}
 .lg-card-body.open{display:block}
@@ -31,6 +31,7 @@
 .food-ok{background:#D1FAE5;color:#065F46}
 .food-no{background:#FEE2E2;color:#991B1B}
 .science-box{background:#FEF3C7;border-radius:8px;padding:12px 14px;margin-bottom:10px;border-left:3px solid #F59E0B;font-size:12px;color:#334155;line-height:1.8}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
@@ -128,12 +129,13 @@
   </div>
 
   <div class="no-print" style="background:white;border-radius:12px;border:1.5px solid var(--border);padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+    <label for="lg-search" class="sr-only"><span data-only-lang="it">Cerca patologia</span><span data-only-lang="en" style="display:none">Search condition</span></label>
     <input type="text" id="lg-search" class="db-search" style="width:100%;padding:10px 14px;font-size:14px;border-radius:8px" placeholder="🔍 Cerca patologia (es. diabete, cirrosi, osteoporosi...)... / Search condition (e.g. diabetes, cirrhosis, osteoporosis...)..." oninput="filterLG()">
-    <div id="lg-count" style="font-size:12px;color:var(--slate-l);margin-top:8px"></div>
+    <div id="lg-count" style="font-size:12px;color:var(--slate-l);margin-top:8px" aria-live="polite"></div>
   </div>
   <div id="lg-grid"></div>
   <div id="lg-empty" style="display:none" class="empty-state">
-    <div class="ei">🔍</div><h3><span data-only-lang="it">Nessuna patologia trovata</span><span data-only-lang="en" style="display:none">No condition found</span></h3><p><span data-only-lang="it">Prova con un termine diverso.</span><span data-only-lang="en" style="display:none">Try a different term.</span></p>
+    <div class="ei" aria-hidden="true">🔍</div><h3><span data-only-lang="it">Nessuna patologia trovata</span><span data-only-lang="en" style="display:none">No condition found</span></h3><p><span data-only-lang="it">Prova con un termine diverso.</span><span data-only-lang="en" style="display:none">Try a different term.</span></p>
   </div>
 </div>
 </main>
@@ -154,19 +156,21 @@ function buildCard(d) {
   div.id = 'lg-' + d.id;
   div.dataset.search = (d.nome + ' ' + d.id + ' ' + d.badge + ' ' + d.desc).toLowerCase();
   div.innerHTML = `
-    <div class="lg-card-hdr" style="background:${d.colore}18;border-left:4px solid ${d.colore}" onclick="toggleLG('${d.id}')">
-      <span style="font-size:24px">${d.emoji}</span>
+    <h3 style="margin:0;font-size:inherit;font-weight:inherit">
+    <button type="button" class="lg-card-hdr" style="background:${d.colore}18;border-left:4px solid ${d.colore}" onclick="toggleLG('${d.id}')" aria-expanded="false" aria-controls="body-${d.id}" id="hdr-${d.id}">
+      <span style="font-size:24px" aria-hidden="true">${d.emoji}</span>
       <div style="flex:1;min-width:0">
         <div style="font-weight:700;font-size:13.5px;color:var(--slate)">${d.nome}</div>
         <div style="font-size:11px;color:var(--slate-l);margin-top:2px;line-height:1.4">${d.desc}</div>
       </div>
       <span style="font-size:9.5px;padding:2px 8px;border-radius:8px;font-weight:700;background:#EFF6FF;color:#1D4ED8;white-space:nowrap;flex-shrink:0">${d.badge}</span>
-      <span style="margin-left:8px;color:var(--slate-l);font-size:13px;flex-shrink:0" id="tog-${d.id}">▼</span>
-    </div>
+      <span style="margin-left:8px;color:var(--slate-l);font-size:13px;flex-shrink:0" id="tog-${d.id}" aria-hidden="true">▼</span>
+    </button>
+    </h3>
     <div class="lg-card-body" id="body-${d.id}">
       <div style="display:flex;gap:6px;margin-bottom:12px">
-        <button class="lg-ver-btn active" id="btn-s-${d.id}" onclick="showVer('${d.id}','s')">📋 ${_L('Versione breve','Short version')}</button>
-        <button class="lg-ver-btn" id="btn-e-${d.id}" onclick="showVer('${d.id}','e')">📖 ${_L('Versione estesa','Extended version')}</button>
+        <button class="lg-ver-btn active" id="btn-s-${d.id}" onclick="showVer('${d.id}','s')" aria-pressed="true">📋 ${_L('Versione breve','Short version')}</button>
+        <button class="lg-ver-btn" id="btn-e-${d.id}" onclick="showVer('${d.id}','e')" aria-pressed="false">📖 ${_L('Versione estesa','Extended version')}</button>
       </div>
       <div id="vs-${d.id}">
         <div class="lg-target-box">
@@ -211,9 +215,11 @@ function buildCard(d) {
 function toggleLG(id) {
   const body = document.getElementById('body-'+id);
   const tog = document.getElementById('tog-'+id);
+  const hdr = document.getElementById('hdr-'+id);
   if (!body) return;
   const isOpen = body.classList.toggle('open');
   if (tog) tog.textContent = isOpen ? '▲' : '▼';
+  if (hdr) hdr.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 }
 
 function showVer(id, ver) {
@@ -224,9 +230,11 @@ function showVer(id, ver) {
   if (ver === 's') {
     if(s) s.style.display='block'; if(e) e.style.display='none';
     bs?.classList.add('active'); be?.classList.remove('active');
+    bs?.setAttribute('aria-pressed', 'true'); be?.setAttribute('aria-pressed', 'false');
   } else {
     if(s) s.style.display='none'; if(e) e.style.display='block';
     bs?.classList.remove('active'); be?.classList.add('active');
+    bs?.setAttribute('aria-pressed', 'false'); be?.setAttribute('aria-pressed', 'true');
   }
 }
 
@@ -248,6 +256,7 @@ function renderAll(filter='') {
     document.getElementById('body-'+d.id)?.classList.add('open');
     const tog = document.getElementById('tog-'+d.id);
     if (tog) tog.textContent = '▲';
+    document.getElementById('hdr-'+d.id)?.setAttribute('aria-expanded', 'true');
   });
 }
 
@@ -262,6 +271,7 @@ function printAllLG() {
     document.getElementById('body-'+d.id)?.classList.add('open');
     const tog = document.getElementById('tog-'+d.id);
     if (tog) tog.textContent = '▲';
+    document.getElementById('hdr-'+d.id)?.setAttribute('aria-expanded', 'true');
     showVer(d.id, 'e');
   });
   _lgPrintRestore = prevSearch;

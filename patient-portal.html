@@ -24,35 +24,35 @@
 </div>
 
 <div class="pp-container">
-  <div class="pp-tab-bar">
-    <div class="pp-tab active" onclick="switchPPTab('profile')" id="pp-tab-profile"><span data-i18n="pp.tab_profile">👤 Dati Personali</span></div>
-    <div class="pp-tab" onclick="switchPPTab('dieta')" id="pp-tab-dieta"><span data-i18n="pp.tab_dieta">🥗 Dieta</span></div>
-    <div class="pp-tab" onclick="switchPPTab('docs')" id="pp-tab-docs"><span data-i18n="pp.tab_docs">📄 Documenti</span></div>
-    <div class="pp-tab" onclick="switchPPTab('diary')" id="pp-tab-diary"><span data-i18n="pp.tab_diary">📓 Diario</span></div>
-    <div class="pp-tab" onclick="switchPPTab('chat')" id="pp-tab-chat"><span data-i18n="pp.tab_chat">💬 Chat</span></div>
-    <div class="pp-tab" onclick="switchPPTab('privacy')" id="pp-tab-privacy"><span data-i18n="pp.tab_privacy">📋 Privacy</span></div>
-    <div class="pp-tab" onclick="switchPPTab('statistiche')" id="pp-tab-statistiche">📊 Statistiche</div>
-    <div class="pp-tab" onclick="switchPPTab('macro')" id="pp-tab-macro">🔬 Macro</div>
-    <div class="pp-tab" onclick="switchPPTab('attivita')" id="pp-tab-attivita">🏃 Attività</div>
-    <div class="pp-tab" onclick="switchPPTab('progressi')" id="pp-tab-progressi">📈 Progressi</div>
+  <div class="pp-tab-bar" role="tablist" aria-label="Sezioni portale paziente">
+    <div class="pp-tab active" role="tab" aria-selected="true" aria-controls="pp-panel-profile" tabindex="0" onclick="switchPPTab('profile')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchPPTab('profile')}" id="pp-tab-profile"><span data-i18n="pp.tab_profile">👤 Dati Personali</span></div>
+    <div class="pp-tab" role="tab" aria-selected="false" aria-controls="pp-panel-dieta" tabindex="0" onclick="switchPPTab('dieta')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchPPTab('dieta')}" id="pp-tab-dieta"><span data-i18n="pp.tab_dieta">🥗 Dieta</span></div>
+    <div class="pp-tab" role="tab" aria-selected="false" aria-controls="pp-panel-docs" tabindex="0" onclick="switchPPTab('docs')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchPPTab('docs')}" id="pp-tab-docs"><span data-i18n="pp.tab_docs">📄 Documenti</span></div>
+    <div class="pp-tab" role="tab" aria-selected="false" aria-controls="pp-panel-diary" tabindex="0" onclick="switchPPTab('diary')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchPPTab('diary')}" id="pp-tab-diary"><span data-i18n="pp.tab_diary">📓 Diario</span></div>
+    <div class="pp-tab" role="tab" aria-selected="false" aria-controls="pp-panel-chat" tabindex="0" onclick="switchPPTab('chat')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchPPTab('chat')}" id="pp-tab-chat"><span data-i18n="pp.tab_chat">💬 Chat</span></div>
+    <div class="pp-tab" role="tab" aria-selected="false" aria-controls="pp-panel-privacy" tabindex="0" onclick="switchPPTab('privacy')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchPPTab('privacy')}" id="pp-tab-privacy"><span data-i18n="pp.tab_privacy">📋 Privacy</span></div>
+    <div class="pp-tab" role="tab" aria-selected="false" aria-controls="pp-panel-statistiche" tabindex="0" onclick="switchPPTab('statistiche')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchPPTab('statistiche')}" id="pp-tab-statistiche">📊 Statistiche</div>
+    <div class="pp-tab" role="tab" aria-selected="false" aria-controls="pp-panel-macro" tabindex="0" onclick="switchPPTab('macro')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchPPTab('macro')}" id="pp-tab-macro">🔬 Macro</div>
+    <div class="pp-tab" role="tab" aria-selected="false" aria-controls="pp-panel-attivita" tabindex="0" onclick="switchPPTab('attivita')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchPPTab('attivita')}" id="pp-tab-attivita">🏃 Attività</div>
+    <div class="pp-tab" role="tab" aria-selected="false" aria-controls="pp-panel-progressi" tabindex="0" onclick="switchPPTab('progressi')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchPPTab('progressi')}" id="pp-tab-progressi">📈 Progressi</div>
   </div>
 
   <!-- PROFILE TAB -->
-  <div id="pp-panel-profile">
+  <div id="pp-panel-profile" role="tabpanel" aria-labelledby="pp-tab-profile" tabindex="-1">
     <div class="pp-section">
       <div class="pp-section-hdr" data-i18n="pp.profile_hdr">👤 Dati Personali</div>
       <div class="pp-section-body">
         <p style="font-size:12.5px;color:var(--slate-l);margin-bottom:14px" data-i18n="pp.profile_note">Inserisci i tuoi dati personali. Il tuo nutrizionista li vedrà per identificarti.</p>
         <div class="pp-field">
-          <label data-i18n="pp.nome">Nome</label>
+          <label data-i18n="pp.nome" for="pp-nome">Nome</label>
           <input type="text" id="pp-nome" placeholder="es. Mario / e.g. Mario" maxlength="60">
         </div>
         <div class="pp-field">
-          <label data-i18n="pp.cognome">Cognome</label>
+          <label data-i18n="pp.cognome" for="pp-cognome">Cognome</label>
           <input type="text" id="pp-cognome" placeholder="es. Rossi / e.g. Smith" maxlength="60">
         </div>
         <div class="pp-field">
-          <label data-i18n="pp.email">Email</label>
+          <label data-i18n="pp.email" for="pp-email">Email</label>
           <input type="email" id="pp-email" disabled style="background:#F1F5F9;color:var(--slate-l)">
         </div>
         <button onclick="salvaProfiloPaziente()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px" data-i18n="pp.save_profile">💾 Salva Dati</button>
@@ -61,7 +61,7 @@
   </div>
 
   <!-- DIETA TAB -->
-  <div id="pp-panel-dieta" style="display:none">
+  <div id="pp-panel-dieta" role="tabpanel" aria-labelledby="pp-tab-dieta" tabindex="-1" style="display:none">
     <div class="pp-section">
       <div class="pp-section-hdr">🥗 La Mia Dieta</div>
       <div class="pp-section-body" id="pp-dieta-list">
@@ -71,7 +71,7 @@
   </div>
 
   <!-- DOCUMENTS TAB -->
-  <div id="pp-panel-docs" style="display:none">
+  <div id="pp-panel-docs" role="tabpanel" aria-labelledby="pp-tab-docs" tabindex="-1" style="display:none">
     <div class="pp-section">
       <div class="pp-section-hdr">📄 I Miei Documenti</div>
       <div class="pp-section-body" id="pp-docs-list">
@@ -81,7 +81,7 @@
   </div>
 
   <!-- DIARY TAB -->
-  <div id="pp-panel-diary" style="display:none">
+  <div id="pp-panel-diary" role="tabpanel" aria-labelledby="pp-tab-diary" tabindex="-1" style="display:none">
     <div class="pp-section">
       <div class="pp-section-hdr">📓 Diario Alimentare e Benessere</div>
       <div class="pp-section-body">
@@ -89,11 +89,11 @@
         <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin-bottom:16px">
           <div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:12px">✏️ Nuova registrazione</div>
           <div class="pp-field">
-            <label>Data</label>
+            <label for="diary-date">Data</label>
             <input type="date" id="diary-date" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
           </div>
           <div class="pp-field">
-            <label>Umore (1 = molto negativo, 5 = ottimo)</label>
+            <label for="diary-mood">Umore (1 = molto negativo, 5 = ottimo)</label>
             <select id="diary-mood" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;background:white">
               <option value="">— Seleziona —</option>
               <option value="1">😞 1 — Molto negativo</option>
@@ -104,23 +104,23 @@
             </select>
           </div>
           <div class="pp-field">
-            <label>Pasti e alimentazione (descrivi brevemente)</label>
+            <label for="diary-notes">Pasti e alimentazione (descrivi brevemente)</label>
             <textarea id="diary-notes" placeholder="Es: Colazione: yogurt con cereali. Pranzo: pasta al pomodoro... / E.g.: Breakfast: yogurt with cereal. Lunch: pasta with tomato sauce..." rows="4" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;resize:vertical"></textarea>
           </div>
           <div class="pp-field">
-            <label>Ore di sonno (opzionale)</label>
+            <label for="diary-sleep">Ore di sonno (opzionale)</label>
             <input type="number" id="diary-sleep" placeholder="Es: 7.5 / E.g.: 7.5" step="0.5" min="0" max="24" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;max-width:160px">
           </div>
           <div class="pp-field">
-            <label>Attività fisica (opzionale)</label>
+            <label for="diary-activity">Attività fisica (opzionale)</label>
             <input type="text" id="diary-activity" placeholder="Es: camminata 30 min, palestra, nuoto... / E.g.: 30 min walk, gym, swimming..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
           </div>
           <div class="pp-field">
-            <label>Sintomi / Note aggiuntive (opzionale)</label>
+            <label for="diary-symptoms">Sintomi / Note aggiuntive (opzionale)</label>
             <input type="text" id="diary-symptoms" placeholder="Es: gonfiore addominale, stanchezza... / E.g.: bloating, fatigue..." style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
           </div>
           <div class="pp-field">
-            <label>Peso corporeo kg (opzionale)</label>
+            <label for="diary-weight">Peso corporeo kg (opzionale)</label>
             <input type="number" id="diary-weight" placeholder="Es: 70.5 / E.g.: 70.5" step="0.1" min="20" max="300" style="padding:9px 12px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;max-width:160px">
           </div>
           <button onclick="salvaDiario()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px">📓 Salva registrazione</button>
@@ -133,7 +133,7 @@
   </div>
 
   <!-- PRIVACY TAB -->
-  <div id="pp-panel-privacy" style="display:none">
+  <div id="pp-panel-privacy" role="tabpanel" aria-labelledby="pp-tab-privacy" tabindex="-1" style="display:none">
     <div class="pp-section">
       <div class="pp-section-hdr">📋 Privacy e Consenso al Trattamento dei Dati</div>
       <div class="pp-section-body" id="pp-consents-list">
@@ -143,43 +143,43 @@
   </div>
 
   <!-- STATISTICS TAB -->
-  <div id="pp-panel-statistiche" style="display:none">
+  <div id="pp-panel-statistiche" role="tabpanel" aria-labelledby="pp-tab-statistiche" tabindex="-1" style="display:none">
     <div class="pp-section">
       <div class="pp-section-hdr">📊 Statistiche</div>
       <div class="pp-section-body">
-        <div class="sub-tab-bar">
-          <div class="sub-tab active" onclick="switchStatsTab('grafici')" id="stats-tab-grafici">📈 Grafici</div>
-          <div class="sub-tab" onclick="switchStatsTab('aderenza')" id="stats-tab-aderenza">✅ Aderenza</div>
-          <div class="sub-tab" onclick="switchStatsTab('confronto')" id="stats-tab-confronto">🔄 Confronto</div>
-          <div class="sub-tab" onclick="switchStatsTab('report')" id="stats-tab-report">📄 Report PDF</div>
+        <div class="sub-tab-bar" role="tablist" aria-label="Statistiche">
+          <div class="sub-tab active" role="tab" aria-selected="true" aria-controls="stats-panel-grafici" tabindex="0" onclick="switchStatsTab('grafici')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchStatsTab('grafici')}" id="stats-tab-grafici">📈 Grafici</div>
+          <div class="sub-tab" role="tab" aria-selected="false" aria-controls="stats-panel-aderenza" tabindex="0" onclick="switchStatsTab('aderenza')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchStatsTab('aderenza')}" id="stats-tab-aderenza">✅ Aderenza</div>
+          <div class="sub-tab" role="tab" aria-selected="false" aria-controls="stats-panel-confronto" tabindex="0" onclick="switchStatsTab('confronto')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchStatsTab('confronto')}" id="stats-tab-confronto">🔄 Confronto</div>
+          <div class="sub-tab" role="tab" aria-selected="false" aria-controls="stats-panel-report" tabindex="0" onclick="switchStatsTab('report')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchStatsTab('report')}" id="stats-tab-report">📄 Report PDF</div>
         </div>
-        <div id="stats-panel-grafici">
+        <div id="stats-panel-grafici" role="tabpanel" aria-labelledby="stats-tab-grafici" tabindex="-1">
           <div class="week-nav">
-            <button class="week-nav-btn" id="stats-prev-btn" onclick="statsNavWeek(-1)">◀ Precedente</button>
+            <button class="week-nav-btn" id="stats-prev-btn" onclick="statsNavWeek(-1)" aria-label="Settimana precedente">◀ Precedente</button>
             <span id="stats-week-label" style="font-size:13px;font-weight:700;color:var(--slate)">Settimana corrente</span>
-            <button class="week-nav-btn" id="stats-next-btn" onclick="statsNavWeek(1)" disabled>Successiva ▶</button>
+            <button class="week-nav-btn" id="stats-next-btn" onclick="statsNavWeek(1)" disabled aria-label="Settimana successiva">Successiva ▶</button>
           </div>
           <div id="stats-grafici-content"></div>
         </div>
-        <div id="stats-panel-aderenza" style="display:none"></div>
-        <div id="stats-panel-confronto" style="display:none"></div>
-        <div id="stats-panel-report" style="display:none"></div>
+        <div id="stats-panel-aderenza" role="tabpanel" aria-labelledby="stats-tab-aderenza" tabindex="-1" style="display:none"></div>
+        <div id="stats-panel-confronto" role="tabpanel" aria-labelledby="stats-tab-confronto" tabindex="-1" style="display:none"></div>
+        <div id="stats-panel-report" role="tabpanel" aria-labelledby="stats-tab-report" tabindex="-1" style="display:none"></div>
       </div>
     </div>
   </div>
 
   <!-- MACRO TRACKER TAB -->
-  <div id="pp-panel-macro" style="display:none">
+  <div id="pp-panel-macro" role="tabpanel" aria-labelledby="pp-tab-macro" tabindex="-1" style="display:none">
     <div class="pp-section">
       <div class="pp-section-hdr">🔬 Macro Tracker — Oggi</div>
       <div class="pp-section-body">
         <div id="macro-summary"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-          <div class="pp-field" style="margin-bottom:0"><label>Calorie (kcal)</label><input type="number" id="macro-kcal" placeholder="es. 1800 / e.g. 1800" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
-          <div class="pp-field" style="margin-bottom:0"><label>Acqua (ml)</label><input type="number" id="macro-acqua" placeholder="es. 1500 / e.g. 1500" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
-          <div class="pp-field" style="margin-bottom:0"><label>Proteine (g)</label><input type="number" id="macro-proteine" placeholder="es. 80 / e.g. 80" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
-          <div class="pp-field" style="margin-bottom:0"><label>Carboidrati (g)</label><input type="number" id="macro-carboidrati" placeholder="es. 200 / e.g. 200" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
-          <div class="pp-field" style="margin-bottom:0;grid-column:1/-1"><label>Grassi (g)</label><input type="number" id="macro-grassi" placeholder="es. 60 / e.g. 60" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;max-width:160px"></div>
+          <div class="pp-field" style="margin-bottom:0"><label for="macro-kcal">Calorie (kcal)</label><input type="number" id="macro-kcal" placeholder="es. 1800 / e.g. 1800" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0"><label for="macro-acqua">Acqua (ml)</label><input type="number" id="macro-acqua" placeholder="es. 1500 / e.g. 1500" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0"><label for="macro-proteine">Proteine (g)</label><input type="number" id="macro-proteine" placeholder="es. 80 / e.g. 80" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0"><label for="macro-carboidrati">Carboidrati (g)</label><input type="number" id="macro-carboidrati" placeholder="es. 200 / e.g. 200" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>
+          <div class="pp-field" style="margin-bottom:0;grid-column:1/-1"><label for="macro-grassi">Grassi (g)</label><input type="number" id="macro-grassi" placeholder="es. 60 / e.g. 60" min="0" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;max-width:160px"></div>
         </div>
         <button onclick="salvaMacro()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">💾 Salva</button>
         <div id="macro-micro-section"></div>
@@ -188,33 +188,33 @@
   </div>
 
   <!-- ACTIVITY TAB -->
-  <div id="pp-panel-attivita" style="display:none">
+  <div id="pp-panel-attivita" role="tabpanel" aria-labelledby="pp-tab-attivita" tabindex="-1" style="display:none">
     <div class="pp-section">
       <div class="pp-section-hdr">🏃 Attività Fisica</div>
       <div class="pp-section-body">
-        <div class="sub-tab-bar">
-          <div class="sub-tab active" onclick="switchAttivitaTab('oggi')" id="att-tab-oggi">📅 Oggi</div>
-          <div class="sub-tab" onclick="switchAttivitaTab('settimana')" id="att-tab-settimana">📊 Settimana</div>
-          <div class="sub-tab" onclick="switchAttivitaTab('storico')" id="att-tab-storico">🗂️ Storico</div>
+        <div class="sub-tab-bar" role="tablist" aria-label="Attività">
+          <div class="sub-tab active" role="tab" aria-selected="true" aria-controls="att-panel-oggi" tabindex="0" onclick="switchAttivitaTab('oggi')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchAttivitaTab('oggi')}" id="att-tab-oggi">📅 Oggi</div>
+          <div class="sub-tab" role="tab" aria-selected="false" aria-controls="att-panel-settimana" tabindex="0" onclick="switchAttivitaTab('settimana')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchAttivitaTab('settimana')}" id="att-tab-settimana">📊 Settimana</div>
+          <div class="sub-tab" role="tab" aria-selected="false" aria-controls="att-panel-storico" tabindex="0" onclick="switchAttivitaTab('storico')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();switchAttivitaTab('storico')}" id="att-tab-storico">🗂️ Storico</div>
         </div>
-        <div id="att-panel-oggi">
+        <div id="att-panel-oggi" role="tabpanel" aria-labelledby="att-tab-oggi" tabindex="-1">
           <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin-bottom:14px">
             <div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:12px">✏️ Registra attività</div>
             <div class="pp-field">
-              <label>Data</label>
+              <label for="att-date">Data</label>
               <input type="date" id="att-date" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
             </div>
             <div class="pp-field">
-              <label>Tipo di attività</label>
+              <label for="att-tipo">Tipo di attività</label>
               <input type="text" id="att-tipo" placeholder="es. Camminata, Palestra, Nuoto… / e.g. Walking, Gym, Swimming…" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
               <div class="pp-field" style="margin-bottom:0">
-                <label>Durata (min)</label>
+                <label for="att-durata">Durata (min)</label>
                 <input type="number" id="att-durata" placeholder="es. 45 / e.g. 45" min="1" max="600" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
               </div>
               <div class="pp-field" style="margin-bottom:0">
-                <label>Intensità</label>
+                <label for="att-intensita">Intensità</label>
                 <select id="att-intensita" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none;background:white">
                   <option value="">— Seleziona —</option>
                   <option value="leggera">🟢 Leggera</option>
@@ -224,21 +224,21 @@
               </div>
             </div>
             <div class="pp-field">
-              <label>Note (opzionale)</label>
+              <label for="att-note">Note (opzionale)</label>
               <input type="text" id="att-note" placeholder="es. corsa in parco, circuito in palestra… / e.g. park run, gym circuit…" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none">
             </div>
             <button onclick="logAttivita()" style="background:var(--teal);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">🏃 Registra</button>
           </div>
           <div id="att-oggi-list"></div>
         </div>
-        <div id="att-panel-settimana" style="display:none"></div>
-        <div id="att-panel-storico" style="display:none"></div>
+        <div id="att-panel-settimana" role="tabpanel" aria-labelledby="att-tab-settimana" tabindex="-1" style="display:none"></div>
+        <div id="att-panel-storico" role="tabpanel" aria-labelledby="att-tab-storico" tabindex="-1" style="display:none"></div>
       </div>
     </div>
   </div>
 
   <!-- PROGRESS TAB -->
-  <div id="pp-panel-progressi" style="display:none">
+  <div id="pp-panel-progressi" role="tabpanel" aria-labelledby="pp-tab-progressi" tabindex="-1" style="display:none">
     <div class="pp-section">
       <div class="pp-section-hdr">📈 Progressi — Peso</div>
       <div class="pp-section-body" id="pp-progressi-content">
@@ -248,7 +248,7 @@
   </div>
 
   <!-- CHAT TAB -->
-  <div id="pp-panel-chat" style="display:none">
+  <div id="pp-panel-chat" role="tabpanel" aria-labelledby="pp-tab-chat" tabindex="-1" style="display:none">
     <div class="pp-section">
       <div class="pp-section-hdr">💬 Chat con il Nutrizionista</div>
       <div id="pp-chat-container">
@@ -260,20 +260,20 @@
 
 <!-- Image viewer modal (multi-page documents) -->
 <div class="iv-bg" id="iv-bg" onclick="if(event.target===this)closeImageViewer()">
-  <div class="iv-box">
+  <div class="iv-box" role="dialog" aria-modal="true" aria-labelledby="iv-title" tabindex="-1">
     <div class="iv-hdr">
-      <span style="font-size:18px" id="iv-icon">📄</span>
+      <span style="font-size:18px" id="iv-icon" aria-hidden="true">📄</span>
       <div class="iv-title" id="iv-title">Documento</div>
       <span class="iv-pageinfo" id="iv-pageinfo"></span>
-      <button class="iv-close" onclick="closeImageViewer()" title="Chiudi / Close">×</button>
+      <button class="iv-close" onclick="closeImageViewer()" title="Chiudi / Close" aria-label="Chiudi">×</button>
     </div>
     <div class="iv-body" id="iv-body">
       <img id="iv-img" alt="Pagina documento">
     </div>
     <div class="iv-nav">
-      <button class="iv-btn" id="iv-prev" onclick="ivPrev()">◀ Precedente</button>
+      <button class="iv-btn" id="iv-prev" onclick="ivPrev()" aria-label="Pagina precedente">◀ Precedente</button>
       <a class="iv-dl" id="iv-download" download target="_blank">⬇️ Scarica pagina</a>
-      <button class="iv-btn" id="iv-next" onclick="ivNext()">Successiva ▶</button>
+      <button class="iv-btn" id="iv-next" onclick="ivNext()" aria-label="Pagina successiva">Successiva ▶</button>
     </div>
   </div>
 </div>
@@ -367,6 +367,7 @@ function parsePrintUrls(value) {
 
 let _ivUrls = [];
 let _ivIdx = 0;
+let _ivLastFocus = null;
 function openImageViewer(urls, title, icon) {
   if (!urls || !urls.length) { toast(_L('Documento non disponibile','Document not available'), 'err'); return; }
   _ivUrls = urls;
@@ -376,11 +377,15 @@ function openImageViewer(urls, title, icon) {
   ivShow();
   document.getElementById('iv-bg').classList.add('open');
   document.body.style.overflow = 'hidden';
+  _ivLastFocus = document.activeElement;
+  document.querySelector('#iv-bg .iv-box')?.focus({ preventScroll: true });
 }
 function closeImageViewer() {
   document.getElementById('iv-bg').classList.remove('open');
   document.body.style.overflow = '';
   _ivUrls = []; _ivIdx = 0;
+  if (_ivLastFocus && typeof _ivLastFocus.focus === 'function') _ivLastFocus.focus({ preventScroll: true });
+  _ivLastFocus = null;
 }
 function ivShow() {
   const total = _ivUrls.length;
@@ -494,7 +499,7 @@ function switchPPTab(tab) {
     const p = document.getElementById('pp-panel-' + t);
     const b = document.getElementById('pp-tab-' + t);
     if (p) p.style.display = t === tab ? '' : 'none';
-    if (b) b.classList.toggle('active', t === tab);
+    if (b) { b.classList.toggle('active', t === tab); b.setAttribute('aria-selected', t === tab ? 'true' : 'false'); }
   });
   if (tab === 'privacy') loadConsents();
   if (tab === 'statistiche') ensurePlanChecked().then(() => loadStatistiche());
@@ -1381,7 +1386,7 @@ function switchStatsTab(tab) {
     const p = document.getElementById('stats-panel-' + t);
     const b = document.getElementById('stats-tab-' + t);
     if (p) p.style.display = t === tab ? '' : 'none';
-    if (b) b.classList.toggle('active', t === tab);
+    if (b) { b.classList.toggle('active', t === tab); b.setAttribute('aria-selected', t === tab ? 'true' : 'false'); }
   });
   if (tab === 'aderenza') renderStatsAderenza();
   if (tab === 'confronto') renderStatsConfronto();
@@ -1517,7 +1522,7 @@ function renderMicroSection() {
       <div style="font-weight:700;font-size:13px;color:var(--slate);margin-bottom:12px">🔬 Micronutrienti</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         ${microFields.map(([label,unit,k]) =>
-          `<div class="pp-field" style="margin-bottom:0"><label>${label} (${unit})</label><input type="number" id="micro-${k}" value="${stored[k]||''}" placeholder="0" min="0" step="0.1" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>`
+          `<div class="pp-field" style="margin-bottom:0"><label for="micro-${k}">${label} (${unit})</label><input type="number" id="micro-${k}" value="${stored[k]||''}" placeholder="0" min="0" step="0.1" style="padding:8px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-size:16px;font-family:inherit;outline:none"></div>`
         ).join('')}
       </div>
       <button onclick="salvaMicro()" style="margin-top:12px;background:var(--teal);color:white;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">💾 Salva micronutrienti</button>
@@ -1544,7 +1549,7 @@ function switchAttivitaTab(tab) {
     const p = document.getElementById('att-panel-' + t);
     const b = document.getElementById('att-tab-' + t);
     if (p) p.style.display = t === tab ? '' : 'none';
-    if (b) b.classList.toggle('active', t === tab);
+    if (b) { b.classList.toggle('active', t === tab); b.setAttribute('aria-selected', t === tab ? 'true' : 'false'); }
   });
   if (tab === 'settimana') renderAttivitaSettimana();
   if (tab === 'storico') renderAttivitaStorico();

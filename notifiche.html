@@ -105,7 +105,7 @@
 
 <div id="topbar">
   <button id="sb-toggle-btn" onclick="toggleSidebar()" data-i18n-tooltip="paz.toggle_sidebar" class="no-print">☰</button>
-  <button id="menu-toggle" onclick="toggleSB()">☰</button>
+  <button id="menu-toggle" onclick="toggleSB()" data-i18n-tooltip="paz.toggle_sidebar">☰</button>
   <h2>🔔 <span data-only-lang="it">Centro Notifiche</span><span data-only-lang="en" style="display:none">Notification Center</span></h2>
   <div class="tbar-actions"></div>
 </div>
@@ -127,8 +127,8 @@
 <div class="gdpr-card">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
     <div style="display:flex;gap:3px;background:#F1F5F9;border-radius:8px;padding:3px">
-      <button id="notif-filter-all" class="gdpr-filter-btn active" onclick="notifSetFilter('all')"><span data-only-lang="it">Tutte</span><span data-only-lang="en" style="display:none">All</span></button>
-      <button id="notif-filter-unread" class="gdpr-filter-btn" onclick="notifSetFilter('unread')"><span data-only-lang="it">Non lette</span><span data-only-lang="en" style="display:none">Unread</span></button>
+      <button id="notif-filter-all" class="gdpr-filter-btn active" aria-pressed="true" onclick="notifSetFilter('all')"><span data-only-lang="it">Tutte</span><span data-only-lang="en" style="display:none">All</span></button>
+      <button id="notif-filter-unread" class="gdpr-filter-btn" aria-pressed="false" onclick="notifSetFilter('unread')"><span data-only-lang="it">Non lette</span><span data-only-lang="en" style="display:none">Unread</span></button>
     </div>
     <button class="btn btn-ghost btn-sm" onclick="notifMarkAllRead()">✓ <span data-only-lang="it">Segna tutte come lette</span><span data-only-lang="en" style="display:none">Mark all as read</span></button>
   </div>
@@ -186,7 +186,9 @@ function renderNotifiche() {
     const d = new Date(n.created_at);
     const unread = !n.read_at;
     const dateStr = d.toLocaleDateString(_L('it', 'en')) + ' ' + d.toLocaleTimeString(_L('it', 'en'), { hour: '2-digit', minute: '2-digit' });
-    return `<div onclick="notifClick(${n.id})" data-notif-url="${esc(n.url || '')}" style="display:flex;gap:12px;align-items:flex-start;padding:12px 10px;border-bottom:1px solid var(--border);cursor:pointer;border-radius:8px;${unread ? 'background:#F0FDFA' : ''}">` +
+    const unreadLabel = unread ? _L(' — non letta', ' — unread') : '';
+    const notifAriaLabel = (n.title || '') + (n.body ? '. ' + n.body : '') + '. ' + dateStr + unreadLabel;
+    return `<div onclick="notifClick(${n.id})" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();notifClick(${n.id})}" role="button" tabindex="0" aria-label="${esc(notifAriaLabel)}" data-notif-url="${esc(n.url || '')}" style="display:flex;gap:12px;align-items:flex-start;padding:12px 10px;border-bottom:1px solid var(--border);cursor:pointer;border-radius:8px;${unread ? 'background:#F0FDFA' : ''}">` +
       `<div style="width:8px;height:8px;border-radius:50%;background:${unread ? '#0F766E' : 'transparent'};margin-top:6px;flex-shrink:0"></div>` +
       `<div style="flex:1;min-width:0">` +
         `<div style="font-size:13.5px;font-weight:${unread ? '700' : '500'};color:var(--slate)">${esc(n.title || '')}</div>` +
@@ -213,8 +215,8 @@ function notifSetFilter(f) {
   _notifFilter = f;
   const btnAll = document.getElementById('notif-filter-all');
   const btnUnread = document.getElementById('notif-filter-unread');
-  if (btnAll) btnAll.classList.toggle('active', f === 'all');
-  if (btnUnread) btnUnread.classList.toggle('active', f === 'unread');
+  if (btnAll) { btnAll.classList.toggle('active', f === 'all'); btnAll.setAttribute('aria-pressed', String(f === 'all')); }
+  if (btnUnread) { btnUnread.classList.toggle('active', f === 'unread'); btnUnread.setAttribute('aria-pressed', String(f === 'unread')); }
   loadNotifiche(true);
 }
 

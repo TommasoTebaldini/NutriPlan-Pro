@@ -160,11 +160,11 @@
 <!-- BARRA PAZIENTE PEDIATRIA -->
 <div class="paz-hdr no-print" id="ped-paz-hdr" style="margin-bottom:16px">
   <div class="paz-hdr-field" style="flex:2;min-width:200px">
-    <label>📁 Cartella Paziente</label>
+    <label for="ped-cartella-cw-srch">📁 Cartella Paziente</label>
     <div id="ped-cartella-cw"></div>
   </div>
   <div class="paz-hdr-field" style="max-width:220px">
-    <label>📝 Titolo sessione</label>
+    <label for="ped-nota">📝 Titolo sessione</label>
     <input type="text" id="ped-nota" placeholder="es. Visita pediatrica... / e.g. Paediatric visit..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border-d);border-radius:var(--r-sm);font-family:inherit;font-size:16px">
   </div>
   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
@@ -186,34 +186,34 @@
   <div id="paz-box-content">
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">
       <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Anni</label>
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px" for="g-anni">Anni</label>
         <input type="number" id="g-anni" placeholder="0" min="0" max="19" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
       </div>
       <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Mesi</label>
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px" for="g-mesi">Mesi</label>
         <input type="number" id="g-mesi" placeholder="0" min="0" max="11" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
       </div>
       <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Sesso</label>
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px" for="g-sesso">Sesso</label>
         <select id="g-sesso" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:13.5px;font-weight:600;color:#5B21B6;outline:none;font-family:inherit;background:white" onchange="syncSharedData()">
           <option value="M">Maschio ♂</option>
           <option value="F">Femmina ♀</option>
         </select>
       </div>
       <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Peso (kg)</label>
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px" for="g-peso">Peso (kg)</label>
         <input type="number" id="g-peso" placeholder="es. 18.5 / e.g. 18.5" step="0.1" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
       </div>
       <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Altezza (cm)</label>
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px" for="g-altezza">Altezza (cm)</label>
         <input type="number" id="g-altezza" placeholder="es. 110 / e.g. 110" step="0.5" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
       </div>
       <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px">Circ. cranica (cm)</label>
+        <label style="font-size:10.5px;font-weight:700;color:var(--slate-m);text-transform:uppercase;letter-spacing:.4px" for="g-cc">Circ. cranica (cm)</label>
         <input type="number" id="g-cc" placeholder="es. 50 / e.g. 50" step="0.5" style="padding:8px 10px;border:1.5px solid #C4B5FD;border-radius:8px;font-size:14px;font-weight:700;color:#5B21B6;outline:none;font-family:inherit" oninput="syncSharedData()">
       </div>
     </div>
-    <div id="ped-quick-result" style="margin-top:12px;display:none">
+    <div id="ped-quick-result" style="margin-top:12px;display:none" aria-live="polite">
       <div style="display:flex;gap:10px;flex-wrap:wrap" id="ped-quick-cards"></div>
     </div>
   </div>
@@ -245,7 +245,7 @@
     Percentiles calculated on <b>WHO (WHO Child Growth Standards 2006)</b> data for 0–5 years and <b>WHO Reference 2007</b> for 5–19 years. Data are taken from the patient record above — update them to recalculate.
   </div>
 
-  <div id="perc-result" style="display:none;margin-bottom:16px">
+  <div id="perc-result" style="display:none;margin-bottom:16px" aria-live="polite">
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:16px" id="perc-cards"></div>
     <div id="perc-interpretation" class="alert-box"></div>
     <div id="perc-flags"></div>
@@ -326,16 +326,16 @@
     <h3><span data-only-lang="it">⚡ Calcolatore Fabbisogno Energetico Pediatrico</span><span data-only-lang="en" style="display:none">⚡ Paediatric Energy Requirements Calculator</span></h3>
     <span class="calc-ref-note" data-only-lang="it">&#9877;&#65039; Riferimento da letteratura scientifica &#8212; non costituisce prescrizione.</span><span class="calc-ref-note" data-only-lang="en" style="display:none">⚕️ Reference from scientific literature — does not constitute a prescription.</span>
     <div class="grid-3">
-      <div class="nf"><label>Età (anni e mesi)</label>
+      <div class="nf"><label for="f-anni">Età (anni e mesi)</label>
         <div style="display:flex;gap:6px">
           <input type="number" id="f-anni" placeholder="anni / years" min="0" max="18" style="flex:1" oninput="calcFabb()">
           <input type="number" id="f-mesi" placeholder="mesi / months" min="0" max="11" style="flex:1" oninput="calcFabb()">
         </div>
       </div>
-      <div class="nf"><label>Peso (kg)</label><input type="number" id="f-peso" placeholder="es. 20 / e.g. 20" step="0.5" oninput="calcFabb()"></div>
-      <div class="nf"><label>Altezza (cm)</label><input type="number" id="f-altezza" placeholder="es. 115 / e.g. 115" oninput="calcFabb()"></div>
-      <div class="nf"><label>Sesso</label><select id="f-sesso" onchange="calcFabb()"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
-      <div class="nf"><label>Livello attività</label>
+      <div class="nf"><label for="f-peso">Peso (kg)</label><input type="number" id="f-peso" placeholder="es. 20 / e.g. 20" step="0.5" oninput="calcFabb()"></div>
+      <div class="nf"><label for="f-altezza">Altezza (cm)</label><input type="number" id="f-altezza" placeholder="es. 115 / e.g. 115" oninput="calcFabb()"></div>
+      <div class="nf"><label for="f-sesso">Sesso</label><select id="f-sesso" onchange="calcFabb()"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+      <div class="nf"><label for="f-laf">Livello attività</label>
         <select id="f-laf" onchange="calcFabb()">
           <option value="1.2">Sedentario (malato/ospedalizzato)</option>
           <option value="1.4" selected>Bassa attività</option>
@@ -344,7 +344,7 @@
           <option value="2.0">Molto attivo (atleta)</option>
         </select>
       </div>
-      <div class="nf"><label>Condizione clinica</label>
+      <div class="nf"><label for="f-cond">Condizione clinica</label>
         <select id="f-cond" onchange="calcFabb()">
           <option value="1.0">Sano</option>
           <option value="1.1">Leggero stress (infezione minore)</option>
@@ -354,7 +354,7 @@
         </select>
       </div>
     </div>
-    <div id="fabb-result" style="display:none;margin-top:14px">
+    <div id="fabb-result" style="display:none;margin-top:14px" aria-live="polite">
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px">
         <div style="background:#EDE9FE;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)"><span data-only-lang="it">MB (Schofield)</span><span data-only-lang="en" style="display:none">BMR (Schofield)</span></div><div class="result-big" id="fr-mb" style="font-size:20px">—</div></div>
         <div style="background:#EDE9FE;border-radius:10px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--slate-l)"><span data-only-lang="it">Kcal/die</span><span data-only-lang="en" style="display:none">kcal/day</span></div><div class="result-big" id="fr-kcal">—</div></div>
@@ -486,11 +486,11 @@
   <div class="grid-2">
     <div class="calc-box">
       <h3><span data-only-lang="it">🧮 Formule per il Metabolismo Basale (MB)</span><span data-only-lang="en" style="display:none">🧮 Basal Metabolic Rate (BMR) Equations</span></h3>
-      <div class="nf" style="margin-bottom:10px"><label>Peso (kg)</label><input type="number" id="fm-peso" placeholder="es. 20 / e.g. 20" step="0.5" oninput="calcFormule()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Altezza (cm)</label><input type="number" id="fm-alt" placeholder="es. 115 / e.g. 115" oninput="calcFormule()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Età (anni)</label><input type="number" id="fm-eta" placeholder="es. 6 / e.g. 6" oninput="calcFormule()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Sesso</label><select id="fm-sesso" onchange="calcFormule()"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
-      <div id="formule-result" style="display:none">
+      <div class="nf" style="margin-bottom:10px"><label for="fm-peso">Peso (kg)</label><input type="number" id="fm-peso" placeholder="es. 20 / e.g. 20" step="0.5" oninput="calcFormule()"></div>
+      <div class="nf" style="margin-bottom:10px"><label for="fm-alt">Altezza (cm)</label><input type="number" id="fm-alt" placeholder="es. 115 / e.g. 115" oninput="calcFormule()"></div>
+      <div class="nf" style="margin-bottom:10px"><label for="fm-eta">Età (anni)</label><input type="number" id="fm-eta" placeholder="es. 6 / e.g. 6" oninput="calcFormule()"></div>
+      <div class="nf" style="margin-bottom:10px"><label for="fm-sesso">Sesso</label><select id="fm-sesso" onchange="calcFormule()"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+      <div id="formule-result" style="display:none" aria-live="polite">
         <table class="food-table" style="margin-top:10px">
           <thead><tr><th>Formula</th><th><span data-only-lang="it">Età applicabile</span><span data-only-lang="en" style="display:none">Applicable age</span></th><th><span data-only-lang="it">MB (kcal/die)</span><span data-only-lang="en" style="display:none">BMR (kcal/day)</span></th></tr></thead>
           <tbody id="formule-tbody"></tbody>
@@ -499,8 +499,8 @@
     </div>
     <div class="calc-box">
       <h3><span data-only-lang="it">💧 Fabbisogno Idrico Pediatrico</span><span data-only-lang="en" style="display:none">💧 Paediatric Fluid Requirements</span></h3>
-      <div class="nf" style="margin-bottom:10px"><label>Peso (kg)</label><input type="number" id="idro-peso" placeholder="es. 25 / e.g. 25" step="0.5" oninput="calcIdro()"></div>
-      <div id="idro-result" style="display:none;margin-top:10px">
+      <div class="nf" style="margin-bottom:10px"><label for="idro-peso">Peso (kg)</label><input type="number" id="idro-peso" placeholder="es. 25 / e.g. 25" step="0.5" oninput="calcIdro()"></div>
+      <div id="idro-result" style="display:none;margin-top:10px" aria-live="polite">
         <div style="background:#EDE9FE;border-radius:8px;padding:14px;margin-bottom:10px">
           <div style="font-size:12px;color:var(--slate-l)">Fabbisogno idrico (Holiday-Segar)</div>
           <div class="result-big" id="idro-ml">— mL/die</div>
@@ -724,14 +724,14 @@
   <div class="grid-2">
     <div class="calc-box">
       <h3><span data-only-lang="it">⚙️ Dati Clinici e Obiettivi</span><span data-only-lang="en" style="display:none">⚙️ Clinical Data and Goals</span></h3>
-      <div class="nf" style="margin-bottom:10px"><label>Fascia d'età</label>
+      <div class="nf" style="margin-bottom:10px"><label for="ped-piano-eta">Fascia d'età</label>
         <select id="ped-piano-eta"><option value="0-6m">0–6 mesi (lattante)</option><option value="6-12m">6–12 mesi (diversificazione)</option><option value="1-3a">1–3 anni (prima infanzia)</option><option value="4-6a">4–6 anni (età prescolare)</option><option value="7-10a">7–10 anni (età scolare)</option><option value="11-14a">11–14 anni (pre-adolescenza)</option><option value="15-18a">15–18 anni (adolescenza)</option></select>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label>Motivo della consulenza</label>
+      <div class="nf" style="margin-bottom:10px"><label for="ped-piano-motivo">Motivo della consulenza</label>
         <select id="ped-piano-motivo"><option value="crescita">Crescita (ritardo o promozione)</option><option value="sovrappeso">Sovrappeso / Obesità pediatrica</option><option value="sottopeso">Sottopeso / Scarso accrescimento</option><option value="allergie">Allergie / Intolleranze alimentari</option><option value="neofobia">Neofobia alimentare / ARFID</option><option value="patologia">Patologia cronica (IBD, celiachia, FC...)</option><option value="prevenzione">Prevenzione e promozione della salute</option></select>
       </div>
-      <div class="nf" style="margin-bottom:10px"><label>Kcal target/giorno</label><input type="number" id="ped-piano-kcal" placeholder="es. 1600 / e.g. 1600" oninput="calcolaPedPiano()"></div>
-      <div class="nf" style="margin-bottom:10px"><label>Peso attuale (kg)</label><input type="number" id="ped-piano-peso" placeholder="es. 35 / e.g. 35" oninput="calcolaPedPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label for="ped-piano-kcal">Kcal target/giorno</label><input type="number" id="ped-piano-kcal" placeholder="es. 1600 / e.g. 1600" oninput="calcolaPedPiano()"></div>
+      <div class="nf" style="margin-bottom:10px"><label for="ped-piano-peso">Peso attuale (kg)</label><input type="number" id="ped-piano-peso" placeholder="es. 35 / e.g. 35" oninput="calcolaPedPiano()"></div>
       <div style="margin-bottom:0"><div style="background:#FAF5FF;border:1.5px solid #C4B5FD;border-radius:10px;padding:12px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
           <span style="background:#EDE9FE;color:#5B21B6;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">📋</span>
@@ -742,7 +742,7 @@
     </div>
     <div class="calc-box">
       <h3><span data-only-lang="it">📊 Target Nutrizionali Pediatrici</span><span data-only-lang="en" style="display:none">📊 Paediatric Nutritional Targets</span></h3>
-      <div id="ped-piano-macro-result" style="margin-bottom:12px;padding:12px;background:#FAF5FF;border-radius:8px;font-size:13px"><i data-only-lang="it">Inserisci le kcal e il peso per calcolare i target.</i><i data-only-lang="en" style="display:none">Enter kcal and weight to calculate targets.</i></div>
+      <div id="ped-piano-macro-result" style="margin-bottom:12px;padding:12px;background:#FAF5FF;border-radius:8px;font-size:13px" aria-live="polite"><i data-only-lang="it">Inserisci le kcal e il peso per calcolare i target.</i><i data-only-lang="en" style="display:none">Enter kcal and weight to calculate targets.</i></div>
       <div class="alert-info alert-box" style="font-size:12px;background:#FAF5FF;border-color:#8B5CF6;color:#3B0764" data-only-lang="it">
         <b>💡 Linee guida pediatriche:</b><br>
         Proteine: 1.2–2.0g/kg (più alto nella prima infanzia e adolescenza).<br>

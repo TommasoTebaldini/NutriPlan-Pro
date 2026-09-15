@@ -10081,3 +10081,107 @@ END $$;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_127_trial_per_dietista', 'Sostituisce l''account demo condiviso (SEZIONE 125) con una prova gratuita di 7 giorni per-dietista: ogni dietista sceglie email+password in index.html, ottiene un vero account isolato dalle RLS, approvato subito e precaricato con 6 pazienti finti (seed_trial_demo_data). Colonne profiles.is_trial_account/trial_expires_at aggiunte. Blocco automatico allo scadere gestito lato client (loadProfile, js/utils.js), gated da site_payments_active() (dormiente, false finché Stripe dietista non è live - flippare insieme a PAYMENTS_ACTIVE in js/payments-config.js). Cron reset-demo-studio-nightly disattivato.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 128 — FIX SICUREZZA: 7 tabelle cliniche leggibili da collaboratori
+-- "segretario" (stesso gap ricorrente già chiuso 4 volte: SEZIONE 60/61
+-- note_specialistiche, SEZIONE 63 patient_photos/patient_files, SEZIONE 121
+-- coach_ai_messages)
+--
+-- Trovato da un audit di sicurezza mirato (2026-09-15): confronto sistematico
+-- di tutte le 220 policy RLS live del progetto contro il pattern
+-- get_studio_owner() SENZA is_dietitian_level_collaborator(). Su queste 7
+-- tabelle, un collaboratore di livello "segretario" (dovrebbe avere solo
+-- accesso amministrativo/agenda, MAI dati clinici, per esplicito disegno del
+-- prodotto - vedi impostazioni.html sezione collaboratori) poteva leggere
+-- dati clinici pieni di qualunque paziente dello studio:
+--   - ncpt_raw: diagnosi/intervento/monitoraggio NCPT
+--   - note_specialistiche_raw: note cliniche libere
+--   - schede_valutazione_raw: schede di valutazione nutrizionale complete
+--   - bia_records: misurazioni di composizione corporea
+--   - patient_documents: documenti caricati (referti, esami...)
+--   - percorsi_nutrizionali_raw: percorsi/piani terapeutici nutrizionali
+--   - piani: piani alimentari assegnati ai pazienti
+--
+-- Fix: stesso pattern esatto di SEZIONE 121 — aggiunge
+-- is_dietitian_level_collaborator((select auth.uid())) in AND SOLO al ramo
+-- "sono lo studio owner/un suo collaboratore" di ogni policy, senza toccare
+-- i rami "il paziente vede il proprio dato con visible_to_patient=true",
+-- che restano invariati (un paziente deve continuare a vedere i propri dati
+-- indipendentemente da questo controllo, che riguarda solo i collaboratori
+-- del DIETISTA).
+--
+-- NON incluso in questo giro: chat_messages_raw (2 policy con lo stesso
+-- gap, "chat_messages_select_visible" e "chat visibile ai coinvolti") —
+-- quest'ultima è una policy FOR ALL che governa anche INSERT/UPDATE/DELETE,
+-- non solo SELECT: aggiungere qui is_dietitian_level_collaborator()
+-- impedirebbe anche a un segretario di INVIARE messaggi per conto dello
+-- studio, che potrebbe essere una funzione amministrativa intenzionale (es.
+-- promemoria appuntamenti) — decisione di prodotto, non tecnica, da
+-- chiarire con l'utente prima di toccarla.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "ncpt_select_combined" ON ncpt_raw;
+CREATE POLICY "ncpt_select_combined" ON ncpt_raw
+  FOR SELECT USING (
+    (user_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())))
+    OR ((visible_to_patient = true) AND (cartella_id IN (SELECT patient_dietitian.cartella_id FROM patient_dietitian WHERE patient_dietitian.patient_id = (select auth.uid()))))
+    OR ((visible_to_patient = true) AND is_linked_patient(cartella_id))
+    OR ((visible_to_patient = true) AND (((select auth.uid()) = patient_id) OR (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = (select auth.uid()) AND pd.cartella_id = ncpt_raw.cartella_id))))
+  );
+
+DROP POLICY IF EXISTS "note_specialistiche_select_combined" ON note_specialistiche_raw;
+CREATE POLICY "note_specialistiche_select_combined" ON note_specialistiche_raw
+  FOR SELECT USING (
+    (user_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())))
+    OR ((visible_to_patient = true) AND (cartella_id IN (SELECT patient_dietitian.cartella_id FROM patient_dietitian WHERE patient_dietitian.patient_id = (select auth.uid()))))
+    OR ((visible_to_patient = true) AND is_linked_patient(cartella_id))
+    OR ((visible_to_patient = true) AND (((select auth.uid()) = patient_id) OR (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = (select auth.uid()) AND pd.cartella_id = note_specialistiche_raw.cartella_id))))
+  );
+
+DROP POLICY IF EXISTS "schede_valutazione_select_combined" ON schede_valutazione_raw;
+CREATE POLICY "schede_valutazione_select_combined" ON schede_valutazione_raw
+  FOR SELECT USING (
+    ((visible_to_patient = true) AND (((select auth.uid()) = patient_id) OR (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = (select auth.uid()) AND pd.cartella_id = schede_valutazione_raw.cartella_id))))
+    OR (user_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())))
+    OR ((visible_to_patient = true) AND (cartella_id IN (SELECT patient_dietitian.cartella_id FROM patient_dietitian WHERE patient_dietitian.patient_id = (select auth.uid()))))
+    OR ((visible_to_patient = true) AND is_linked_patient(cartella_id))
+  );
+
+DROP POLICY IF EXISTS "bia_records_select_combined" ON bia_records;
+CREATE POLICY "bia_records_select_combined" ON bia_records
+  FOR SELECT USING (
+    (user_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())))
+    OR ((visible_to_patient = true) AND (cartella_id IN (SELECT patient_dietitian.cartella_id FROM patient_dietitian WHERE patient_dietitian.patient_id = (select auth.uid()))))
+    OR ((visible_to_patient = true) AND is_linked_patient(cartella_id))
+    OR ((visible_to_patient = true) AND (((select auth.uid()) = patient_id) OR (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = (select auth.uid()) AND pd.cartella_id = bia_records.cartella_id))))
+  );
+
+DROP POLICY IF EXISTS "patient_documents_select_combined" ON patient_documents;
+CREATE POLICY "patient_documents_select_combined" ON patient_documents
+  FOR SELECT USING (
+    (dietitian_id = (select auth.uid()))
+    OR (dietitian_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())))
+    OR ((visible = true) AND (cartella_id IN (SELECT patient_dietitian.cartella_id FROM patient_dietitian WHERE patient_dietitian.patient_id = (select auth.uid()))))
+    OR ((visible = true) AND is_linked_patient(cartella_id))
+    OR (((select auth.uid()) = patient_id) AND (visible IS NOT FALSE))
+  );
+
+DROP POLICY IF EXISTS "percorsi_select_combined" ON percorsi_nutrizionali_raw;
+CREATE POLICY "percorsi_select_combined" ON percorsi_nutrizionali_raw
+  FOR SELECT USING (
+    (dietitian_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())))
+    OR (patient_id = (select auth.uid()))
+  );
+
+DROP POLICY IF EXISTS "piani_select_combined" ON piani;
+CREATE POLICY "piani_select_combined" ON piani
+  FOR SELECT USING (
+    ((visible_to_patient = true) AND (((select auth.uid()) = patient_id) OR (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = (select auth.uid()) AND pd.cartella_id = piani.cartella_id))))
+    OR (user_id = get_studio_owner((select auth.uid())) AND is_dietitian_level_collaborator((select auth.uid())))
+    OR ((visible_to_patient = true) AND is_linked_patient(cartella_id))
+  );
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_128_fix_7_tabelle_cliniche_collaborator_gap', 'Stesso gap ricorrente (SEZIONE 60/61/63/121) chiuso su 7 tabelle trovate da un audit sistematico delle 220 policy RLS live: ncpt_raw, note_specialistiche_raw, schede_valutazione_raw, bia_records, patient_documents, percorsi_nutrizionali_raw, piani. Un collaboratore "segretario" poteva leggere dati clinici pieni (diagnosi NCPT, note, valutazioni, BIA, documenti, percorsi terapeutici, piani alimentari) di qualunque paziente dello studio. chat_messages_raw ha lo stesso gap ma su una policy FOR ALL (governa anche scrittura) - lasciata non toccata, decisione di prodotto da chiarire prima.')
+ON CONFLICT (id) DO NOTHING;

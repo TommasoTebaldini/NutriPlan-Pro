@@ -10263,3 +10263,79 @@ CREATE POLICY "chat_messages_select_visible" ON chat_messages_raw
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_129_fix_chat_messages_collaborator_gap', 'Completa SEZIONE 128: chat_messages_raw aveva lo stesso gap (segretario poteva leggere la chat clinica di qualunque paziente) ma su una policy FOR ALL che governava anche scrittura. Divisa in policy separate INSERT/UPDATE/DELETE (invariate, il segretario continua a poter inviare messaggi per conto dello studio, confermato dall''utente) e una policy SELECT dedicata con is_dietitian_level_collaborator() aggiunto, stesso pattern delle altre 7 tabelle.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 130 — FIX SICUREZZA CRITICO: start_trial_signup() poteva
+-- auto-approvare l'account di un ALTRO utente (SEZIONE 127, stessa sessione)
+--
+-- Trovato da un'autoverifica mirata sul codice appena scritto in questa
+-- sessione. start_trial_signup(p_uid, p_email) è SECURITY DEFINER, concessa
+-- ad anon (deve funzionare subito dopo sb.auth.signUp(), prima che esista
+-- una sessione) e non verificava mai che p_uid corrispondesse davvero al
+-- chiamante — necessario per design (è lo stesso pattern già usato da
+-- create_profile_for_new_user), ma il suo INSERT ... ON CONFLICT DO UPDATE
+-- impostava INCONDIZIONATAMENTE approved=true/is_trial_account=true su
+-- QUALUNQUE profilo preesistente con quell'id, senza distinguere "è un
+-- trial che sta richiamando la RPC" da "è un account VERO, registrato
+-- normalmente, in attesa di approvazione admin (o già approvato)".
+--
+-- Scenario di sfruttamento: chiunque conosca (o indovini) lo UUID di un
+-- account già registrato normalmente poteva chiamare questa RPC via REST
+-- con quel p_uid e forzarne approved=true, bypassando il gate di
+-- approvazione manuale dell'admin — e in più gli avrebbe seminato 6
+-- pazienti finti nel profilo (seed_trial_demo_data), dato che
+-- v_already_trial risultava false per un account reale non-trial,
+-- facendo scattare la semina come se fosse un trial "alla prima chiamata".
+-- SECURITY DEFINER bypassa comunque ogni RLS, quindi non c'era una rete di
+-- sicurezza sotto a livello di policy.
+--
+-- Fix: guardia esplicita in cima alla funzione — se il profilo esiste già
+-- e NON è già un trial, la funzione esce subito senza toccare nulla (né
+-- approved, né semina). La UPDATE nell'ON CONFLICT resta inoltre
+-- condizionata a "WHERE profiles.is_trial_account = true" come difesa in
+-- profondità, ridondante rispetto alla guardia sopra ma innocua se in
+-- futuro qualcuno tocca la funzione senza notare la guardia.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION start_trial_signup(p_uid uuid, p_email text)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_profile_exists boolean;
+  v_already_trial boolean;
+BEGIN
+  SELECT true, is_trial_account INTO v_profile_exists, v_already_trial FROM public.profiles WHERE id = p_uid;
+
+  -- Il profilo esiste già ma non è un trial (registrazione normale in
+  -- attesa di approvazione admin, o account già approvato/admin): non
+  -- tocca NULLA. Impedisce che chi conosce/indovina l'uid di un altro
+  -- utente possa auto-approvarsi o inquinargli l'account con pazienti
+  -- finti chiamando questa RPC anonima.
+  IF v_profile_exists AND v_already_trial IS NOT TRUE THEN
+    RETURN;
+  END IF;
+
+  INSERT INTO public.profiles (id, email, nome, cognome, approved, is_admin, is_trial_account, trial_expires_at, terms_accepted_at)
+  VALUES (p_uid, p_email, 'Studio', 'in prova', true, false, true, now() + interval '7 days', now())
+  ON CONFLICT (id) DO UPDATE SET
+    approved = true,
+    is_trial_account = true,
+    trial_expires_at = COALESCE(profiles.trial_expires_at, EXCLUDED.trial_expires_at),
+    terms_accepted_at = COALESCE(profiles.terms_accepted_at, EXCLUDED.terms_accepted_at)
+  WHERE profiles.is_trial_account = true;
+
+  -- Semina solo la prima volta (v_already_trial era NULL/false prima di
+  -- questa chiamata): evita pazienti duplicati su una seconda invocazione.
+  IF v_already_trial IS NOT TRUE THEN
+    PERFORM seed_trial_demo_data(p_uid);
+  END IF;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION start_trial_signup(uuid, text) TO anon, authenticated;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_130_fix_start_trial_signup_account_takeover', 'FIX CRITICO: start_trial_signup (SEZIONE 127, stessa sessione) impostava incondizionatamente approved=true su QUALUNQUE profilo preesistente passato come p_uid, non solo sui trial - chiunque conoscesse lo uid di un account registrato normalmente e in attesa di approvazione admin poteva auto-approvarlo (e farsi seminare 6 pazienti finti) chiamando la RPC anonima. Aggiunta guardia esplicita: se il profilo esiste e non e gia un trial, la funzione esce subito senza modificare nulla. Trovato da un autoreview di sicurezza sul codice scritto in questa sessione, mai sfruttato in produzione per quanto verificabile.')
+ON CONFLICT (id) DO NOTHING;

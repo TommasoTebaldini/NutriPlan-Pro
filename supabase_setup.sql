@@ -10185,3 +10185,81 @@ CREATE POLICY "piani_select_combined" ON piani
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_128_fix_7_tabelle_cliniche_collaborator_gap', 'Stesso gap ricorrente (SEZIONE 60/61/63/121) chiuso su 7 tabelle trovate da un audit sistematico delle 220 policy RLS live: ncpt_raw, note_specialistiche_raw, schede_valutazione_raw, bia_records, patient_documents, percorsi_nutrizionali_raw, piani. Un collaboratore "segretario" poteva leggere dati clinici pieni (diagnosi NCPT, note, valutazioni, BIA, documenti, percorsi terapeutici, piani alimentari) di qualunque paziente dello studio. chat_messages_raw ha lo stesso gap ma su una policy FOR ALL (governa anche scrittura) - lasciata non toccata, decisione di prodotto da chiarire prima.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 129 — FIX SICUREZZA: chat_messages_raw, split lettura/scrittura
+--
+-- Completa SEZIONE 128 (stesso gap, lasciato apposta fuori da quel giro
+-- perché "chat visibile ai coinvolti" era FOR ALL: aggiungere
+-- is_dietitian_level_collaborator() lì avrebbe impedito anche a un
+-- collaboratore "segretario" di INVIARE messaggi per conto dello studio —
+-- funzione amministrativa che l'utente ha confermato deve restare
+-- disponibile al segretario, mentre la LETTURA della cronologia clinica
+-- della chat resta riservata al titolare/collaboratori "dietista", come
+-- le altre 7 tabelle già corrette.
+--
+-- "chat visibile ai coinvolti" (FOR ALL, un'unica policy per SELECT+INSERT+
+-- UPDATE+DELETE) va quindi divisa: la parte INSERT/UPDATE/DELETE resta
+-- IDENTICA a prima (nessuna restrizione di collaboratore, il segretario può
+-- continuare a scrivere), la parte SELECT viene invece rimossa da qui e
+-- gestita SOLO dalla policy dedicata "chat_messages_select_visible", a cui
+-- si aggiunge is_dietitian_level_collaborator() — stesso identico pattern
+-- delle altre 7 tabelle di SEZIONE 128.
+--
+-- Verificato prima di questa sezione (query diretta su pg_policy) che su
+-- chat_messages_raw esistono solo queste 2 policy permissive più una
+-- restrictive "mfa_required" (invariata, non tocca la logica sotto).
+-- ═══════════════════════════════════════════════════════════════════════════
+
+DROP POLICY IF EXISTS "chat visibile ai coinvolti" ON chat_messages_raw;
+
+CREATE POLICY "chat_messages_insert_coinvolti" ON chat_messages_raw
+  FOR INSERT WITH CHECK (
+    (patient_id = (select auth.uid()))
+    OR (
+      (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = chat_messages_raw.patient_id AND pd.dietitian_id = get_studio_owner((select auth.uid()))))
+      AND ((dietitian_id IS NULL) OR (dietitian_id = get_studio_owner((select auth.uid()))))
+    )
+  );
+
+CREATE POLICY "chat_messages_update_coinvolti" ON chat_messages_raw
+  FOR UPDATE USING (
+    (patient_id = (select auth.uid()))
+    OR (
+      (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = chat_messages_raw.patient_id AND pd.dietitian_id = get_studio_owner((select auth.uid()))))
+      AND ((dietitian_id IS NULL) OR (dietitian_id = get_studio_owner((select auth.uid()))))
+    )
+  ) WITH CHECK (
+    (patient_id = (select auth.uid()))
+    OR (
+      (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = chat_messages_raw.patient_id AND pd.dietitian_id = get_studio_owner((select auth.uid()))))
+      AND ((dietitian_id IS NULL) OR (dietitian_id = get_studio_owner((select auth.uid()))))
+    )
+  );
+
+CREATE POLICY "chat_messages_delete_coinvolti" ON chat_messages_raw
+  FOR DELETE USING (
+    (patient_id = (select auth.uid()))
+    OR (
+      (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = chat_messages_raw.patient_id AND pd.dietitian_id = get_studio_owner((select auth.uid()))))
+      AND ((dietitian_id IS NULL) OR (dietitian_id = get_studio_owner((select auth.uid()))))
+    )
+  );
+
+DROP POLICY IF EXISTS "chat_messages_select_visible" ON chat_messages_raw;
+CREATE POLICY "chat_messages_select_visible" ON chat_messages_raw
+  FOR SELECT USING (
+    (
+      (patient_id = (select auth.uid()))
+      OR (
+        (EXISTS (SELECT 1 FROM patient_dietitian pd WHERE pd.patient_id = chat_messages_raw.patient_id AND pd.dietitian_id = get_studio_owner((select auth.uid()))))
+        AND ((dietitian_id IS NULL) OR (dietitian_id = get_studio_owner((select auth.uid()))))
+        AND is_dietitian_level_collaborator((select auth.uid()))
+      )
+    )
+    AND ((status = 'sent') OR (sender_id = (select auth.uid())))
+  );
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_129_fix_chat_messages_collaborator_gap', 'Completa SEZIONE 128: chat_messages_raw aveva lo stesso gap (segretario poteva leggere la chat clinica di qualunque paziente) ma su una policy FOR ALL che governava anche scrittura. Divisa in policy separate INSERT/UPDATE/DELETE (invariate, il segretario continua a poter inviare messaggi per conto dello studio, confermato dall''utente) e una policy SELECT dedicata con is_dietitian_level_collaborator() aggiunto, stesso pattern delle altre 7 tabelle.')
+ON CONFLICT (id) DO NOTHING;

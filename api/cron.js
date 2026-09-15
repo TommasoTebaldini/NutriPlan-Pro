@@ -15,6 +15,7 @@
 // cron-appointment-reminders.js, cron-overdue-payments.js), solo spostata
 // da "export default handler" a una funzione dedicata per job.
 
+import crypto from 'crypto';
 import webpush from 'web-push';
 import { withErrorLogging, logServerError, escapeHtml } from './_errorLog.js';
 
@@ -862,10 +863,20 @@ async function jobFhirSync() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+function isValidCronAuth(authHeader, cronSecret) {
+  if (!cronSecret) return false;
+  const expected = Buffer.from(`Bearer ${cronSecret}`);
+  const actual = Buffer.from(authHeader);
+  // timingSafeEqual richiede buffer della stessa lunghezza — stesso pattern
+  // già usato per il token calendario (api/calendar.js) e la firma webhook
+  // WhatsApp (api/whatsapp-webhook.js), qui mai allineato.
+  return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
+}
+
 async function handler(req, res) {
   const cronSecret = process.env.CRON_SECRET;
   const authHeader = req.headers.authorization || '';
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+  if (!isValidCronAuth(authHeader, cronSecret)) {
     return res.status(401).json({ error: 'Non autorizzato' });
   }
 

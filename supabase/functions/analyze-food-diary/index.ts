@@ -266,8 +266,12 @@ Deno.serve(async (req: Request) => {
     } catch (e) { lastError = (e as Error).message }
   }
   if (!text) {
+    // Il messaggio grezzo del provider (lastError) va solo nel log server —
+    // al client un errore generico, altrimenti si confermerebbe a chiunque
+    // chiami l'endpoint dettagli come "chiave API non valida"/"rate limit"
+    // del provider AI (piccola fuga di informazioni, non la chiave stessa).
     await logServerError('analyze-food-diary', lastError || 'Errore AI: tutti i provider hanno fallito').catch(() => {})
-    return json({ error: lastError || 'Errore AI' }, 500)
+    return json({ error: 'Errore nell\'analisi della foto. Riprova più tardi.' }, 500)
   }
 
   try {

@@ -16,9 +16,9 @@ function debouncedFilter() {
 function setFilter(cat) {
   currentFilter = cat;
   currentPage = 1;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
   const btn = document.getElementById('f-' + cat);
-  if (btn) btn.classList.add('active');
+  if (btn) { btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true'); }
   filterStudies();
 }
 
@@ -119,7 +119,7 @@ function renderStudy(s) {
 
   // Body rendered lazily on first open (see toggleStudy)
   return `<div class="study-card" id="sc-${s.id}">
-    <div class="study-card-hdr" onclick="toggleStudy(${s.id})">
+    <div class="study-card-hdr" onclick="toggleStudy(${s.id})" role="button" tabindex="0" aria-expanded="false" aria-controls="sb-${s.id}" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleStudy(${s.id})}">
       <div style="flex:1">
         <div class="study-meta">
           <span class="study-type" style="background:${s.tipoBg};color:${s.tipoColor}">${tipoLabel}</span>
@@ -153,6 +153,7 @@ function _studyBodyHTML(s) {
 function toggleStudy(id) {
   const body = document.getElementById('sb-' + id);
   const arr = document.getElementById('arr-' + id);
+  const hdr = body ? body.previousElementSibling : null;
   // Populate body on first open
   if (!body._loaded) {
     const s = STUDI.find(x => x.id === id);
@@ -160,6 +161,7 @@ function toggleStudy(id) {
   }
   const isOpen = body.classList.contains('open');
   body.classList.toggle('open');
+  if (hdr) hdr.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
   if (arr) arr.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
 }
 

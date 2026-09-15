@@ -199,18 +199,21 @@ async function loadProfile() {
     window.location.href = 'index.html?waiting=1';
     return;
   }
-  // Prova gratuita scaduta (SEZIONE 127) — bloccata SOLO quando
+  // Prova gratuita scaduta (SEZIONE 127/131) — la RPC valuta lo stato del
+  // TITOLARE dello studio (get_studio_owner), non del profilo di chi è
+  // loggato: un collaboratore ha una propria prova individuale scollegata
+  // da quella del titolare, e non deve mai essere bloccato solo perché LA
+  // SUA prova personale è scaduta, se lo studio in cui lavora è già
+  // abbonato (o è ancora in prova valida). Bloccata SOLO quando
   // site_payments_active() è true lato DB (dormiente, false finché il
-  // checkout Stripe del dietista non è live: stesso pattern già usato per
-  // il limite ricette Free lato paziente). Finché resta false, un trial
+  // checkout Stripe del dietista non è live). Finché resta false, un trial
   // scaduto continua a funzionare normalmente — nessuna regressione prima
   // del lancio dei pagamenti.
-  const _isProNow = data && data.subscription_plan === 'pro' && (!data.subscription_expires_at || new Date(data.subscription_expires_at) > new Date());
-  if (data && data.is_trial_account && data.trial_expires_at && new Date(data.trial_expires_at) < new Date() && !_isProNow) {
+  if (data) {
     try {
-      const { data: gateActive, error: gateErr } = await sb.rpc('site_payments_active');
-      if (!gateErr && gateActive) { window.location.href = 'trial-scaduto.html'; return; }
-    } catch (e) { /* best-effort: se il check di site_payments_active fallisce, non si blocca l'accesso */ }
+      const { data: blocked, error: blockErr } = await sb.rpc('is_trial_access_blocked');
+      if (!blockErr && blocked) { window.location.href = 'trial-scaduto.html'; return; }
+    } catch (e) { /* best-effort: se il check fallisce, non si blocca l'accesso */ }
   }
   // Update UI
   const el = document.getElementById('sb-user-email');

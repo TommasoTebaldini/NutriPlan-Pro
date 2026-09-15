@@ -10339,3 +10339,70 @@ GRANT EXECUTE ON FUNCTION start_trial_signup(uuid, text) TO anon, authenticated;
 INSERT INTO schema_migrations (id, note) VALUES
   ('sezione_130_fix_start_trial_signup_account_takeover', 'FIX CRITICO: start_trial_signup (SEZIONE 127, stessa sessione) impostava incondizionatamente approved=true su QUALUNQUE profilo preesistente passato come p_uid, non solo sui trial - chiunque conoscesse lo uid di un account registrato normalmente e in attesa di approvazione admin poteva auto-approvarlo (e farsi seminare 6 pazienti finti) chiamando la RPC anonima. Aggiunta guardia esplicita: se il profilo esiste e non e gia un trial, la funzione esce subito senza modificare nulla. Trovato da un autoreview di sicurezza sul codice scritto in questa sessione, mai sfruttato in produzione per quanto verificabile.')
 ON CONFLICT (id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- SEZIONE 131 — FIX: il blocco per prova scaduta guardava l'account di chi
+-- è loggato, non il TITOLARE dello studio in cui lavora
+--
+-- Il gate scritto in SEZIONE 127/128 (loadProfile(), js/utils.js) valutava
+-- is_trial_account/trial_expires_at/subscription_plan del profilo di chi
+-- è loggato. Caso limite mai chiuso prima: un collaboratore ha una PROPRIA
+-- prova gratuita individuale (si è registrato lui stesso via prova, magari
+-- proprio per essere aggiunto come collaboratore altrove) scollegata da
+-- quella del titolare dello studio in cui lavora davvero. Se la SUA prova
+-- personale scade, il vecchio gate lo avrebbe bloccato e reindirizzato a
+-- trial-scaduto.html anche se il titolare dello studio fosse già abbonato
+-- e pagante — un collaboratore legittimo perderebbe l'accesso per un
+-- motivo che non ha alcun senso dal punto di vista dello studio (l'accesso
+-- ai DATI via RLS è comunque scoping sul titolare tramite get_studio_owner,
+-- indipendente dall'abbonamento del singolo collaboratore: solo il gate
+-- client-side in loadProfile() non rifletteva questa realtà).
+--
+-- Fix: nuova RPC is_trial_access_blocked() che valuta lo stato di prova/
+-- abbonamento del TITOLARE dello studio (get_studio_owner(auth.uid())),
+-- non dell'utente loggato. Per un titolare/dietista indipendente
+-- get_studio_owner() ritorna il proprio id, quindi il comportamento
+-- per chi non è collaboratore di nessuno resta identico a prima.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION is_trial_access_blocked()
+RETURNS boolean
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_owner_id uuid;
+  v_owner_plan text;
+  v_owner_sub_expires timestamptz;
+  v_owner_is_trial boolean;
+  v_owner_trial_expires timestamptz;
+  v_is_owner_pro boolean;
+BEGIN
+  v_owner_id := get_studio_owner((select auth.uid()));
+
+  SELECT subscription_plan, subscription_expires_at, is_trial_account, trial_expires_at
+  INTO v_owner_plan, v_owner_sub_expires, v_owner_is_trial, v_owner_trial_expires
+  FROM public.profiles WHERE id = v_owner_id;
+
+  -- Lo studio (identificato dal titolare) è pagante: mai bloccato, per
+  -- nessuno di chi ci lavora, a prescindere dalla propria prova personale.
+  v_is_owner_pro := v_owner_plan = 'pro' AND (v_owner_sub_expires IS NULL OR v_owner_sub_expires > now());
+  IF v_is_owner_pro THEN
+    RETURN false;
+  END IF;
+
+  IF v_owner_is_trial IS TRUE AND v_owner_trial_expires IS NOT NULL AND v_owner_trial_expires < now() THEN
+    RETURN site_payments_active(); -- dormiente finché i pagamenti non sono live, stesso pattern di sempre
+  END IF;
+
+  RETURN false;
+END;
+$$;
+REVOKE ALL ON FUNCTION is_trial_access_blocked() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION is_trial_access_blocked() TO authenticated;
+
+INSERT INTO schema_migrations (id, note) VALUES
+  ('sezione_131_fix_trial_gate_studio_owner', 'Il blocco per prova scaduta (loadProfile, js/utils.js) valutava il profilo di chi e loggato invece del titolare dello studio - un collaboratore con una propria prova individuale scaduta sarebbe stato bloccato anche lavorando dentro uno studio gia abbonato. Nuova RPC is_trial_access_blocked() valuta lo stato del titolare via get_studio_owner(), non dellutente corrente. Per titolari/dietisti indipendenti (get_studio_owner ritorna il proprio id) il comportamento resta identico a prima.')
+ON CONFLICT (id) DO NOTHING;

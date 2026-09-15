@@ -974,12 +974,22 @@ function initCartellaWidget(cid, opts) {
   const labelColor = opts.labelColor || '#0F766E';
   const hiddenId = opts.hiddenInputId || (cid + '-val');
   const placeholder = opts.placeholder || '🔍 Cerca paziente...';
+  // La pagina chiamante disegna sempre una propria etichetta visibile
+  // ("Cartella Paziente", "Filtra per paziente"...) subito prima del div
+  // container, ma è testo libero senza for=/aria-labelledby verso questo
+  // input generato dinamicamente — irraggiungibile a colpo sicuro da un
+  // for= statico lato pagina dato che l'id è composto qui. Fix qui, una
+  // volta sola: aria-label sull'input di ricerca, derivato dallo stesso
+  // placeholder già personalizzabile per istanza (spogliato dell'emoji).
+  const ariaLabel = opts.ariaLabel || placeholder.replace(/^\s*\S+\s*/, '') || 'Cerca cartella paziente';
   container.innerHTML =
     '<div style="position:relative">' +
-      '<input type="text" id="' + cid + '-srch" placeholder="' + placeholder + '" autocomplete="off"' +
+      '<input type="text" id="' + cid + '-srch" placeholder="' + placeholder + '" aria-label="' + esc(ariaLabel) + '" autocomplete="off"' +
+      ' role="combobox" aria-expanded="false" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="' + cid + '-dd"' +
       ' style="width:100%;padding:6px 10px;border:1.5px solid ' + border + ';border-radius:var(--r-sm);font-family:inherit;font-size:13px;outline:none;background:white;color:#1E293B;box-sizing:border-box"' +
       ' oninput="_cwFilter(\'' + cid + '\')"' +
       ' onfocus="_cwFocus(\'' + cid + '\')"' +
+      ' onkeydown="_cwKeydown(event,\'' + cid + '\')"' +
       ' onblur="setTimeout(()=>_cwBlur(\'' + cid + '\'),200)">' +
     '</div>' +
     '<input type="hidden" id="' + hiddenId + '" value="">' +
@@ -989,6 +999,7 @@ function initCartellaWidget(cid, opts) {
   if (existingDd) existingDd.remove();
   const dd = document.createElement('div');
   dd.id = cid + '-dd';
+  dd.setAttribute('role', 'listbox');
   dd.setAttribute('onmousedown', 'event.preventDefault()');
   dd.style.cssText = 'display:none;position:fixed;background:white;border:2px solid ' + border + ';border-radius:var(--r-sm);max-height:200px;overflow-y:auto;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.15);color:#1E293B';
   document.body.appendChild(dd);
@@ -1014,16 +1025,24 @@ async function _cwShow(cid, q) {
   if (!filtered.length) {
     html += '<div style="padding:10px;color:var(--slate-l);font-size:12.5px">Nessuna cartella trovata</div>';
   } else {
-    html += filtered.map(function(c){
-      return '<div onclick="_cwSelect(\'' + cid + '\',\'' + escJS(c.id) + '\',\'' + escJS(c.nome) + '\')"' +
+    html += filtered.map(function(c, i){
+      return '<div id="' + cid + '-opt-' + i + '" role="option" aria-selected="false" data-id="' + escJS(c.id) + '" data-nome="' + esc(c.nome) + '"' +
+        ' onclick="_cwSelect(\'' + cid + '\',\'' + escJS(c.id) + '\',\'' + escJS(c.nome) + '\')"' +
         ' style="padding:8px 12px;cursor:pointer;font-size:13px;font-weight:500;border-bottom:1px solid var(--border);color:#1E293B"' +
         ' onmouseover="this.style.background=\'' + hoverBg + '\'" onmouseout="this.style.background=\'\'">📁 ' + esc(c.nome) + '</div>';
     }).join('');
   }
-  html += '<div onclick="_cwNuovaCartella(\'' + cid + '\')"' +
+  // La voce "Crea nuova cartella" è anch'essa un'opzione raggiungibile via
+  // freccia giù/Invio (_cwKeydown/_cwHighlight), non solo click — vedi indice
+  // newIdx sotto, sempre l'ultimo della lista qualunque sia filtered.length.
+  const newIdx = filtered.length;
+  html += '<div id="' + cid + '-opt-' + newIdx + '" role="option" aria-selected="false" data-action="new"' +
+    ' onclick="_cwNuovaCartella(\'' + cid + '\')"' +
     ' style="padding:8px 12px;cursor:pointer;font-size:12.5px;font-weight:600;color:' + border + ';background:' + nuovaBg + ';border-top:2px solid var(--border)"' +
     ' onmouseover="this.style.opacity=\'.75\'" onmouseout="this.style.opacity=\'1\'">➕ Crea nuova cartella</div>';
   dd.innerHTML = html;
+  dd._cwActiveIndex = -1;
+  dd._cwOptCount = newIdx + 1;
   // Position fixed relative to input (escapes any CSS stacking context from animation/transform)
   const srch = document.getElementById(cid + '-srch');
   if (srch) {
@@ -1031,6 +1050,7 @@ async function _cwShow(cid, q) {
     dd.style.top = r.bottom + 'px';
     dd.style.left = r.left + 'px';
     dd.style.width = r.width + 'px';
+    srch.setAttribute('aria-expanded', 'true');
   }
   dd.style.display = 'block';
 }
@@ -1038,6 +1058,63 @@ async function _cwShow(cid, q) {
 function _cwHide(cid) {
   const dd = document.getElementById(cid + '-dd');
   if (dd) dd.style.display = 'none';
+  const srch = document.getElementById(cid + '-srch');
+  if (srch) { srch.setAttribute('aria-expanded', 'false'); srch.removeAttribute('aria-activedescendant'); }
+}
+
+// Navigazione da tastiera del dropdown (frecce/Invio/Esc) — prima le voci
+// erano <div onclick> raggiungibili solo col mouse. Il focus resta sempre
+// sull'input (pattern ARIA combobox standard): le frecce spostano solo
+// l'evidenziazione visiva + aria-activedescendant, non il focus DOM, così
+// il 200ms di _cwBlur (che nasconde il dropdown alla perdita di focus
+// dell'input) non interferisce mai con la navigazione.
+function _cwKeydown(e, cid) {
+  const dd = document.getElementById(cid + '-dd');
+  const srch = document.getElementById(cid + '-srch');
+  if (!dd || !srch) return;
+  const visible = dd.style.display !== 'none';
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (!visible) { _cwShow(cid, ''); return; }
+    const count = dd._cwOptCount || 0;
+    if (!count) return;
+    let idx = typeof dd._cwActiveIndex === 'number' ? dd._cwActiveIndex : -1;
+    idx = e.key === 'ArrowDown' ? (idx + 1) % count : (idx - 1 + count) % count;
+    _cwHighlight(cid, idx);
+  } else if (e.key === 'Enter') {
+    if (visible && typeof dd._cwActiveIndex === 'number' && dd._cwActiveIndex >= 0) {
+      e.preventDefault();
+      const opt = document.getElementById(cid + '-opt-' + dd._cwActiveIndex);
+      if (opt) {
+        if (opt.dataset.action === 'new') _cwNuovaCartella(cid);
+        else _cwSelect(cid, opt.dataset.id, opt.dataset.nome);
+      }
+    }
+  } else if (e.key === 'Escape') {
+    if (visible) { e.preventDefault(); _cwHide(cid); }
+  }
+}
+
+function _cwHighlight(cid, idx) {
+  const dd = document.getElementById(cid + '-dd');
+  const srch = document.getElementById(cid + '-srch');
+  if (!dd) return;
+  const container = document.getElementById(cid);
+  const opts = (container || {})._cwOpts || {};
+  const hoverBg = opts.hoverBg || '#F0FDF4';
+  const prev = dd._cwActiveIndex;
+  if (typeof prev === 'number' && prev >= 0) {
+    const prevEl = document.getElementById(cid + '-opt-' + prev);
+    if (prevEl) { prevEl.style.background = ''; prevEl.setAttribute('aria-selected', 'false'); }
+  }
+  dd._cwActiveIndex = idx;
+  const el = document.getElementById(cid + '-opt-' + idx);
+  if (el) {
+    el.style.background = hoverBg;
+    el.setAttribute('aria-selected', 'true');
+    el.scrollIntoView({ block: 'nearest' });
+    if (srch) srch.setAttribute('aria-activedescendant', el.id);
+  }
 }
 
 function _cwFocus(cid) {
